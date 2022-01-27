@@ -24,41 +24,42 @@ import org.springframework.webflow.execution.ScopeType;
 
 /**
  * An action that sets an attribute in a {@link ScopeType scope} when executed. Always returns the "success" event.
- * 
+ *
  * @author Keith Donald
  */
 public class SetAction extends AbstractAction {
 
-	/**
-	 * The expression for setting the scoped attribute value.
-	 */
-	private Expression nameExpression;
+    /**
+     * The expression for setting the scoped attribute value.
+     */
+    private Expression nameExpression;
 
-	/**
-	 * The expression for resolving the scoped attribute value.
-	 */
-	private Expression valueExpression;
+    /**
+     * The expression for resolving the scoped attribute value.
+     */
+    private Expression valueExpression;
 
-	/**
-	 * Creates a new set attribute action.
-	 * @param nameExpression the name of the property to set (required)
-	 * @param valueExpression the expression to obtain the new property value (required) expected
-	 */
-	public SetAction(Expression nameExpression, Expression valueExpression) {
-		Assert.notNull(nameExpression, "The name expression is required");
-		Assert.notNull(valueExpression, "The value expression is required");
-		this.nameExpression = nameExpression;
-		this.valueExpression = valueExpression;
-	}
+    /**
+     * Creates a new set attribute action.
+     *
+     * @param nameExpression  the name of the property to set (required)
+     * @param valueExpression the expression to obtain the new property value (required) expected
+     */
+    public SetAction(Expression nameExpression, Expression valueExpression) {
+        Assert.notNull(nameExpression, "The name expression is required");
+        Assert.notNull(valueExpression, "The value expression is required");
+        this.nameExpression = nameExpression;
+        this.valueExpression = valueExpression;
+    }
 
-	protected Event doExecute(RequestContext context) throws Exception {
-		Object value = valueExpression.getValue(context);
-		nameExpression.setValue(context, value);
-		return success();
-	}
+    public String toString() {
+        return new ToStringCreator(this).append("name", nameExpression).append("value", valueExpression).toString();
+    }
 
-	public String toString() {
-		return new ToStringCreator(this).append("name", nameExpression).append("value", valueExpression).toString();
-	}
+    protected Event doExecute(RequestContext context) throws Exception {
+        Object value = valueExpression.getValue(context);
+        nameExpression.setValue(context, value);
+        return success();
+    }
 
 }

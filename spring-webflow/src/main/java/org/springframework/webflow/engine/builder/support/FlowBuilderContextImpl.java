@@ -35,136 +35,139 @@ import org.springframework.webflow.validation.ValidationHintResolver;
 
 /**
  * Generic implementation of a flow builder context, suitable for use by most flow assembly systems.
+ *
  * @author Keith Donald
  */
 public class FlowBuilderContextImpl implements FlowBuilderContext {
 
-	private String flowId;
+    private String flowId;
 
-	private AttributeMap<Object> flowAttributes;
+    private AttributeMap<Object> flowAttributes;
 
-	private FlowDefinitionLocator flowDefinitionLocator;
+    private FlowDefinitionLocator flowDefinitionLocator;
 
-	private FlowBuilderServices flowBuilderServices;
+    private FlowBuilderServices flowBuilderServices;
 
-	private ConversionService conversionService;
+    private ConversionService conversionService;
 
-	/**
-	 * Creates a new flow builder context.
-	 * @param flowId the id to assign the flow being built
-	 * @param flowAttributes attributes to assign the flow being built
-	 * @param flowDefinitionLocator a locator to find dependent subflows
-	 * @param flowBuilderServices a parameter object providing access to additional services needed by the flow builder
-	 */
-	public FlowBuilderContextImpl(String flowId, AttributeMap<Object> flowAttributes,
-			FlowDefinitionLocator flowDefinitionLocator, FlowBuilderServices flowBuilderServices) {
-		Assert.hasText(flowId, "The flow id is required");
-		Assert.notNull(flowDefinitionLocator, "The flow definition locator is required");
-		Assert.notNull(flowBuilderServices, "The flow builder services holder is required");
-		this.flowId = flowId;
-		initFlowAttributes(flowAttributes);
-		this.flowDefinitionLocator = flowDefinitionLocator;
-		this.flowBuilderServices = flowBuilderServices;
-		this.conversionService = createConversionService();
-	}
+    /**
+     * Creates a new flow builder context.
+     *
+     * @param flowId                the id to assign the flow being built
+     * @param flowAttributes        attributes to assign the flow being built
+     * @param flowDefinitionLocator a locator to find dependent subflows
+     * @param flowBuilderServices   a parameter object providing access to additional services needed by the flow builder
+     */
+    public FlowBuilderContextImpl(String flowId, AttributeMap<Object> flowAttributes,
+                                  FlowDefinitionLocator flowDefinitionLocator, FlowBuilderServices flowBuilderServices) {
+        Assert.hasText(flowId, "The flow id is required");
+        Assert.notNull(flowDefinitionLocator, "The flow definition locator is required");
+        Assert.notNull(flowBuilderServices, "The flow builder services holder is required");
+        this.flowId = flowId;
+        initFlowAttributes(flowAttributes);
+        this.flowDefinitionLocator = flowDefinitionLocator;
+        this.flowBuilderServices = flowBuilderServices;
+        this.conversionService = createConversionService();
+    }
 
-	public FlowBuilderServices getFlowBuilderServices() {
-		return flowBuilderServices;
-	}
+    public FlowBuilderServices getFlowBuilderServices() {
+        return flowBuilderServices;
+    }
 
-	// implementing flow builder context
+    // implementing flow builder context
 
-	public String getFlowId() {
-		return flowId;
-	}
+    public String getFlowId() {
+        return flowId;
+    }
 
-	public AttributeMap<Object> getFlowAttributes() {
-		return flowAttributes;
-	}
+    public AttributeMap<Object> getFlowAttributes() {
+        return flowAttributes;
+    }
 
-	public FlowArtifactFactory getFlowArtifactFactory() {
-		return flowBuilderServices.getFlowArtifactFactory();
-	}
+    public FlowArtifactFactory getFlowArtifactFactory() {
+        return flowBuilderServices.getFlowArtifactFactory();
+    }
 
-	public FlowDefinitionLocator getFlowDefinitionLocator() {
-		return flowDefinitionLocator;
-	}
+    public FlowDefinitionLocator getFlowDefinitionLocator() {
+        return flowDefinitionLocator;
+    }
 
-	public ConversionService getConversionService() {
-		return conversionService;
-	}
+    public ConversionService getConversionService() {
+        return conversionService;
+    }
 
-	public ViewFactoryCreator getViewFactoryCreator() {
-		return flowBuilderServices.getViewFactoryCreator();
-	}
+    public ViewFactoryCreator getViewFactoryCreator() {
+        return flowBuilderServices.getViewFactoryCreator();
+    }
 
-	public ExpressionParser getExpressionParser() {
-		return flowBuilderServices.getExpressionParser();
-	}
+    public ExpressionParser getExpressionParser() {
+        return flowBuilderServices.getExpressionParser();
+    }
 
-	public ApplicationContext getApplicationContext() {
-		return flowBuilderServices.getApplicationContext();
-	}
+    public ApplicationContext getApplicationContext() {
+        return flowBuilderServices.getApplicationContext();
+    }
 
-	public Validator getValidator() {
-		return flowBuilderServices.getValidator();
-	}
+    public Validator getValidator() {
+        return flowBuilderServices.getValidator();
+    }
 
-	public ValidationHintResolver getValidationHintResolver() {
-		return flowBuilderServices.getValidationHintResolver();
-	}
+    public ValidationHintResolver getValidationHintResolver() {
+        return flowBuilderServices.getValidationHintResolver();
+    }
 
-	/**
-	 * Factory method that creates the conversion service the flow builder will use. Subclasses may override. The
-	 * default implementation registers Web Flow-specific converters thought to be useful for most builder
-	 * implementations, setting the externally-provided builder services conversion service as its parent.
-	 * @return the flow builder conversion service
-	 */
-	protected ConversionService createConversionService() {
-		GenericConversionService service = new GenericConversionService(
-				getFlowBuilderServices().getConversionService().getDelegateConversionService());
-		service.addConverter(new TextToTransitionCriteria(this));
-		service.addConverter(new TextToTargetStateResolver(this));
-		service.setParent(new ParentConversionServiceProxy());
-		return service;
-	}
+    /**
+     * Factory method that creates the conversion service the flow builder will use. Subclasses may override. The
+     * default implementation registers Web Flow-specific converters thought to be useful for most builder
+     * implementations, setting the externally-provided builder services conversion service as its parent.
+     *
+     * @return the flow builder conversion service
+     */
+    protected ConversionService createConversionService() {
+        GenericConversionService service = new GenericConversionService(
+            getFlowBuilderServices().getConversionService().getDelegateConversionService());
+        service.addConverter(new TextToTransitionCriteria(this));
+        service.addConverter(new TextToTargetStateResolver(this));
+        service.setParent(new ParentConversionServiceProxy());
+        return service;
+    }
 
-	private void initFlowAttributes(AttributeMap<Object> flowAttributes) {
-		if (flowAttributes != null) {
-			this.flowAttributes = flowAttributes;
-		} else {
-			this.flowAttributes = CollectionUtils.EMPTY_ATTRIBUTE_MAP;
-		}
-	}
+    /**
+     * A little proxy that refreshes the externally configured conversion service reference on each invocation.
+     */
+    private class ParentConversionServiceProxy implements ConversionService {
+        public Object executeConversion(Object source, Class<?> targetClass) throws ConversionException {
+            return getFlowBuilderServices().getConversionService().executeConversion(source, targetClass);
+        }
 
-	/**
-	 * A little proxy that refreshes the externally configured conversion service reference on each invocation.
-	 */
-	private class ParentConversionServiceProxy implements ConversionService {
-		public Object executeConversion(Object source, Class<?> targetClass) throws ConversionException {
-			return getFlowBuilderServices().getConversionService().executeConversion(source, targetClass);
-		}
+        public Object executeConversion(String converterId, Object source, Class<?> targetClass) {
+            return getFlowBuilderServices().getConversionService().executeConversion(converterId, source, targetClass);
+        }
 
-		public Object executeConversion(String converterId, Object source, Class<?> targetClass) {
-			return getFlowBuilderServices().getConversionService().executeConversion(converterId, source, targetClass);
-		}
+        public ConversionExecutor getConversionExecutor(Class<?> sourceClass, Class<?> targetClass)
+            throws ConversionExecutionException {
+            return getFlowBuilderServices().getConversionService().getConversionExecutor(sourceClass, targetClass);
+        }
 
-		public ConversionExecutor getConversionExecutor(Class<?> sourceClass, Class<?> targetClass)
-				throws ConversionExecutionException {
-			return getFlowBuilderServices().getConversionService().getConversionExecutor(sourceClass, targetClass);
-		}
+        public ConversionExecutor getConversionExecutor(String id, Class<?> sourceClass, Class<?> targetClass)
+            throws ConversionExecutorNotFoundException {
+            return getFlowBuilderServices().getConversionService().getConversionExecutor(id, sourceClass, targetClass);
+        }
 
-		public ConversionExecutor getConversionExecutor(String id, Class<?> sourceClass, Class<?> targetClass)
-				throws ConversionExecutorNotFoundException {
-			return getFlowBuilderServices().getConversionService().getConversionExecutor(id, sourceClass, targetClass);
-		}
+        public Class<?> getClassForAlias(String name) {
+            return getFlowBuilderServices().getConversionService().getClassForAlias(name);
+        }
 
-		public Class<?> getClassForAlias(String name) {
-			return getFlowBuilderServices().getConversionService().getClassForAlias(name);
-		}
+        public org.springframework.core.convert.ConversionService getDelegateConversionService() {
+            return getFlowBuilderServices().getConversionService().getDelegateConversionService();
+        }
+    }
 
-		public org.springframework.core.convert.ConversionService getDelegateConversionService() {
-			return getFlowBuilderServices().getConversionService().getDelegateConversionService();
-		}
-	}
+    private void initFlowAttributes(AttributeMap<Object> flowAttributes) {
+        if (flowAttributes != null) {
+            this.flowAttributes = flowAttributes;
+        } else {
+            this.flowAttributes = CollectionUtils.EMPTY_ATTRIBUTE_MAP;
+        }
+    }
 }

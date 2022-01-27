@@ -30,85 +30,86 @@ import org.springframework.webflow.validation.ValidationHintResolver;
 /**
  * A builder context that delegates to a flow-local bean factory for builder services. Such builder services override
  * the services of the external "parent" context.
+ *
  * @author Keith Donald
  */
 class LocalFlowBuilderContext implements FlowBuilderContext {
 
-	private FlowBuilderContext parent;
+    private FlowBuilderContext parent;
 
-	private ApplicationContext localFlowContext;
+    private ApplicationContext localFlowContext;
 
-	public LocalFlowBuilderContext(FlowBuilderContext parent, GenericApplicationContext localFlowContext) {
-		this.parent = parent;
-		this.localFlowContext = localFlowContext;
-	}
+    public LocalFlowBuilderContext(FlowBuilderContext parent, GenericApplicationContext localFlowContext) {
+        this.parent = parent;
+        this.localFlowContext = localFlowContext;
+    }
 
-	public ApplicationContext getApplicationContext() {
-		return localFlowContext;
-	}
+    public ApplicationContext getApplicationContext() {
+        return localFlowContext;
+    }
 
-	public String getFlowId() {
-		return parent.getFlowId();
-	}
+    public String getFlowId() {
+        return parent.getFlowId();
+    }
 
-	public AttributeMap<Object> getFlowAttributes() {
-		return parent.getFlowAttributes();
-	}
+    public AttributeMap<Object> getFlowAttributes() {
+        return parent.getFlowAttributes();
+    }
 
-	public FlowDefinitionLocator getFlowDefinitionLocator() {
-		if (localFlowContext.containsLocalBean("flowRegistry")) {
-			return localFlowContext.getBean("flowRegistry", FlowDefinitionLocator.class);
-		} else {
-			return parent.getFlowDefinitionLocator();
-		}
-	}
+    public FlowDefinitionLocator getFlowDefinitionLocator() {
+        if (localFlowContext.containsLocalBean("flowRegistry")) {
+            return localFlowContext.getBean("flowRegistry", FlowDefinitionLocator.class);
+        } else {
+            return parent.getFlowDefinitionLocator();
+        }
+    }
 
-	public FlowArtifactFactory getFlowArtifactFactory() {
-		if (localFlowContext.containsLocalBean("flowArtifactFactory")) {
-			return localFlowContext.getBean("flowArtifactFactory", FlowArtifactFactory.class);
-		} else {
-			return parent.getFlowArtifactFactory();
-		}
-	}
+    public FlowArtifactFactory getFlowArtifactFactory() {
+        if (localFlowContext.containsLocalBean("flowArtifactFactory")) {
+            return localFlowContext.getBean("flowArtifactFactory", FlowArtifactFactory.class);
+        } else {
+            return parent.getFlowArtifactFactory();
+        }
+    }
 
-	public ConversionService getConversionService() {
-		if (localFlowContext.containsLocalBean("conversionService")) {
-			return localFlowContext.getBean("conversionService", ConversionService.class);
-		} else {
-			return parent.getConversionService();
-		}
-	}
+    public ConversionService getConversionService() {
+        if (localFlowContext.containsLocalBean("conversionService")) {
+            return localFlowContext.getBean("conversionService", ConversionService.class);
+        } else {
+            return parent.getConversionService();
+        }
+    }
 
-	public ViewFactoryCreator getViewFactoryCreator() {
-		if (localFlowContext.containsLocalBean("viewFactoryCreator")) {
-			return localFlowContext.getBean("viewFactoryCreator", ViewFactoryCreator.class);
-		} else {
-			return parent.getViewFactoryCreator();
-		}
-	}
+    public ViewFactoryCreator getViewFactoryCreator() {
+        if (localFlowContext.containsLocalBean("viewFactoryCreator")) {
+            return localFlowContext.getBean("viewFactoryCreator", ViewFactoryCreator.class);
+        } else {
+            return parent.getViewFactoryCreator();
+        }
+    }
 
-	public ExpressionParser getExpressionParser() {
-		if (localFlowContext.containsLocalBean("expressionParser")) {
-			return localFlowContext.getBean("expressionParser", ExpressionParser.class);
-		} else {
-			return parent.getExpressionParser();
-		}
-	}
+    public ExpressionParser getExpressionParser() {
+        if (localFlowContext.containsLocalBean("expressionParser")) {
+            return localFlowContext.getBean("expressionParser", ExpressionParser.class);
+        } else {
+            return parent.getExpressionParser();
+        }
+    }
 
-	public Validator getValidator() {
-		if (localFlowContext.containsLocalBean("validator")) {
-			return localFlowContext.getBean("validator", Validator.class);
-		} else {
-			return parent.getValidator();
-		}
-	}
+    public Validator getValidator() {
+        if (localFlowContext.containsLocalBean("validator")) {
+            return localFlowContext.getBean("validator", Validator.class);
+        } else {
+            return parent.getValidator();
+        }
+    }
 
-	public ValidationHintResolver getValidationHintResolver() {
-		if (localFlowContext.containsLocalBean("validationHintResolver")) {
-			return localFlowContext.getBean("validationHintResolver", ValidationHintResolver.class);
-		} else {
-			return parent.getValidationHintResolver();
-		}
-	}
+    public ValidationHintResolver getValidationHintResolver() {
+        if (localFlowContext.containsLocalBean("validationHintResolver")) {
+            return localFlowContext.getBean("validationHintResolver", ValidationHintResolver.class);
+        } else {
+            return parent.getValidationHintResolver();
+        }
+    }
 
 }

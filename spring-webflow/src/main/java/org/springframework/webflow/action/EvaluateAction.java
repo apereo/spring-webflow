@@ -28,86 +28,88 @@ import org.springframework.webflow.execution.RequestContext;
  * <p>
  * Delegates to a {@link ResultEventFactory} to determine how to map the evaluation result to an action outcome
  * {@link Event}.
- * 
- * @see Expression
- * @see ResultEventFactory
- * 
+ *
  * @author Keith Donald
  * @author Jeremy Grelle
+ * @see Expression
+ * @see ResultEventFactory
  */
 public class EvaluateAction extends AbstractAction {
 
-	/**
-	 * The expression to evaluate when this action is invoked. Required.
-	 */
-	private Expression expression;
+    /**
+     * The expression to evaluate when this action is invoked. Required.
+     */
+    private Expression expression;
 
-	/**
-	 * The expression to evaluate to set the result of the action. Optional.
-	 */
-	private Expression resultExpression;
+    /**
+     * The expression to evaluate to set the result of the action. Optional.
+     */
+    private Expression resultExpression;
 
-	/**
-	 * The selector for the factory that will create the action result event callers can respond to.
-	 */
-	private ResultEventFactory resultEventFactory;
+    /**
+     * The selector for the factory that will create the action result event callers can respond to.
+     */
+    private ResultEventFactory resultEventFactory;
 
-	/**
-	 * Create a new evaluate action.
-	 * @param expression the expression to evaluate (required)
-	 * @param resultExpression the expression to evaluate the result (optional)
-	 */
-	public EvaluateAction(Expression expression, Expression resultExpression) {
-		init(expression, resultExpression, null);
-	}
+    /**
+     * Create a new evaluate action.
+     *
+     * @param expression       the expression to evaluate (required)
+     * @param resultExpression the expression to evaluate the result (optional)
+     */
+    public EvaluateAction(Expression expression, Expression resultExpression) {
+        init(expression, resultExpression, null);
+    }
 
-	/**
-	 * Create a new evaluate action.
-	 * @param expression the expression to evaluate (required)
-	 * @param resultExpression the strategy for how the expression result will be exposed to the flow (optional)
-	 * @param resultEventFactory the factory that will map the evaluation result to a Web Flow event (optional)
-	 */
-	public EvaluateAction(Expression expression, Expression resultExpression, ResultEventFactory resultEventFactory) {
-		init(expression, resultExpression, resultEventFactory);
-	}
+    /**
+     * Create a new evaluate action.
+     *
+     * @param expression         the expression to evaluate (required)
+     * @param resultExpression   the strategy for how the expression result will be exposed to the flow (optional)
+     * @param resultEventFactory the factory that will map the evaluation result to a Web Flow event (optional)
+     */
+    public EvaluateAction(Expression expression, Expression resultExpression, ResultEventFactory resultEventFactory) {
+        init(expression, resultExpression, resultEventFactory);
+    }
 
-	protected Event doExecute(RequestContext context) throws Exception {
-		Object result = expression.getValue(context);
-		if (result instanceof Action) {
-			return ActionExecutor.execute((Action) result, context);
-		} else {
-			if (resultExpression != null) {
-				resultExpression.setValue(context, result);
-			}
-			return resultEventFactory.createResultEvent(this, result, context);
-		}
-	}
+    public String toString() {
+        return new ToStringCreator(this).append("expression", expression).append("resultExpression", resultExpression)
+            .toString();
+    }
 
-	public String toString() {
-		return new ToStringCreator(this).append("expression", expression).append("resultExpression", resultExpression)
-				.toString();
-	}
+    protected Event doExecute(RequestContext context) throws Exception {
+        Object result = expression.getValue(context);
+        if (result instanceof Action) {
+            return ActionExecutor.execute((Action) result, context);
+        } else {
+            if (resultExpression != null) {
+                resultExpression.setValue(context, result);
+            }
+            return resultEventFactory.createResultEvent(this, result, context);
+        }
+    }
 
-	// internal helpers
+    // internal helpers
 
-	private void init(Expression expression, Expression resultExpression, ResultEventFactory resultEventFactory) {
-		Assert.notNull(expression, "The expression this action should evaluate is required");
-		this.expression = expression;
-		this.resultExpression = resultExpression;
-		this.resultEventFactory = resultEventFactory != null ? resultEventFactory : new DefaultResultEventFactory();
-	}
+    /**
+     * Default implementation that uses the ResultEventFactorySelector helper.
+     *
+     * @author Keith Donald
+     */
+    private class DefaultResultEventFactory implements ResultEventFactory {
 
-	/**
-	 * Default implementation that uses the ResultEventFactorySelector helper.
-	 * @author Keith Donald
-	 */
-	private class DefaultResultEventFactory implements ResultEventFactory {
+        private ResultEventFactorySelector selector = new ResultEventFactorySelector();
 
-		private ResultEventFactorySelector selector = new ResultEventFactorySelector();
+        public Event createResultEvent(Object source, Object resultObject, RequestContext context) {
+            return selector.forResult(resultObject).createResultEvent(source, resultObject, context);
+        }
+    }
 
-		public Event createResultEvent(Object source, Object resultObject, RequestContext context) {
-			return selector.forResult(resultObject).createResultEvent(source, resultObject, context);
-		}
-	}
+    private void init(Expression expression, Expression resultExpression, ResultEventFactory resultEventFactory) {
+        Assert.notNull(expression, "The expression this action should evaluate is required");
+        this.expression = expression;
+        this.resultExpression = resultExpression;
+        this.resultEventFactory = resultEventFactory != null ? resultEventFactory : new DefaultResultEventFactory();
+    }
 
 }

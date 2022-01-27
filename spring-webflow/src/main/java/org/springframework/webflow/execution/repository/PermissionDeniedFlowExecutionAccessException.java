@@ -19,19 +19,20 @@ import org.springframework.webflow.execution.FlowExecutionKey;
 
 /**
  * Thrown when access to a flow execution was denied by a repository.
- * 
+ *
  * @author Keith Donald
  * @author Erwin Vervaet
  */
 public class PermissionDeniedFlowExecutionAccessException extends FlowExecutionAccessException {
 
-	/**
-	 * Creates a new flow execution restoration exception.
-	 * @param flowExecutionKey the key of the execution that could not be accessed
-	 * @param cause the root cause of the access failure
-	 */
-	public PermissionDeniedFlowExecutionAccessException(FlowExecutionKey flowExecutionKey, Exception cause) {
-		super(flowExecutionKey, "Unable to restore flow execution with key '" + flowExecutionKey
-				+ "' -- permission denied.", cause);
-	}
+    /**
+     * Creates a new flow execution restoration exception.
+     *
+     * @param flowExecutionKey the key of the execution that could not be accessed
+     * @param cause            the root cause of the access failure
+     */
+    public PermissionDeniedFlowExecutionAccessException(FlowExecutionKey flowExecutionKey, Exception cause) {
+        super(flowExecutionKey, "Unable to restore flow execution with key '" + flowExecutionKey
+                                + "' -- permission denied.", cause);
+    }
 }

@@ -15,8 +15,6 @@
  */
 package org.springframework.binding.expression.el;
 
-import java.util.List;
-
 import jakarta.el.ArrayELResolver;
 import jakarta.el.BeanELResolver;
 import jakarta.el.CompositeELResolver;
@@ -26,80 +24,84 @@ import jakarta.el.ListELResolver;
 import jakarta.el.MapELResolver;
 import jakarta.el.ResourceBundleELResolver;
 
+import java.util.List;
+
 /**
  * A generic ELResolver to be used as a default when no other ELResolvers have been configured by the client
  * application.
- * 
+ * <p>
  * This implementation will resolve the first part of the expression to the pre-configured base object, and will then
  * delegate through the chain of standard resolvers for the rest of the expression.
- * 
+ * <p>
  * Note - Requires Java 5 or higher due to the use of generics in the API's basic resolvers.
- * 
+ *
  * @author Jeremy Grelle
  */
 public class DefaultELResolver extends CompositeELResolver {
 
-	private Object target;
+    private Object target;
 
-	/**
-	 * Creates a new default EL resolver for resolving properties of the root object. Assumes a null target and expect
-	 * that the base object has already been resolved by the time this resolver runs.
-	 * @param customResolvers the custom resolvers to apply before this resolver
-	 */
-	public DefaultELResolver(List<? extends ELResolver> customResolvers) {
-		this(null, customResolvers);
-	}
+    /**
+     * Creates a new default EL resolver for resolving properties of the root object. Assumes a null target and expect
+     * that the base object has already been resolved by the time this resolver runs.
+     *
+     * @param customResolvers the custom resolvers to apply before this resolver
+     */
+    public DefaultELResolver(List<? extends ELResolver> customResolvers) {
+        this(null, customResolvers);
+    }
 
-	/**
-	 * Creates a new default EL resolver for resolving properties of the root object.
-	 * @param target the target, or "root", object of the expression
-	 * @param customResolvers the custom resolvers to apply before this resolver
-	 */
-	public DefaultELResolver(Object target, List<? extends ELResolver> customResolvers) {
-		this.target = target;
-		configureResolvers(customResolvers);
-	}
+    /**
+     * Creates a new default EL resolver for resolving properties of the root object.
+     *
+     * @param target          the target, or "root", object of the expression
+     * @param customResolvers the custom resolvers to apply before this resolver
+     */
+    public DefaultELResolver(Object target, List<? extends ELResolver> customResolvers) {
+        this.target = target;
+        configureResolvers(customResolvers);
+    }
 
-	public Object getTarget() {
-		return target;
-	}
+    public Object getTarget() {
+        return target;
+    }
 
-	public Class<?> getType(ELContext context, Object base, Object property) {
-		if (base == null) {
-			return super.getType(context, target, property);
-		} else {
-			return super.getType(context, base, property);
-		}
-	}
+    public Class<?> getType(ELContext context, Object base, Object property) {
+        if (base == null) {
+            return super.getType(context, target, property);
+        } else {
+            return super.getType(context, base, property);
+        }
+    }
 
-	public Object getValue(ELContext context, Object base, Object property) {
-		if (base == null) {
-			return super.getValue(context, target, property);
-		} else {
-			return super.getValue(context, base, property);
-		}
-	}
+    public Object getValue(ELContext context, Object base, Object property) {
+        if (base == null) {
+            return super.getValue(context, target, property);
+        } else {
+            return super.getValue(context, base, property);
+        }
+    }
 
-	public void setValue(ELContext context, Object base, Object property, Object val) {
-		if (base == null) {
-			super.setValue(context, target, property, val);
-		} else {
-			super.setValue(context, base, property, val);
-		}
-	}
+    public void setValue(ELContext context, Object base, Object property, Object val) {
+        if (base == null) {
+            super.setValue(context, target, property, val);
+        } else {
+            super.setValue(context, base, property, val);
+        }
+    }
 
-	private void configureResolvers(List<? extends ELResolver> customResolvers) {
-		if (customResolvers != null) {
-			for (ELResolver resolver : customResolvers) {
-				add(resolver);
-			}
-		}
-		add(new MapAdaptableELResolver());
-		add(new ArrayELResolver());
-		add(new ListELResolver());
-		add(new MapELResolver());
-		add(new ResourceBundleELResolver());
-		add(new BeanELResolver());
-	}
+    private void configureResolvers(List<? extends ELResolver> customResolvers) {
+        if (customResolvers != null) {
+            for (ELResolver resolver : customResolvers) {
+                add(resolver);
+            }
+        }
+        add(new MapAdaptableELResolver());
+        add(new ArrayELResolver());
+        add(new ListELResolver());
+        add(new MapELResolver());
+        add(new ResourceBundleELResolver());
+        add(new BeanELResolver());
+    }
 
 }

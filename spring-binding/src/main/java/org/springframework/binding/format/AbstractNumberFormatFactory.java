@@ -15,52 +15,55 @@
  */
 package org.springframework.binding.format;
 
+import org.springframework.context.i18n.LocaleContextHolder;
+
 import java.text.NumberFormat;
 import java.util.Locale;
 
-import org.springframework.context.i18n.LocaleContextHolder;
-
 /**
  * Base class suitable for subclassing by most {@link NumberFormatFactory} implementations.
- * 
+ *
  * @author Keith Donald
  */
 public abstract class AbstractNumberFormatFactory implements NumberFormatFactory {
 
-	private Locale locale;
+    private Locale locale;
 
-	/**
-	 * The locale to use in formatting number values. If null, the locale associated with the current thread is used.
-	 * @see LocaleContextHolder#getLocale()
-	 * @return the locale
-	 */
-	public Locale getLocale() {
-		return locale;
-	}
+    /**
+     * The locale to use in formatting number values. If null, the locale associated with the current thread is used.
+     *
+     * @return the locale
+     * @see LocaleContextHolder#getLocale()
+     */
+    public Locale getLocale() {
+        return locale;
+    }
 
-	/**
-	 * Sets the locale to use in formatting number values.
-	 * @param locale the locale
-	 */
-	public void setLocale(Locale locale) {
-		this.locale = locale;
-	}
+    /**
+     * Sets the locale to use in formatting number values.
+     *
+     * @param locale the locale
+     */
+    public void setLocale(Locale locale) {
+        this.locale = locale;
+    }
 
-	public final NumberFormat getNumberFormat() {
-		Locale locale = determineLocale(this.locale);
-		return getNumberFormat(locale);
-	}
+    public final NumberFormat getNumberFormat() {
+        Locale locale = determineLocale(this.locale);
+        return getNumberFormat(locale);
+    }
 
-	/**
-	 * Subclasses should override to create the new NumberFormat instance.
-	 * @param locale the locale to use
-	 * @return the number format
-	 */
-	protected abstract NumberFormat getNumberFormat(Locale locale);
+    /**
+     * Subclasses should override to create the new NumberFormat instance.
+     *
+     * @param locale the locale to use
+     * @return the number format
+     */
+    protected abstract NumberFormat getNumberFormat(Locale locale);
 
-	// internal helpers
+    // internal helpers
 
-	private Locale determineLocale(Locale locale) {
-		return locale != null ? locale : LocaleContextHolder.getLocale();
-	}
+    private Locale determineLocale(Locale locale) {
+        return locale != null ? locale : LocaleContextHolder.getLocale();
+    }
 }

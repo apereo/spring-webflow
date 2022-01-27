@@ -15,19 +15,19 @@
  */
 package org.springframework.webflow.core.collection;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit tests for {@link CollectionUtils}.
  */
 public class CollectionUtilsTests {
 
-	@Test
-	public void testSingleEntryMap() {
-		AttributeMap<Object> map1 = CollectionUtils.singleEntryMap("foo", "bar");
-		AttributeMap<Object> map2 = CollectionUtils.singleEntryMap("foo", "bar");
-		assertEquals(map1, map2);
-	}
+    @Test
+    public void testSingleEntryMap() {
+        AttributeMap<Object> map1 = CollectionUtils.singleEntryMap("foo", "bar");
+        AttributeMap<Object> map2 = CollectionUtils.singleEntryMap("foo", "bar");
+        assertEquals(map1, map2);
+    }
 }

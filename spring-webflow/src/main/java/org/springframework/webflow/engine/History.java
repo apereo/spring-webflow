@@ -17,26 +17,26 @@ package org.springframework.webflow.engine;
 
 /**
  * View state history policies.
- * 
- * @see ViewState
+ *
  * @author Keith Donald
+ * @see ViewState
  */
 public enum History {
 
-	/**
-	 * The history of the view state should be preserved when the view state exits to support back-tracking.
-	 */
-	PRESERVE,
+    /**
+     * The history of the view state should be preserved when the view state exits to support back-tracking.
+     */
+    PRESERVE,
 
-	/**
-	 * The history of the view state should be discarded when the view state exits to prevent back-tracking.
-	 */
-	DISCARD,
+    /**
+     * The history of the view state should be discarded when the view state exits to prevent back-tracking.
+     */
+    DISCARD,
 
-	/**
-	 * The history of the view state and all previous view state should be invalidated to completely restrict back
-	 * tracking.
-	 */
-	INVALIDATE
+    /**
+     * The history of the view state and all previous view state should be invalidated to completely restrict back
+     * tracking.
+     */
+    INVALIDATE
 
 }

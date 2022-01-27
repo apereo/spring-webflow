@@ -15,91 +15,97 @@
  */
 package org.springframework.webflow.security;
 
+import org.springframework.util.StringUtils;
+
 import java.util.Collection;
 import java.util.HashSet;
 
-import org.springframework.util.StringUtils;
-
 /**
  * Encapsulates the rules for comparing security attributes
- * 
+ *
  * @author Scott Andrews
  */
 public class SecurityRule {
 
-	/**
-	 * Attribute name for the location of the security rule
-	 */
-	public static final String SECURITY_ATTRIBUTE_NAME = "secured";
+    /**
+     * Attribute name for the location of the security rule
+     */
+    public static final String SECURITY_ATTRIBUTE_NAME = "secured";
 
-	/**
-	 * Compare method where any attribute authorization allows access
-	 */
-	public static final short COMPARISON_ANY = 1;
+    /**
+     * Compare method where any attribute authorization allows access
+     */
+    public static final short COMPARISON_ANY = 1;
 
-	/**
-	 * Compare method where all attribute authorization allows access
-	 */
-	public static final short COMPARISON_ALL = 2;
+    /**
+     * Compare method where all attribute authorization allows access
+     */
+    public static final short COMPARISON_ALL = 2;
 
-	private Collection<String> attributes;
+    private Collection<String> attributes;
 
-	private short comparisonType = COMPARISON_ANY;
+    private short comparisonType = COMPARISON_ANY;
 
-	/**
-	 * Convert attributes to comma separated String
-	 * @param attributes the attributes to convert
-	 * @return comma separated String
-	 */
-	public static String securityAttributesToCommaDelimitedList(Collection<?> attributes) {
-		return StringUtils.collectionToDelimitedString(attributes, ", ");
-	}
+    /**
+     * Convert attributes to comma separated String
+     *
+     * @param attributes the attributes to convert
+     * @return comma separated String
+     */
+    public static String securityAttributesToCommaDelimitedList(Collection<?> attributes) {
+        return StringUtils.collectionToDelimitedString(attributes, ", ");
+    }
 
-	/**
-	 * Convert attributes from comma separated String to Collection
-	 * @param attributes the attributes to convert
-	 * @return comma parsed Collection
-	 */
-	public static Collection<String> commaDelimitedListToSecurityAttributes(String attributes) {
-		Collection<String> attrs = new HashSet<>();
-		for (String attribute : attributes.split(",")) {
-			attribute = attribute.trim();
-			if (!attribute.isEmpty()) {
-				attrs.add(attribute);
-			}
-		}
-		return attrs;
-	}
+    /**
+     * Convert attributes from comma separated String to Collection
+     *
+     * @param attributes the attributes to convert
+     * @return comma parsed Collection
+     */
+    public static Collection<String> commaDelimitedListToSecurityAttributes(String attributes) {
+        Collection<String> attrs = new HashSet<>();
+        for (String attribute : attributes.split(",")) {
+            attribute = attribute.trim();
+            if (!attribute.isEmpty()) {
+                attrs.add(attribute);
+            }
+        }
+        return attrs;
+    }
 
-	/**
-	 * Gets security attributes
-	 * @return security attributes
-	 */
-	public Collection<String> getAttributes() {
-		return attributes;
-	}
+    /**
+     * Gets security attributes
+     *
+     * @return security attributes
+     */
+    public Collection<String> getAttributes() {
+        return attributes;
+    }
 
-	/**
-	 * Sets security attributes
-	 * @param attributes security attributes
-	 */
-	public void setAttributes(Collection<String> attributes) {
-		this.attributes = attributes;
-	}
+    /**
+     * Sets security attributes
+     *
+     * @param attributes security attributes
+     */
+    public void setAttributes(Collection<String> attributes) {
+        this.attributes = attributes;
+    }
 
-	/**
-	 * Gets comparison type
-	 * @return comparison type
-	 */
-	public short getComparisonType() {
-		return comparisonType;
-	}
+    /**
+     * Gets comparison type
+     *
+     * @return comparison type
+     */
+    public short getComparisonType() {
+        return comparisonType;
+    }
 
-	/**
-	 * Sets comparison type
-	 * @param comparisonType comparison type
-	 */
-	public void setComparisonType(short comparisonType) {
-		this.comparisonType = comparisonType;
-	}
+    /**
+     * Sets comparison type
+     *
+     * @param comparisonType comparison type
+     */
+    public void setComparisonType(short comparisonType) {
+        this.comparisonType = comparisonType;
+    }
 }

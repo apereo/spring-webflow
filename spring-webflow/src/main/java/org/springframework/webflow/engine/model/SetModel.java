@@ -21,85 +21,86 @@ import org.springframework.util.StringUtils;
  * Model support for set actions.
  * <p>
  * Sets an attribute value in a scope.
- * 
+ *
  * @author Scott Andrews
  */
 public class SetModel extends AbstractActionModel {
 
-	private String name;
+    private String name;
 
-	private String value;
+    private String value;
 
-	private String type;
+    private String type;
 
-	/**
-	 * Create a set action model
-	 * @param name the name of the property to set
-	 * @param value the value to set
-	 */
-	public SetModel(String name, String value) {
-		setName(name);
-		setValue(value);
-	}
+    /**
+     * Create a set action model
+     *
+     * @param name  the name of the property to set
+     * @param value the value to set
+     */
+    public SetModel(String name, String value) {
+        setName(name);
+        setValue(value);
+    }
 
-	public Model createCopy() {
-		final SetModel copy = new SetModel(name, value);
-		super.fillCopy(copy);
-		copy.setType(type);
-		return copy;
-	}
+    public Model createCopy() {
+        final SetModel copy = new SetModel(name, value);
+        super.fillCopy(copy);
+        copy.setType(type);
+        return copy;
+    }
 
-	/**
-	 * @return the name
-	 */
-	public String getName() {
-		return name;
-	}
+    /**
+     * @return the name
+     */
+    public String getName() {
+        return name;
+    }
 
-	/**
-	 * @param name the name to set
-	 */
-	public void setName(String name) {
-		if (StringUtils.hasText(name)) {
-			this.name = name;
-		} else {
-			this.name = null;
-		}
-	}
+    /**
+     * @param name the name to set
+     */
+    public void setName(String name) {
+        if (StringUtils.hasText(name)) {
+            this.name = name;
+        } else {
+            this.name = null;
+        }
+    }
 
-	/**
-	 * @return the value
-	 */
-	public String getValue() {
-		return value;
-	}
+    /**
+     * @return the value
+     */
+    public String getValue() {
+        return value;
+    }
 
-	/**
-	 * @param value the value to set
-	 */
-	public void setValue(String value) {
-		if (StringUtils.hasText(value)) {
-			this.value = value;
-		} else {
-			this.value = null;
-		}
-	}
+    /**
+     * @param value the value to set
+     */
+    public void setValue(String value) {
+        if (StringUtils.hasText(value)) {
+            this.value = value;
+        } else {
+            this.value = null;
+        }
+    }
 
-	/**
-	 * @return the type
-	 */
-	public String getType() {
-		return type;
-	}
+    /**
+     * @return the type
+     */
+    public String getType() {
+        return type;
+    }
 
-	/**
-	 * @param type the type to set
-	 */
-	public void setType(String type) {
-		if (StringUtils.hasText(type)) {
-			this.type = type;
-		} else {
-			this.type = null;
-		}
-	}
+    /**
+     * @param type the type to set
+     */
+    public void setType(String type) {
+        if (StringUtils.hasText(type)) {
+            this.type = type;
+        } else {
+            this.type = null;
+        }
+    }
 }

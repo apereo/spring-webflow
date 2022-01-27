@@ -15,25 +15,25 @@
  */
 package org.springframework.webflow.action;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import org.junit.jupiter.api.Test;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.test.MockRequestContext;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit tests for {@link SuccessEventFactory}.
  */
 public class SuccessEventFactoryTests {
 
-	private MockRequestContext context = new MockRequestContext();
+    private MockRequestContext context = new MockRequestContext();
 
-	private SuccessEventFactory factory = new SuccessEventFactory();
+    private SuccessEventFactory factory = new SuccessEventFactory();
 
-	@Test
-	public void testDefaultAdaptionRules() {
-		Event result = factory.createResultEvent(this, "result", context);
-		assertEquals("success", result.getId());
-		assertEquals("result", result.getAttributes().getString("result"));
-	}
+    @Test
+    public void testDefaultAdaptionRules() {
+        Event result = factory.createResultEvent(this, "result", context);
+        assertEquals("success", result.getId());
+        assertEquals("result", result.getAttributes().getString("result"));
+    }
 }

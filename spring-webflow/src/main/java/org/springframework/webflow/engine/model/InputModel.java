@@ -21,39 +21,40 @@ import org.springframework.util.ObjectUtils;
  * Model support for input mappings.
  * <p>
  * Maps a single input attribute into this flow or subflow.
- * 
+ *
  * @author Scott Andrews
  */
 public class InputModel extends AbstractMappingModel {
 
-	/**
-	 * Create an input mapping model
-	 * @param name the name of the mapping variable
-	 * @param value the value to map
-	 */
-	public InputModel(String name, String value) {
-		setName(name);
-		setValue(value);
-	}
+    /**
+     * Create an input mapping model
+     *
+     * @param name  the name of the mapping variable
+     * @param value the value to map
+     */
+    public InputModel(String name, String value) {
+        setName(name);
+        setValue(value);
+    }
 
-	public boolean isMergeableWith(Model model) {
-		if (!(model instanceof InputModel)) {
-			return false;
-		}
-		InputModel input = (InputModel) model;
-		return ObjectUtils.nullSafeEquals(getName(), input.getName());
-	}
+    public boolean isMergeableWith(Model model) {
+        if (!(model instanceof InputModel)) {
+            return false;
+        }
+        InputModel input = (InputModel) model;
+        return ObjectUtils.nullSafeEquals(getName(), input.getName());
+    }
 
-	public void merge(Model model) {
-		InputModel input = (InputModel) model;
-		setValue(merge(getValue(), input.getValue()));
-		setType(merge(getType(), input.getType()));
-		setRequired(merge(getRequired(), input.getRequired()));
-	}
+    public void merge(Model model) {
+        InputModel input = (InputModel) model;
+        setValue(merge(getValue(), input.getValue()));
+        setType(merge(getType(), input.getType()));
+        setRequired(merge(getRequired(), input.getRequired()));
+    }
 
-	public Model createCopy() {
-		InputModel copy = new InputModel(getName(), getValue());
-		super.fillCopy(copy);
-		return copy;
-	}
+    public Model createCopy() {
+        InputModel copy = new InputModel(getName(), getValue());
+        super.fillCopy(copy);
+        return copy;
+    }
 }

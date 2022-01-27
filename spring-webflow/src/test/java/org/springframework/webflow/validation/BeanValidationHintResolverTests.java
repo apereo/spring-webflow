@@ -15,15 +15,12 @@
  */
 package org.springframework.webflow.validation;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.fail;
-
 import jakarta.validation.groups.Default;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.webflow.execution.FlowExecutionException;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Test fixture for {@link BeanValidationHintResolver};
@@ -32,56 +29,55 @@ import org.springframework.webflow.execution.FlowExecutionException;
  */
 public class BeanValidationHintResolverTests {
 
-	private BeanValidationHintResolver resolver;
+    private BeanValidationHintResolver resolver;
 
-	@BeforeEach
-	public void setUp() {
-		this.resolver = new BeanValidationHintResolver();
-	}
+    @BeforeEach
+    public void setUp() {
+        this.resolver = new BeanValidationHintResolver();
+    }
 
-	@Test
-	public void testResolveFullyQualifiedClassNameHint() {
-		String[] hints = new String[] { this.getClass().getName() };
-		Class<?>[] resolvedHints = this.resolver.resolveValidationHints(null, "flowId", "state1", hints);
+    @Test
+    public void testResolveFullyQualifiedClassNameHint() {
+        String[] hints = new String[]{this.getClass().getName()};
+        Class<?>[] resolvedHints = this.resolver.resolveValidationHints(null, "flowId", "state1", hints);
 
-		assertNotNull(resolvedHints);
-		assertEquals(1, resolvedHints.length);
-		assertEquals(this.getClass(), resolvedHints[0]);
-	}
+        assertNotNull(resolvedHints);
+        assertEquals(1, resolvedHints.length);
+        assertEquals(this.getClass(), resolvedHints[0]);
+    }
 
-	@Test
-	public void testResolveInnterTypeHints() {
-		String[] hints = new String[] {"default", "state1", "state2"};
-		Class<?>[] resolvedHints = this.resolver.resolveValidationHints(new TestModel(), "flowId", "state1", hints);
+    @Test
+    public void testResolveInnterTypeHints() {
+        String[] hints = new String[]{"default", "state1", "state2"};
+        Class<?>[] resolvedHints = this.resolver.resolveValidationHints(new TestModel(), "flowId", "state1", hints);
 
-		assertNotNull(resolvedHints);
-		assertEquals(3, resolvedHints.length);
-		assertEquals(Default.class, resolvedHints[0]);
-		assertEquals(BaseTestModel.State1.class, resolvedHints[1]);
-		assertEquals(TestModel.State2.class, resolvedHints[2]);
-	}
+        assertNotNull(resolvedHints);
+        assertEquals(3, resolvedHints.length);
+        assertEquals(Default.class, resolvedHints[0]);
+        assertEquals(BaseTestModel.State1.class, resolvedHints[1]);
+        assertEquals(TestModel.State2.class, resolvedHints[2]);
+    }
 
-	@Test
-	public void testResolveHintNoMatch() {
-		try {
-			this.resolver.resolveValidationHints(null, "flowId", "state1", new String[] { "foo" });
-			fail("Expected exception");
-		}
-		catch (FlowExecutionException ex) {
-			// expected
-		}
-	}
+    @Test
+    public void testResolveHintNoMatch() {
+        try {
+            this.resolver.resolveValidationHints(null, "flowId", "state1", new String[]{"foo"});
+            fail("Expected exception");
+        } catch (FlowExecutionException ex) {
+            // expected
+        }
+    }
 
-	public static class BaseTestModel {
+    public static class BaseTestModel {
 
-		private static class State1 {
-		}
-	}
+        private static class State1 {
+        }
+    }
 
-	public static class TestModel extends BaseTestModel {
+    public static class TestModel extends BaseTestModel {
 
-		private static class State2 {
-		}
-	}
+        private static class State2 {
+        }
+    }
 
 }

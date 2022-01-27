@@ -15,10 +15,6 @@
  */
 package org.springframework.webflow.engine;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-import java.util.Collections;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.binding.expression.EvaluationException;
@@ -33,98 +29,105 @@ import org.springframework.webflow.execution.FlowExecutionException;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.test.MockRequestControlContext;
 
+import java.util.Collections;
+
+import static org.junit.jupiter.api.Assertions.*;
+
 /**
  * Tests that each of the Flow state types execute as expected when entered.
- * 
+ *
  * @author Keith Donald
  */
 public class SubflowStateTests {
 
-	private Flow parentFlow;
-	private SubflowState subflowState;
-	private Flow subflow;
-	private MockRequestControlContext context;
+    private Flow parentFlow;
 
-	@BeforeEach
-	public void setUp() {
-		parentFlow = new Flow("parent");
-		subflow = new Flow("child");
-		subflowState = new SubflowState(parentFlow, "subflow", new AbstractGetValueExpression() {
-			public Object getValue(Object context) throws EvaluationException {
-				return subflow;
-			}
-		});
-		context = new MockRequestControlContext(parentFlow);
-		context.setCurrentState(subflowState);
-	}
+    private SubflowState subflowState;
 
-	@Test
-	public void testEnter() {
-		new State(subflow, "whatev") {
-			protected void doEnter(RequestControlContext context) throws FlowExecutionException {
-			}
-		};
-		subflowState.enter(context);
-		assertEquals("child", context.getActiveFlow().getId());
-	}
+    private Flow subflow;
 
-	@SuppressWarnings("unchecked")
-	@Test
-	public void testEnterWithInput() {
-		subflowState.setAttributeMapper(new SubflowAttributeMapper() {
-			public MutableAttributeMap<Object> createSubflowInput(RequestContext context) {
-				return new LocalAttributeMap<>("foo", "bar");
-			}
+    private MockRequestControlContext context;
 
-			public void mapSubflowOutput(AttributeMap<?> flowOutput, RequestContext context) {
-			}
-		});
-		subflow.setInputMapper((source, target) -> {
-			MutableAttributeMap<Object> map = (MutableAttributeMap<Object>) source;
-			assertEquals("bar", map.get("foo"));
-			return new DefaultMappingResults(source, target, Collections.emptyList());
-		});
-		new State(subflow, "whatev") {
-			protected void doEnter(RequestControlContext context) throws FlowExecutionException {
-			}
-		};
-		subflowState.enter(context);
-		assertEquals("child", context.getActiveFlow().getId());
-	}
+    @BeforeEach
+    public void setUp() {
+        parentFlow = new Flow("parent");
+        subflow = new Flow("child");
+        subflowState = new SubflowState(parentFlow, "subflow", new AbstractGetValueExpression() {
+            public Object getValue(Object context) throws EvaluationException {
+                return subflow;
+            }
+        });
+        context = new MockRequestControlContext(parentFlow);
+        context.setCurrentState(subflowState);
+    }
 
-	@SuppressWarnings("unchecked")
-	@Test
-	public void testReturnWithOutput() {
-		subflowState.setAttributeMapper(new SubflowAttributeMapper() {
-			public MutableAttributeMap<Object> createSubflowInput(RequestContext context) {
-				return new LocalAttributeMap<>();
-			}
+    @Test
+    public void testEnter() {
+        new State(subflow, "whatev") {
+            protected void doEnter(RequestControlContext context) throws FlowExecutionException {
+            }
+        };
+        subflowState.enter(context);
+        assertEquals("child", context.getActiveFlow().getId());
+    }
 
-			public void mapSubflowOutput(AttributeMap<?> flowOutput, RequestContext context) {
-				assertEquals("bar", flowOutput.get("foo"));
-			}
-		});
-		subflowState.getTransitionSet().add(new Transition(on("end"), to("whatev")));
-		new State(parentFlow, "whatev") {
-			protected void doEnter(RequestControlContext context) throws FlowExecutionException {
-			}
-		};
-		new EndState(subflow, "end");
-		subflow.setOutputMapper((source, target) -> {
-			MutableAttributeMap<Object> map = (MutableAttributeMap<Object>) target;
-			map.put("foo", "bar");
-			return new DefaultMappingResults(source, target, Collections.emptyList());
-		});
-		subflowState.enter(context);
-		assertEquals("parent", context.getActiveFlow().getId());
-	}
+    @SuppressWarnings("unchecked")
+    @Test
+    public void testEnterWithInput() {
+        subflowState.setAttributeMapper(new SubflowAttributeMapper() {
+            public MutableAttributeMap<Object> createSubflowInput(RequestContext context) {
+                return new LocalAttributeMap<>("foo", "bar");
+            }
 
-	protected TransitionCriteria on(String event) {
-		return new MockTransitionCriteria(event);
-	}
+            public void mapSubflowOutput(AttributeMap<?> flowOutput, RequestContext context) {
+            }
+        });
+        subflow.setInputMapper((source, target) -> {
+            MutableAttributeMap<Object> map = (MutableAttributeMap<Object>) source;
+            assertEquals("bar", map.get("foo"));
+            return new DefaultMappingResults(source, target, Collections.emptyList());
+        });
+        new State(subflow, "whatev") {
+            protected void doEnter(RequestControlContext context) throws FlowExecutionException {
+            }
+        };
+        subflowState.enter(context);
+        assertEquals("child", context.getActiveFlow().getId());
+    }
 
-	protected TargetStateResolver to(String stateId) {
-		return new DefaultTargetStateResolver(stateId);
-	}
+    @SuppressWarnings("unchecked")
+    @Test
+    public void testReturnWithOutput() {
+        subflowState.setAttributeMapper(new SubflowAttributeMapper() {
+            public MutableAttributeMap<Object> createSubflowInput(RequestContext context) {
+                return new LocalAttributeMap<>();
+            }
+
+            public void mapSubflowOutput(AttributeMap<?> flowOutput, RequestContext context) {
+                assertEquals("bar", flowOutput.get("foo"));
+            }
+        });
+        subflowState.getTransitionSet().add(new Transition(on("end"), to("whatev")));
+        new State(parentFlow, "whatev") {
+            protected void doEnter(RequestControlContext context) throws FlowExecutionException {
+            }
+        };
+        new EndState(subflow, "end");
+        subflow.setOutputMapper((source, target) -> {
+            MutableAttributeMap<Object> map = (MutableAttributeMap<Object>) target;
+            map.put("foo", "bar");
+            return new DefaultMappingResults(source, target, Collections.emptyList());
+        });
+        subflowState.enter(context);
+        assertEquals("parent", context.getActiveFlow().getId());
+    }
+
+    protected TransitionCriteria on(String event) {
+        return new MockTransitionCriteria(event);
+    }
+
+    protected TargetStateResolver to(String stateId) {
+        return new DefaultTargetStateResolver(stateId);
+    }
 
 }

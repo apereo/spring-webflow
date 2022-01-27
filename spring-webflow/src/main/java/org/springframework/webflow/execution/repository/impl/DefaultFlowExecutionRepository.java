@@ -15,8 +15,6 @@
  */
 package org.springframework.webflow.execution.repository.impl;
 
-import java.io.Serializable;
-
 import org.springframework.webflow.conversation.Conversation;
 import org.springframework.webflow.conversation.ConversationManager;
 import org.springframework.webflow.execution.FlowExecution;
@@ -26,6 +24,8 @@ import org.springframework.webflow.execution.repository.snapshot.AbstractSnapsho
 import org.springframework.webflow.execution.repository.snapshot.FlowExecutionSnapshot;
 import org.springframework.webflow.execution.repository.snapshot.FlowExecutionSnapshotFactory;
 import org.springframework.webflow.execution.repository.snapshot.SnapshotNotFoundException;
+
+import java.io.Serializable;
 
 /**
  * The default flow execution repository implementation. Takes <i>one to {@link #getMaxSnapshots() max}</i> flow
@@ -50,139 +50,143 @@ import org.springframework.webflow.execution.repository.snapshot.SnapshotNotFoun
  * This repository implementation also provides support for <i>execution invalidation after completion</i>, where once a
  * logical flow execution completes, it and all of its snapshots are removed. This cleans up memory and prevents the
  * possibility of duplicate submission after completion.
- * 
+ *
  * @author Keith Donald
  */
 public class DefaultFlowExecutionRepository extends AbstractSnapshottingFlowExecutionRepository {
 
-	/**
-	 * The conversation attribute that stores the group of flow execution snapshots.
-	 */
-	private static final String SNAPSHOT_GROUP_ATTRIBUTE = "flowExecutionSnapshotGroup";
+    /**
+     * The conversation attribute that stores the group of flow execution snapshots.
+     */
+    private static final String SNAPSHOT_GROUP_ATTRIBUTE = "flowExecutionSnapshotGroup";
 
-	/**
-	 * The maximum number of snapshots that can be taken per execution. The default is 30, which is generally high
-	 * enough not to interfere with the user experience of normal users using the back button, but low enough to avoid
-	 * excessive resource usage or denial of service attacks.
-	 */
-	private int maxSnapshots = 30;
+    /**
+     * The maximum number of snapshots that can be taken per execution. The default is 30, which is generally high
+     * enough not to interfere with the user experience of normal users using the back button, but low enough to avoid
+     * excessive resource usage or denial of service attacks.
+     */
+    private int maxSnapshots = 30;
 
-	/**
-	 * Create a new default flow execution repository using the given state restorer, conversation manager, and snapshot
-	 * factory.
-	 * @param conversationManager the conversation manager to use
-	 * @param snapshotFactory the flow execution snapshot factory to use
-	 */
-	public DefaultFlowExecutionRepository(ConversationManager conversationManager,
-			FlowExecutionSnapshotFactory snapshotFactory) {
-		super(conversationManager, snapshotFactory);
-	}
+    /**
+     * Create a new default flow execution repository using the given state restorer, conversation manager, and snapshot
+     * factory.
+     *
+     * @param conversationManager the conversation manager to use
+     * @param snapshotFactory     the flow execution snapshot factory to use
+     */
+    public DefaultFlowExecutionRepository(ConversationManager conversationManager,
+                                          FlowExecutionSnapshotFactory snapshotFactory) {
+        super(conversationManager, snapshotFactory);
+    }
 
-	/**
-	 * Returns the max number of snapshots allowed per flow execution by this repository.
+    /**
+     * Returns the max number of snapshots allowed per flow execution by this repository.
+     *
      * @return
      */
-	public int getMaxSnapshots() {
-		return maxSnapshots;
-	}
+    public int getMaxSnapshots() {
+        return maxSnapshots;
+    }
 
-	/**
-	 * Sets the maximum number of snapshots allowed per flow execution by this repository. Use -1 for unlimited. The
-	 * default is 30.
+    /**
+     * Sets the maximum number of snapshots allowed per flow execution by this repository. Use -1 for unlimited. The
+     * default is 30.
+     *
      * @param maxSnapshots
      * @param maxSnapshots
      */
-	public void setMaxSnapshots(int maxSnapshots) {
-		this.maxSnapshots = maxSnapshots;
-	}
+    public void setMaxSnapshots(int maxSnapshots) {
+        this.maxSnapshots = maxSnapshots;
+    }
 
-	// supporting flow execution key factory impl
+    // supporting flow execution key factory impl
 
-	protected Serializable nextSnapshotId(Serializable executionId) {
-		return getSnapshotGroup(getConversation(executionId)).nextSnapshotId();
-	}
+    public FlowExecution getFlowExecution(FlowExecutionKey key) {
+        if (logger.isDebugEnabled()) {
+            logger.debug("Getting flow execution with key '" + key + "'");
+        }
+        Conversation conversation = getConversation(key);
+        FlowExecutionSnapshot snapshot;
+        try {
+            snapshot = getSnapshotGroup(conversation).getSnapshot(getSnapshotId(key));
+        } catch (SnapshotNotFoundException e) {
+            throw new FlowExecutionRestorationFailureException(key, e);
+        }
+        return restoreFlowExecution(snapshot, key, conversation);
+    }
 
-	// implementing flow execution repository
+    // implementing flow execution repository
 
-	public FlowExecution getFlowExecution(FlowExecutionKey key) {
-		if (logger.isDebugEnabled()) {
-			logger.debug("Getting flow execution with key '" + key + "'");
-		}
-		Conversation conversation = getConversation(key);
-		FlowExecutionSnapshot snapshot;
-		try {
-			snapshot = getSnapshotGroup(conversation).getSnapshot(getSnapshotId(key));
-		} catch (SnapshotNotFoundException e) {
-			throw new FlowExecutionRestorationFailureException(key, e);
-		}
-		return restoreFlowExecution(snapshot, key, conversation);
-	}
+    public void putFlowExecution(FlowExecution flowExecution) {
+        assertKeySet(flowExecution);
+        if (logger.isDebugEnabled()) {
+            logger.debug("Putting flow execution '" + flowExecution + "' into repository");
+        }
+        FlowExecutionKey key = flowExecution.getKey();
+        Conversation conversation = getConversation(key);
+        FlowExecutionSnapshotGroup snapshotGroup = getSnapshotGroup(conversation);
+        FlowExecutionSnapshot snapshot = snapshot(flowExecution);
+        if (logger.isDebugEnabled()) {
+            logger.debug("Adding snapshot to group with id " + getSnapshotId(key));
+        }
+        snapshotGroup.addSnapshot(getSnapshotId(key), snapshot);
+        putConversationScope(flowExecution, conversation);
+    }
 
-	public void putFlowExecution(FlowExecution flowExecution) {
-		assertKeySet(flowExecution);
-		if (logger.isDebugEnabled()) {
-			logger.debug("Putting flow execution '" + flowExecution + "' into repository");
-		}
-		FlowExecutionKey key = flowExecution.getKey();
-		Conversation conversation = getConversation(key);
-		FlowExecutionSnapshotGroup snapshotGroup = getSnapshotGroup(conversation);
-		FlowExecutionSnapshot snapshot = snapshot(flowExecution);
-		if (logger.isDebugEnabled()) {
-			logger.debug("Adding snapshot to group with id " + getSnapshotId(key));
-		}
-		snapshotGroup.addSnapshot(getSnapshotId(key), snapshot);
-		putConversationScope(flowExecution, conversation);
-	}
+    public void updateFlowExecutionSnapshot(FlowExecution execution) {
+        FlowExecutionKey key = execution.getKey();
+        if (key == null) {
+            return;
+        }
+        Conversation conversation = getConversation(key);
+        getSnapshotGroup(conversation).updateSnapshot(getSnapshotId(key), snapshot(execution));
+    }
 
-	// implementing flow execution key factory
+    // implementing flow execution key factory
 
-	public void updateFlowExecutionSnapshot(FlowExecution execution) {
-		FlowExecutionKey key = execution.getKey();
-		if (key == null) {
-			return;
-		}
-		Conversation conversation = getConversation(key);
-		getSnapshotGroup(conversation).updateSnapshot(getSnapshotId(key), snapshot(execution));
-	}
+    public void removeFlowExecutionSnapshot(FlowExecution execution) {
+        FlowExecutionKey key = execution.getKey();
+        if (key == null) {
+            return;
+        }
+        Conversation conversation = getConversation(key);
+        getSnapshotGroup(conversation).removeSnapshot(getSnapshotId(key));
+    }
 
-	public void removeFlowExecutionSnapshot(FlowExecution execution) {
-		FlowExecutionKey key = execution.getKey();
-		if (key == null) {
-			return;
-		}
-		Conversation conversation = getConversation(key);
-		getSnapshotGroup(conversation).removeSnapshot(getSnapshotId(key));
-	}
+    public void removeAllFlowExecutionSnapshots(FlowExecution execution) {
+        FlowExecutionKey key = execution.getKey();
+        if (key == null) {
+            return;
+        }
+        Conversation conversation = getConversation(execution.getKey());
+        getSnapshotGroup(conversation).removeAllSnapshots();
+    }
 
-	public void removeAllFlowExecutionSnapshots(FlowExecution execution) {
-		FlowExecutionKey key = execution.getKey();
-		if (key == null) {
-			return;
-		}
-		Conversation conversation = getConversation(execution.getKey());
-		getSnapshotGroup(conversation).removeAllSnapshots();
-	}
+    protected Serializable nextSnapshotId(Serializable executionId) {
+        return getSnapshotGroup(getConversation(executionId)).nextSnapshotId();
+    }
 
-	// hooks for subclassing
+    // hooks for subclassing
 
-	protected FlowExecutionSnapshotGroup createFlowExecutionSnapshotGroup() {
-		SimpleFlowExecutionSnapshotGroup group = new SimpleFlowExecutionSnapshotGroup();
-		group.setMaxSnapshots(maxSnapshots);
-		return group;
-	}
+    protected FlowExecutionSnapshotGroup createFlowExecutionSnapshotGroup() {
+        SimpleFlowExecutionSnapshotGroup group = new SimpleFlowExecutionSnapshotGroup();
+        group.setMaxSnapshots(maxSnapshots);
+        return group;
+    }
 
-	/**
-	 * Returns the snapshot group associated with the governing conversation.
-	 * @param conversation the conversation where the snapshot group is stored
-	 * @return the snapshot group
-	 */
-	protected FlowExecutionSnapshotGroup getSnapshotGroup(Conversation conversation) {
-		FlowExecutionSnapshotGroup group = (FlowExecutionSnapshotGroup) conversation
-				.getAttribute(SNAPSHOT_GROUP_ATTRIBUTE);
-		if (group == null) {
-			group = createFlowExecutionSnapshotGroup();
-			conversation.putAttribute(SNAPSHOT_GROUP_ATTRIBUTE, group);
-		}
-		return group;
-	}
+    /**
+     * Returns the snapshot group associated with the governing conversation.
+     *
+     * @param conversation the conversation where the snapshot group is stored
+     * @return the snapshot group
+     */
+    protected FlowExecutionSnapshotGroup getSnapshotGroup(Conversation conversation) {
+        FlowExecutionSnapshotGroup group = (FlowExecutionSnapshotGroup) conversation
+            .getAttribute(SNAPSHOT_GROUP_ATTRIBUTE);
+        if (group == null) {
+            group = createFlowExecutionSnapshotGroup();
+            conversation.putAttribute(SNAPSHOT_GROUP_ATTRIBUTE, group);
+        }
+        return group;
+    }
 }

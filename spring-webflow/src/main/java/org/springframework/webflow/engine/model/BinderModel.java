@@ -19,32 +19,33 @@ import java.util.LinkedList;
 
 /**
  * Model support for the view-state binder element.
+ *
  * @author Scott Andrews
  */
 public class BinderModel extends AbstractModel {
 
-	private LinkedList<BindingModel> bindings;
+    private LinkedList<BindingModel> bindings;
 
-	public LinkedList<BindingModel> getBindings() {
-		return bindings;
-	}
+    public LinkedList<BindingModel> getBindings() {
+        return bindings;
+    }
 
-	public void setBindings(LinkedList<BindingModel> bindings) {
-		this.bindings = bindings;
-	}
+    public void setBindings(LinkedList<BindingModel> bindings) {
+        this.bindings = bindings;
+    }
 
-	public boolean isMergeableWith(Model model) {
-		return model instanceof BinderModel;
-	}
+    public boolean isMergeableWith(Model model) {
+        return model instanceof BinderModel;
+    }
 
-	public void merge(Model model) {
-		BinderModel binder = (BinderModel) model;
-		setBindings(merge(getBindings(), binder.getBindings()));
-	}
+    public void merge(Model model) {
+        BinderModel binder = (BinderModel) model;
+        setBindings(merge(getBindings(), binder.getBindings()));
+    }
 
-	public Model createCopy() {
-		BinderModel copy = new BinderModel();
-		copy.setBindings(copyList(bindings));
-		return copy;
-	}
+    public Model createCopy() {
+        BinderModel copy = new BinderModel();
+        copy.setBindings(copyList(bindings));
+        return copy;
+    }
 }

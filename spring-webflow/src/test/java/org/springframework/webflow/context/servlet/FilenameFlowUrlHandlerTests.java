@@ -15,77 +15,78 @@
  */
 package org.springframework.webflow.context.servlet;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 public class FilenameFlowUrlHandlerTests {
 
-	private DefaultFlowUrlHandler urlHandler = new FilenameFlowUrlHandler();
-	private MockHttpServletRequest request = new MockHttpServletRequest();
+    private DefaultFlowUrlHandler urlHandler = new FilenameFlowUrlHandler();
 
-	@Test
-	public void testGetFlowId() {
-		request.setContextPath("/springtravel");
-		request.setServletPath("/app");
-		request.setPathInfo("/foo");
-		request.setRequestURI("/springtravel/app/foo");
-		assertEquals("foo", urlHandler.getFlowId(request));
-	}
+    private MockHttpServletRequest request = new MockHttpServletRequest();
 
-	@Test
-	public void testGetFlowIdNoPathInfo() {
-		request.setContextPath("/springtravel");
-		request.setServletPath("/app/foo.htm");
-		request.setPathInfo(null);
-		request.setRequestURI("/springtravel/app/foo.htm");
-		assertEquals("foo", urlHandler.getFlowId(request));
-	}
+    @Test
+    public void testGetFlowId() {
+        request.setContextPath("/springtravel");
+        request.setServletPath("/app");
+        request.setPathInfo("/foo");
+        request.setRequestURI("/springtravel/app/foo");
+        assertEquals("foo", urlHandler.getFlowId(request));
+    }
 
-	@Test
-	public void testGetFlowIdOnlyContextPath() {
-		request.setContextPath("/springtravel");
-		request.setRequestURI("/springtravel");
-		assertEquals("", urlHandler.getFlowId(request));
-	}
+    @Test
+    public void testGetFlowIdNoPathInfo() {
+        request.setContextPath("/springtravel");
+        request.setServletPath("/app/foo.htm");
+        request.setPathInfo(null);
+        request.setRequestURI("/springtravel/app/foo.htm");
+        assertEquals("foo", urlHandler.getFlowId(request));
+    }
 
-	@Test
-	public void testCreateFlowDefinitionUrlWithPathInfo() {
-		request.setContextPath("/springtravel");
-		request.setServletPath("/app");
-		request.setPathInfo("/foo");
-		request.setRequestURI("/springtravel/app/foo");
-		String flowDefUrl = urlHandler.createFlowDefinitionUrl("bar", null, request);
-		assertEquals("/springtravel/app/bar", flowDefUrl);
-	}
+    @Test
+    public void testGetFlowIdOnlyContextPath() {
+        request.setContextPath("/springtravel");
+        request.setRequestURI("/springtravel");
+        assertEquals("", urlHandler.getFlowId(request));
+    }
 
-	@Test
-	public void testCreateFlowDefinitionUrlWithPathInfoNestedPath() {
-		request.setContextPath("/springtravel");
-		request.setServletPath("/app");
-		request.setPathInfo("/nestedPath/foo");
-		request.setRequestURI("/springtravel/app/nestedPath/foo");
-		String flowDefUrl = urlHandler.createFlowDefinitionUrl("bar", null, request);
-		assertEquals("/springtravel/app/nestedPath/bar", flowDefUrl);
-	}
+    @Test
+    public void testCreateFlowDefinitionUrlWithPathInfo() {
+        request.setContextPath("/springtravel");
+        request.setServletPath("/app");
+        request.setPathInfo("/foo");
+        request.setRequestURI("/springtravel/app/foo");
+        String flowDefUrl = urlHandler.createFlowDefinitionUrl("bar", null, request);
+        assertEquals("/springtravel/app/bar", flowDefUrl);
+    }
 
-	@Test
-	public void testCreateFlowDefinitionUrlWithPathInfoNestedPathAndFileExtension() {
-		request.setContextPath("/springtravel");
-		request.setServletPath("/app");
-		request.setPathInfo("/nestedPath/foo.flow");
-		request.setRequestURI("/springtravel/app/nestedPath/foo.flow");
-		String flowDefUrl = urlHandler.createFlowDefinitionUrl("bar", null, request);
-		assertEquals("/springtravel/app/nestedPath/bar.flow", flowDefUrl);
-	}
+    @Test
+    public void testCreateFlowDefinitionUrlWithPathInfoNestedPath() {
+        request.setContextPath("/springtravel");
+        request.setServletPath("/app");
+        request.setPathInfo("/nestedPath/foo");
+        request.setRequestURI("/springtravel/app/nestedPath/foo");
+        String flowDefUrl = urlHandler.createFlowDefinitionUrl("bar", null, request);
+        assertEquals("/springtravel/app/nestedPath/bar", flowDefUrl);
+    }
 
-	@Test
-	public void testCreateFlowDefinitionUrlWithServletPathAndFileExtension() {
-		request.setContextPath("/springtravel");
-		request.setServletPath("/nestedPath/foo.flow");
-		request.setRequestURI("/springtravel/nestedPath/foo.flow");
-		String flowDefUrl = urlHandler.createFlowDefinitionUrl("bar", null, request);
-		assertEquals("/springtravel/nestedPath/bar.flow", flowDefUrl);
-	}
+    @Test
+    public void testCreateFlowDefinitionUrlWithPathInfoNestedPathAndFileExtension() {
+        request.setContextPath("/springtravel");
+        request.setServletPath("/app");
+        request.setPathInfo("/nestedPath/foo.flow");
+        request.setRequestURI("/springtravel/app/nestedPath/foo.flow");
+        String flowDefUrl = urlHandler.createFlowDefinitionUrl("bar", null, request);
+        assertEquals("/springtravel/app/nestedPath/bar.flow", flowDefUrl);
+    }
+
+    @Test
+    public void testCreateFlowDefinitionUrlWithServletPathAndFileExtension() {
+        request.setContextPath("/springtravel");
+        request.setServletPath("/nestedPath/foo.flow");
+        request.setRequestURI("/springtravel/nestedPath/foo.flow");
+        String flowDefUrl = urlHandler.createFlowDefinitionUrl("bar", null, request);
+        assertEquals("/springtravel/nestedPath/bar.flow", flowDefUrl);
+    }
 }

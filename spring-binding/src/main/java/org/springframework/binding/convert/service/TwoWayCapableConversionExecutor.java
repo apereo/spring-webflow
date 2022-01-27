@@ -22,54 +22,56 @@ import org.springframework.binding.convert.converters.TwoWayConverter;
 /**
  * A special conversion executor used by {@link DefaultConversionService} that can dynamically resolve whether to do a
  * forward or "reverse" conversion using a {@link TwoWayConverter} based on the type of the object passed in.
- * 
+ * <p>
  * Used in conjunction with custom converters to support dynamic conversion of collection elements.
  */
 class TwoWayCapableConversionExecutor implements ConversionExecutor {
 
-	private Class<?> sourceClass;
+    private Class<?> sourceClass;
 
-	private Class<?> targetClass;
+    private Class<?> targetClass;
 
-	private TwoWayConverter converter;
+    private TwoWayConverter converter;
 
-	/**
-	 * Creates a new two way conversion executor.
-	 * @param sourceClass the source class to convert to (or from)
-	 * @param targetClass the target class to convert from (or to)
-	 * @param converter the two way converter
-	 */
-	public TwoWayCapableConversionExecutor(Class<?> sourceClass, Class<?> targetClass, TwoWayConverter converter) {
-		this.sourceClass = sourceClass;
-		this.targetClass = targetClass;
-		this.converter = converter;
-	}
+    /**
+     * Creates a new two way conversion executor.
+     *
+     * @param sourceClass the source class to convert to (or from)
+     * @param targetClass the target class to convert from (or to)
+     * @param converter   the two way converter
+     */
+    public TwoWayCapableConversionExecutor(Class<?> sourceClass, Class<?> targetClass, TwoWayConverter converter) {
+        this.sourceClass = sourceClass;
+        this.targetClass = targetClass;
+        this.converter = converter;
+    }
 
-	public Class<?> getSourceClass() {
-		return sourceClass;
-	}
+    public Class<?> getSourceClass() {
+        return sourceClass;
+    }
 
-	public Class<?> getTargetClass() {
-		return targetClass;
-	}
+    public Class<?> getTargetClass() {
+        return targetClass;
+    }
 
-	public Object execute(Object source) throws ConversionExecutionException {
-		if (source == null || converter.getSourceClass().isInstance(source)) {
-			try {
-				return converter.convertSourceToTargetClass(source, targetClass);
-			} catch (Exception e) {
-				throw new ConversionExecutionException(source, getSourceClass(), getTargetClass(), e);
-			}
-		} else if (converter.getTargetClass().isInstance(source)) {
-			try {
-				return converter.convertTargetToSourceClass(source, sourceClass);
-			} catch (Exception e) {
-				throw new ConversionExecutionException(source, converter.getTargetClass(), getSourceClass(), e);
-			}
-		} else {
-			throw new ConversionExecutionException(source, getSourceClass(), getTargetClass(), "Source object "
-					+ source + " to convert is expected to be an instance of [" + converter.getSourceClass().getName()
-					+ "] or [" + converter.getTargetClass().getName() + "]");
-		}
-	}
+    public Object execute(Object source) throws ConversionExecutionException {
+        if (source == null || converter.getSourceClass().isInstance(source)) {
+            try {
+                return converter.convertSourceToTargetClass(source, targetClass);
+            } catch (Exception e) {
+                throw new ConversionExecutionException(source, getSourceClass(), getTargetClass(), e);
+            }
+        } else if (converter.getTargetClass().isInstance(source)) {
+            try {
+                return converter.convertTargetToSourceClass(source, sourceClass);
+            } catch (Exception e) {
+                throw new ConversionExecutionException(source, converter.getTargetClass(), getSourceClass(), e);
+            }
+        } else {
+            throw new ConversionExecutionException(source, getSourceClass(), getTargetClass(), "Source object "
+                                                                                               + source + " to convert is expected to be an instance of [" + converter.getSourceClass()
+                                                                                                   .getName()
+                                                                                               + "] or [" + converter.getTargetClass().getName() + "]");
+        }
+    }
 }

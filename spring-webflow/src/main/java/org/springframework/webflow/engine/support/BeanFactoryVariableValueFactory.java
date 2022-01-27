@@ -23,43 +23,44 @@ import org.springframework.webflow.execution.RequestContext;
 /**
  * A bean-factory backed variable value factory. Relies on an autowire-capable bean factory to wire variable value
  * dependencies on value creation and restoration.
- * 
+ *
  * @author Keith Donald
  */
 public class BeanFactoryVariableValueFactory implements VariableValueFactory {
 
-	/**
-	 * The class of variable value. Typically a Java bean.
-	 */
-	private Class<?> type;
+    /**
+     * The class of variable value. Typically a Java bean.
+     */
+    private Class<?> type;
 
-	/**
-	 * The backing bean factory that will create and restore variable instances.
-	 */
-	private AutowireCapableBeanFactory beanFactory;
+    /**
+     * The backing bean factory that will create and restore variable instances.
+     */
+    private AutowireCapableBeanFactory beanFactory;
 
-	/**
-	 * Creates a new bean factory variable factory.
-	 * @param type the variable class
-	 * @param beanFactory the bean factory that will create and restore variable instances.
-	 */
-	public BeanFactoryVariableValueFactory(Class<?> type, AutowireCapableBeanFactory beanFactory) {
-		this.type = type;
-		this.beanFactory = beanFactory;
-	}
+    /**
+     * Creates a new bean factory variable factory.
+     *
+     * @param type        the variable class
+     * @param beanFactory the bean factory that will create and restore variable instances.
+     */
+    public BeanFactoryVariableValueFactory(Class<?> type, AutowireCapableBeanFactory beanFactory) {
+        this.type = type;
+        this.beanFactory = beanFactory;
+    }
 
-	public Object createInitialValue(RequestContext context) {
-		return beanFactory.createBean(type);
-	}
+    public Object createInitialValue(RequestContext context) {
+        return beanFactory.createBean(type);
+    }
 
-	public void restoreReferences(Object value, RequestContext context) {
-		if (value != null) {
-			beanFactory.autowireBean(value);
-		}
-	}
+    public void restoreReferences(Object value, RequestContext context) {
+        if (value != null) {
+            beanFactory.autowireBean(value);
+        }
+    }
 
-	public String toString() {
-		return new ToStringCreator(this).append("type", type).toString();
-	}
+    public String toString() {
+        return new ToStringCreator(this).append("type", type).toString();
+    }
 
 }

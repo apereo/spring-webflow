@@ -15,61 +15,59 @@
  */
 package org.springframework.webflow.mvc.view;
 
-import java.io.IOException;
-import java.util.Locale;
-
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.view.RedirectView;
 import org.springframework.web.servlet.view.UrlBasedViewResolver;
 import org.springframework.webflow.context.servlet.AjaxHandler;
 import org.springframework.webflow.context.servlet.DefaultAjaxHandler;
 
+import java.io.IOException;
+import java.util.Locale;
+
 /**
  * View resolver that provides special view resolution for Spring Javascript Ajax requests.
- * 
+ *
  * @author Jeremy Grelle
- * 
  */
 public class AjaxUrlBasedViewResolver extends UrlBasedViewResolver {
 
-	/**
-	 * Overridden to implement check for "redirect:" prefix.
-	 * <p>
-	 * Redirect requires special behavior on an Ajax request.
-	 */
-	protected View createView(String viewName, Locale locale) throws Exception {
-		// If this resolver is not supposed to handle the given view,
-		// return null to pass on to the next resolver in the chain.
-		if (!canHandle(viewName, locale)) {
-			return null;
-		}
-		// Check for special "redirect:" prefix.
-		if (viewName.startsWith(REDIRECT_URL_PREFIX)) {
-			String redirectUrl = viewName.substring(REDIRECT_URL_PREFIX.length());
-			return new AjaxRedirectView(redirectUrl, isRedirectContextRelative(), isRedirectHttp10Compatible());
-		}
-		return super.createView(viewName, locale);
-	}
+    /**
+     * Overridden to implement check for "redirect:" prefix.
+     * <p>
+     * Redirect requires special behavior on an Ajax request.
+     */
+    protected View createView(String viewName, Locale locale) throws Exception {
+        // If this resolver is not supposed to handle the given view,
+        // return null to pass on to the next resolver in the chain.
+        if (!canHandle(viewName, locale)) {
+            return null;
+        }
+        // Check for special "redirect:" prefix.
+        if (viewName.startsWith(REDIRECT_URL_PREFIX)) {
+            String redirectUrl = viewName.substring(REDIRECT_URL_PREFIX.length());
+            return new AjaxRedirectView(redirectUrl, isRedirectContextRelative(), isRedirectHttp10Compatible());
+        }
+        return super.createView(viewName, locale);
+    }
 
-	private class AjaxRedirectView extends RedirectView implements View {
+    private class AjaxRedirectView extends RedirectView implements View {
 
-		private AjaxHandler ajaxHandler = new DefaultAjaxHandler();
+        private AjaxHandler ajaxHandler = new DefaultAjaxHandler();
 
-		public AjaxRedirectView(String redirectUrl, boolean redirectContextRelative, boolean redirectHttp10Compatible) {
-			super(redirectUrl, redirectContextRelative, redirectHttp10Compatible);
-		}
+        public AjaxRedirectView(String redirectUrl, boolean redirectContextRelative, boolean redirectHttp10Compatible) {
+            super(redirectUrl, redirectContextRelative, redirectHttp10Compatible);
+        }
 
-		protected void sendRedirect(HttpServletRequest request, HttpServletResponse response, String targetUrl,
-				boolean http10Compatible) throws IOException {
-			if (ajaxHandler.isAjaxRequest(request, response)) {
-				ajaxHandler.sendAjaxRedirect(targetUrl, request, response, false);
-			} else {
-				super.sendRedirect(request, response, targetUrl, http10Compatible);
-			}
-		}
+        protected void sendRedirect(HttpServletRequest request, HttpServletResponse response, String targetUrl,
+                                    boolean http10Compatible) throws IOException {
+            if (ajaxHandler.isAjaxRequest(request, response)) {
+                ajaxHandler.sendAjaxRedirect(targetUrl, request, response, false);
+            } else {
+                super.sendRedirect(request, response, targetUrl, http10Compatible);
+            }
+        }
 
-	}
+    }
 }

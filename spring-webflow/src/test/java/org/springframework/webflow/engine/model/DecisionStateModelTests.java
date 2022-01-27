@@ -15,51 +15,49 @@
  */
 package org.springframework.webflow.engine.model;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.Test;
 
 import java.util.LinkedList;
 
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit tests for {@link DecisionStateModel}.
  */
 public class DecisionStateModelTests {
 
-	@Test
-	public void testMergeable() {
-		DecisionStateModel child = new DecisionStateModel("child");
-		assertTrue(child.isMergeableWith(child));
-	}
+    @Test
+    public void testMergeable() {
+        DecisionStateModel child = new DecisionStateModel("child");
+        assertTrue(child.isMergeableWith(child));
+    }
 
-	@Test
-	public void testNotMergeable() {
-		DecisionStateModel child = new DecisionStateModel("child");
-		DecisionStateModel parent = new DecisionStateModel("parent");
-		assertFalse(child.isMergeableWith(parent));
-	}
+    @Test
+    public void testNotMergeable() {
+        DecisionStateModel child = new DecisionStateModel("child");
+        DecisionStateModel parent = new DecisionStateModel("parent");
+        assertFalse(child.isMergeableWith(parent));
+    }
 
-	@Test
-	public void testNotMergeableWithNull() {
-		DecisionStateModel child = new DecisionStateModel("child");
-		assertFalse(child.isMergeableWith(null));
-	}
+    @Test
+    public void testNotMergeableWithNull() {
+        DecisionStateModel child = new DecisionStateModel("child");
+        assertFalse(child.isMergeableWith(null));
+    }
 
-	@Test
-	public void testMerge() {
-		DecisionStateModel child = new DecisionStateModel("child");
-		DecisionStateModel parent = new DecisionStateModel("child");
-		parent.setSecured(new SecuredModel("secured"));
+    @Test
+    public void testMerge() {
+        DecisionStateModel child = new DecisionStateModel("child");
+        DecisionStateModel parent = new DecisionStateModel("child");
+        parent.setSecured(new SecuredModel("secured"));
 
-		LinkedList<IfModel> ifs = new LinkedList<>();
-		ifs.add(new IfModel("test", "foo"));
-		parent.setIfs(ifs);
+        LinkedList<IfModel> ifs = new LinkedList<>();
+        ifs.add(new IfModel("test", "foo"));
+        parent.setIfs(ifs);
 
-		child.merge(parent);
-		assertNotNull(child.getSecured());
-		assertNotNull("test", child.getIfs().get(0).getTest());
-	}
+        child.merge(parent);
+        assertNotNull(child.getSecured());
+        assertNotNull("test", child.getIfs().get(0).getTest());
+    }
 
 }

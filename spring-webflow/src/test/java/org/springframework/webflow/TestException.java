@@ -20,20 +20,20 @@ package org.springframework.webflow;
  */
 public class TestException extends Exception {
 
-	public TestException() {
-		super();
-	}
+    public TestException() {
+        super();
+    }
 
-	public TestException(String message, Throwable cause) {
-		super(message, cause);
-	}
+    public TestException(String message, Throwable cause) {
+        super(message, cause);
+    }
 
-	public TestException(String message) {
-		super(message);
-	}
+    public TestException(String message) {
+        super(message);
+    }
 
-	public TestException(Throwable cause) {
-		super(cause);
-	}
+    public TestException(Throwable cause) {
+        super(cause);
+    }
 
 }

@@ -23,33 +23,33 @@ import org.springframework.webflow.core.collection.MutableAttributeMap;
 
 /**
  * Spring EL PropertyAccessor for reading from {@link MapAdaptable} and writing to {@link MutableAttributeMap}.
- * 
+ *
  * @author Rossen Stoyanchev
  * @since 2.1
  */
 public class MapAdaptablePropertyAccessor implements PropertyAccessor {
 
-	public Class<?>[] getSpecificTargetClasses() {
-		return new Class[] { MapAdaptable.class };
-	}
+    public Class<?>[] getSpecificTargetClasses() {
+        return new Class[]{MapAdaptable.class};
+    }
 
-	public boolean canRead(EvaluationContext context, Object target, String name) {
-		return true;
-	}
+    public boolean canRead(EvaluationContext context, Object target, String name) {
+        return true;
+    }
 
-	public TypedValue read(EvaluationContext context, Object target, String name) {
-		MapAdaptable<?, ?> map = (MapAdaptable<?, ?>) target;
-		return new TypedValue(map.asMap().get(name));
-	}
+    public TypedValue read(EvaluationContext context, Object target, String name) {
+        MapAdaptable<?, ?> map = (MapAdaptable<?, ?>) target;
+        return new TypedValue(map.asMap().get(name));
+    }
 
-	public boolean canWrite(EvaluationContext context, Object target, String name) {
-		return (target instanceof MutableAttributeMap);
-	}
+    public boolean canWrite(EvaluationContext context, Object target, String name) {
+        return (target instanceof MutableAttributeMap);
+    }
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public void write(EvaluationContext context, Object target, String name, Object newValue) {
-		MutableAttributeMap map = (MutableAttributeMap) target;
-		map.put(name, newValue);
-	}
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    public void write(EvaluationContext context, Object target, String name, Object newValue) {
+        MutableAttributeMap map = (MutableAttributeMap) target;
+        map.put(name, newValue);
+    }
 
 }

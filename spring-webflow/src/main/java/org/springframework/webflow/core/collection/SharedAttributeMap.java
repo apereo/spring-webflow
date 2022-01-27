@@ -17,14 +17,15 @@ package org.springframework.webflow.core.collection;
 
 /**
  * An interface to be implemented by mutable attribute maps accessed by multiple threads that need to be synchronized.
- * 
+ *
  * @author Keith Donald
  */
 public interface SharedAttributeMap<V> extends MutableAttributeMap<V> {
 
-	/**
-	 * Returns the shared map's mutex, which may be synchronized on to block access to the map by other threads.
+    /**
+     * Returns the shared map's mutex, which may be synchronized on to block access to the map by other threads.
+     *
      * @return
      */
-	Object getMutex();
+    Object getMutex();
 }

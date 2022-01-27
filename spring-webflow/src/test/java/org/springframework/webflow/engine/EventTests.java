@@ -15,62 +15,60 @@
  */
 package org.springframework.webflow.engine;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
-
 import org.junit.jupiter.api.Test;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 /**
  * Tests that each of the Flow state types execute as expected when entered.
- * 
+ *
  * @author Keith Donald
  */
 public class EventTests {
 
-	@Test
-	public void testNewEvent() {
-		Event event = new Event(this, "id");
-		assertEquals("id", event.getId());
-		assertTrue(event.getTimestamp() > 0);
-		assertTrue(event.getAttributes().isEmpty());
-	}
+    @Test
+    public void testNewEvent() {
+        Event event = new Event(this, "id");
+        assertEquals("id", event.getId());
+        assertTrue(event.getTimestamp() > 0);
+        assertTrue(event.getAttributes().isEmpty());
+    }
 
-	@Test
-	public void testEventNullSource() {
-		try {
-			new Event(null, "id");
-			fail("null source");
-		} catch (IllegalArgumentException e) {
+    @Test
+    public void testEventNullSource() {
+        try {
+            new Event(null, "id");
+            fail("null source");
+        } catch (IllegalArgumentException e) {
 
-		}
-	}
+        }
+    }
 
-	@Test
-	public void testEventNullId() {
-		try {
-			new Event(this, null);
-			fail("null id");
-		} catch (IllegalArgumentException e) {
+    @Test
+    public void testEventNullId() {
+        try {
+            new Event(this, null);
+            fail("null id");
+        } catch (IllegalArgumentException e) {
 
-		}
-	}
+        }
+    }
 
-	@Test
-	public void testNewEventWithAttributes() {
-		LocalAttributeMap<Object> attrs = new LocalAttributeMap<>();
-		attrs.put("name", "value");
-		Event event = new Event(this, "id", attrs);
-		assertTrue(!event.getAttributes().isEmpty());
-		assertEquals(1, event.getAttributes().size());
-	}
+    @Test
+    public void testNewEventWithAttributes() {
+        LocalAttributeMap<Object> attrs = new LocalAttributeMap<>();
+        attrs.put("name", "value");
+        Event event = new Event(this, "id", attrs);
+        assertTrue(!event.getAttributes().isEmpty());
+        assertEquals(1, event.getAttributes().size());
+    }
 
-	@Test
-	public void testNewEventNullAttributes() {
-		Event event = new Event(this, "id", null);
-		assertTrue(event.getAttributes().isEmpty());
-	}
+    @Test
+    public void testNewEventNullAttributes() {
+        Event event = new Event(this, "id", null);
+        assertTrue(event.getAttributes().isEmpty());
+    }
 
 }

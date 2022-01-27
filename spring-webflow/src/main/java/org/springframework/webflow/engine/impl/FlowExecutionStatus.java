@@ -6,19 +6,19 @@ package org.springframework.webflow.engine.impl;
  */
 public enum FlowExecutionStatus {
 
-	/**
-	 * The flow execution has not yet started.
-	 */
-	NOT_STARTED,
+    /**
+     * The flow execution has not yet started.
+     */
+    NOT_STARTED,
 
-	/**
-	 * The flow execution has started and a session is active.
-	 */
-	ACTIVE,
+    /**
+     * The flow execution has started and a session is active.
+     */
+    ACTIVE,
 
-	/**
-	 * The flow execution has ended.
-	 */
-	ENDED
+    /**
+     * The flow execution has ended.
+     */
+    ENDED
 
 }

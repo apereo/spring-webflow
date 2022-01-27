@@ -20,41 +20,41 @@ import org.springframework.webflow.execution.FlowExecutionKey;
 /**
  * A simple flow execution key implementation. New instances of this class get their values from a sequence encapsulated
  * as a static private variable of this class.
- * 
+ *
  * @author Keith Donald
  */
 public class GeneratedFlowExecutionKey extends FlowExecutionKey {
 
-	private static int nextKey = 1;
+    private static int nextKey = 1;
 
-	private int value;
+    private int value;
 
-	/**
-	 * Creates a new mock flow execution key.
-	 */
-	public GeneratedFlowExecutionKey() {
-		this.value = nextKey();
-	}
+    /**
+     * Creates a new mock flow execution key.
+     */
+    public GeneratedFlowExecutionKey() {
+        this.value = nextKey();
+    }
 
-	public boolean equals(Object o) {
-		if (!(o instanceof GeneratedFlowExecutionKey)) {
-			return false;
-		}
-		GeneratedFlowExecutionKey key = (GeneratedFlowExecutionKey) o;
-		return value == key.value;
-	}
+    private static int nextKey() {
+        int key = nextKey;
+        nextKey++;
+        return key;
+    }
 
-	public int hashCode() {
-		return value * 29;
-	}
+    public boolean equals(Object o) {
+        if (!(o instanceof GeneratedFlowExecutionKey)) {
+            return false;
+        }
+        GeneratedFlowExecutionKey key = (GeneratedFlowExecutionKey) o;
+        return value == key.value;
+    }
 
-	public String toString() {
-		return String.valueOf(value);
-	}
+    public int hashCode() {
+        return value * 29;
+    }
 
-	private static int nextKey() {
-		int key = nextKey;
-		nextKey++;
-		return key;
-	}
+    public String toString() {
+        return String.valueOf(value);
+    }
 }

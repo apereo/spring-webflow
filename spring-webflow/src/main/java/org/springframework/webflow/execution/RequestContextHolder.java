@@ -23,34 +23,35 @@ import org.springframework.core.NamedThreadLocal;
  * <p>
  * Used as a central holder for the current RequestContext in Spring Web Flow, wherever necessary. Often used by
  * integration artifacts needing access to the current flow execution.
- * 
- * @see RequestContext
- * 
+ *
  * @author Jeremy Grelle
+ * @see RequestContext
  */
 public class RequestContextHolder {
 
-	private static final ThreadLocal<RequestContext> requestContextHolder = new NamedThreadLocal<>(
-			"Flow RequestContext");
+    private static final ThreadLocal<RequestContext> requestContextHolder = new NamedThreadLocal<>(
+        "Flow RequestContext");
 
-	/**
-	 * Associate the given RequestContext with the current thread.
-	 * @param requestContext the current RequestContext, or <code>null</code> to reset the thread-bound context
-	 */
-	public static void setRequestContext(RequestContext requestContext) {
-		requestContextHolder.set(requestContext);
-	}
+    // not instantiable
+    private RequestContextHolder() {
+    }
 
-	/**
-	 * Return the RequestContext associated with the current thread, if any.
-	 * @return the current RequestContext
-	 * @throws IllegalStateException if no RequestContext is bound to this thread
-	 */
-	public static RequestContext getRequestContext() {
-		return requestContextHolder.get();
-	}
+    /**
+     * Return the RequestContext associated with the current thread, if any.
+     *
+     * @return the current RequestContext
+     * @throws IllegalStateException if no RequestContext is bound to this thread
+     */
+    public static RequestContext getRequestContext() {
+        return requestContextHolder.get();
+    }
 
-	// not instantiable
-	private RequestContextHolder() {
-	}
+    /**
+     * Associate the given RequestContext with the current thread.
+     *
+     * @param requestContext the current RequestContext, or <code>null</code> to reset the thread-bound context
+     */
+    public static void setRequestContext(RequestContext requestContext) {
+        requestContextHolder.set(requestContext);
+    }
 }

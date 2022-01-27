@@ -24,13 +24,14 @@ package org.springframework.webflow.engine.model.registry;
  */
 public interface FlowModelHolderLocator {
 
-	/**
-	 * Lookup the FlowModelHolder with the specified id.
-	 * @param id the flow model identifier
-	 * @return the flow model holder
-	 * @throws NoSuchFlowModelException when the flow model with the specified
-	 * id does not exist
-	 */
-	FlowModelHolder getFlowModelHolder(String id) throws NoSuchFlowModelException;
+    /**
+     * Lookup the FlowModelHolder with the specified id.
+     *
+     * @param id the flow model identifier
+     * @return the flow model holder
+     * @throws NoSuchFlowModelException when the flow model with the specified
+     *                                  id does not exist
+     */
+    FlowModelHolder getFlowModelHolder(String id) throws NoSuchFlowModelException;
 
 }

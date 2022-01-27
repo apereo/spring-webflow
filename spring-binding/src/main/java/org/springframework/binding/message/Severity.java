@@ -17,32 +17,32 @@ package org.springframework.binding.message;
 
 /**
  * Enum exposing supported message severities.
- * 
+ *
  * @author Keith Donald
  * @author Jeremy Grelle
  * @see Message
  */
 public enum Severity {
 
-	/**
-	 * The "Informational" severity. Used to indicate a successful operation or result.
-	 */
-	INFO,
+    /**
+     * The "Informational" severity. Used to indicate a successful operation or result.
+     */
+    INFO,
 
-	/**
-	 * The "Warning" severity. Used to indicate there is a minor problem, or to inform the message receiver of possible
-	 * misuse, or to indicate a problem may arise in the future.
-	 */
-	WARNING,
+    /**
+     * The "Warning" severity. Used to indicate there is a minor problem, or to inform the message receiver of possible
+     * misuse, or to indicate a problem may arise in the future.
+     */
+    WARNING,
 
-	/**
-	 * The "Error" severity. Used to indicate a significant problem like a business rule violation.
-	 */
-	ERROR,
+    /**
+     * The "Error" severity. Used to indicate a significant problem like a business rule violation.
+     */
+    ERROR,
 
-	/**
-	 * The "Fatal" severity. Used to indicate a fatal problem like a system error.
-	 */
-	FATAL
+    /**
+     * The "Fatal" severity. Used to indicate a fatal problem like a system error.
+     */
+    FATAL
 
 }

@@ -21,59 +21,61 @@ import org.springframework.webflow.core.collection.MutableAttributeMap;
 /**
  * A base class for all objects in the web flow system that support annotation using arbitrary properties. Mainly used
  * to ensure consistent configuration of properties for all annotated objects.
- * 
+ *
  * @author Erwin Vervaet
  * @author Keith Donald
  */
 public abstract class AnnotatedObject implements Annotated {
 
-	/**
-	 * The caption property name ("caption"). A caption is also known as a "short description" and may be used in a GUI
-	 * tooltip.
-	 */
-	public static final String CAPTION_PROPERTY = "caption";
+    /**
+     * The caption property name ("caption"). A caption is also known as a "short description" and may be used in a GUI
+     * tooltip.
+     */
+    public static final String CAPTION_PROPERTY = "caption";
 
-	/**
-	 * The long description property name ("description"). A description provides additional, free-form detail about
-	 * this object and might be shown in a GUI text area.
-	 */
-	public static final String DESCRIPTION_PROPERTY = "description";
+    /**
+     * The long description property name ("description"). A description provides additional, free-form detail about
+     * this object and might be shown in a GUI text area.
+     */
+    public static final String DESCRIPTION_PROPERTY = "description";
 
-	/**
-	 * Additional properties further describing this object. The properties set in this map may be arbitrary.
-	 */
-	private LocalAttributeMap<Object> attributes = new LocalAttributeMap<>();
+    /**
+     * Additional properties further describing this object. The properties set in this map may be arbitrary.
+     */
+    private LocalAttributeMap<Object> attributes = new LocalAttributeMap<>();
 
-	// implementing Annotated
+    // implementing Annotated
 
-	public String getCaption() {
-		return attributes.getString(CAPTION_PROPERTY);
-	}
+    public String getCaption() {
+        return attributes.getString(CAPTION_PROPERTY);
+    }
 
-	public String getDescription() {
-		return attributes.getString(DESCRIPTION_PROPERTY);
-	}
+    /**
+     * Sets the short description (suitable for display in a tooltip).
+     *
+     * @param caption the caption
+     */
+    public void setCaption(String caption) {
+        attributes.put(CAPTION_PROPERTY, caption);
+    }
 
-	public MutableAttributeMap<Object> getAttributes() {
-		return attributes;
-	}
+    public String getDescription() {
+        return attributes.getString(DESCRIPTION_PROPERTY);
+    }
 
-	// mutators
+    // mutators
 
-	/**
-	 * Sets the short description (suitable for display in a tooltip).
-	 * @param caption the caption
-	 */
-	public void setCaption(String caption) {
-		attributes.put(CAPTION_PROPERTY, caption);
-	}
+    /**
+     * Sets the long description.
+     *
+     * @param description the long description
+     */
+    public void setDescription(String description) {
+        attributes.put(DESCRIPTION_PROPERTY, description);
+    }
 
-	/**
-	 * Sets the long description.
-	 * @param description the long description
-	 */
-	public void setDescription(String description) {
-		attributes.put(DESCRIPTION_PROPERTY, description);
-	}
+    public MutableAttributeMap<Object> getAttributes() {
+        return attributes;
+    }
 
 }

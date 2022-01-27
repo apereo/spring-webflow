@@ -19,45 +19,47 @@ import java.util.LinkedList;
 
 /**
  * Model support for actions.
- * 
+ *
  * @author Scott Andrews
  */
 public abstract class AbstractActionModel extends AbstractModel {
 
-	private LinkedList<AttributeModel> attributes;
+    private LinkedList<AttributeModel> attributes;
 
-	/**
-	 * Actions are not mergeable
-	 * @param model the model to test
-	 */
-	public boolean isMergeableWith(Model model) {
-		return false;
-	}
+    /**
+     * Actions are not mergeable
+     *
+     * @param model the model to test
+     */
+    public boolean isMergeableWith(Model model) {
+        return false;
+    }
 
-	/**
-	 * Actions are not mergeable
-	 * @param model the render action to merge into this render
-	 */
-	public void merge(Model model) {
-		// not mergeable
-	}
+    /**
+     * Actions are not mergeable
+     *
+     * @param model the render action to merge into this render
+     */
+    public void merge(Model model) {
+        // not mergeable
+    }
 
-	protected void fillCopy(AbstractActionModel copy) {
-		copy.setAttributes(copyList(attributes));
-	}
+    /**
+     * @return the attributes
+     */
+    public LinkedList<AttributeModel> getAttributes() {
+        return attributes;
+    }
 
-	/**
-	 * @return the attributes
-	 */
-	public LinkedList<AttributeModel> getAttributes() {
-		return attributes;
-	}
+    /**
+     * @param attributes the attributes to set
+     */
+    public void setAttributes(LinkedList<AttributeModel> attributes) {
+        this.attributes = attributes;
+    }
 
-	/**
-	 * @param attributes the attributes to set
-	 */
-	public void setAttributes(LinkedList<AttributeModel> attributes) {
-		this.attributes = attributes;
-	}
+    protected void fillCopy(AbstractActionModel copy) {
+        copy.setAttributes(copyList(attributes));
+    }
 
 }

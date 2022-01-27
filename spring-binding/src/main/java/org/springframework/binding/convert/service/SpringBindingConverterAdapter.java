@@ -15,40 +15,40 @@
  */
 package org.springframework.binding.convert.service;
 
-import java.util.Collections;
-import java.util.Set;
-
 import org.springframework.binding.convert.converters.Converter;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.core.convert.TypeDescriptor;
 import org.springframework.core.convert.converter.GenericConverter;
 import org.springframework.util.Assert;
 
+import java.util.Collections;
+import java.util.Set;
+
 /**
  * A Spring Converter that makes it possible for a Spring Binding Converter to be registered with a Spring
  * {@link ConversionService}.
- * 
+ *
  * @author Rossen Stoyanchev
  */
 public class SpringBindingConverterAdapter implements GenericConverter {
 
-	private Converter converter;
+    private Converter converter;
 
-	public SpringBindingConverterAdapter(Converter converter) {
-		Assert.notNull(converter, "A Spring Binding converter is required.");
-		this.converter = converter;
-	}
+    public SpringBindingConverterAdapter(Converter converter) {
+        Assert.notNull(converter, "A Spring Binding converter is required.");
+        this.converter = converter;
+    }
 
-	public Object convert(Object source, TypeDescriptor sourceType, TypeDescriptor targetType) {
-		try {
-			return converter.convertSourceToTargetClass(source, targetType.getObjectType());
-		} catch (Exception e) {
-			throw new IllegalArgumentException(e);
-		}
-	}
+    public Object convert(Object source, TypeDescriptor sourceType, TypeDescriptor targetType) {
+        try {
+            return converter.convertSourceToTargetClass(source, targetType.getObjectType());
+        } catch (Exception e) {
+            throw new IllegalArgumentException(e);
+        }
+    }
 
-	public Set<ConvertiblePair> getConvertibleTypes() {
-		return Collections.singleton(new ConvertiblePair(converter.getSourceClass(), converter.getTargetClass()));
-	}
+    public Set<ConvertiblePair> getConvertibleTypes() {
+        return Collections.singleton(new ConvertiblePair(converter.getSourceClass(), converter.getTargetClass()));
+    }
 
 }

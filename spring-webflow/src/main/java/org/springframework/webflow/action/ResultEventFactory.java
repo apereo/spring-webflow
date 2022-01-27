@@ -21,17 +21,18 @@ import org.springframework.webflow.execution.RequestContext;
 /**
  * A strategy for creating an {@link Event} object from an arbitrary object such as an expression evaluation result or
  * bean method return value.
- * 
+ *
  * @author Keith Donald
  */
 public interface ResultEventFactory {
 
-	/**
-	 * Create an event instance from the result object.
-	 * @param source the source of the event
-	 * @param resultObject the result object, typically the return value of a bean method
-	 * @param context a flow execution request context
-	 * @return the event
-	 */
-	Event createResultEvent(Object source, Object resultObject, RequestContext context);
+    /**
+     * Create an event instance from the result object.
+     *
+     * @param source       the source of the event
+     * @param resultObject the result object, typically the return value of a bean method
+     * @param context      a flow execution request context
+     * @return the event
+     */
+    Event createResultEvent(Object source, Object resultObject, RequestContext context);
 }

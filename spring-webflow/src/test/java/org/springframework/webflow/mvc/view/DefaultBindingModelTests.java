@@ -6,8 +6,8 @@ import org.springframework.webflow.expression.spel.WebFlowSpringELExpressionPars
 
 public class DefaultBindingModelTests extends AbstractBindingModelTests {
 
-	protected ExpressionParser getExpressionParser() {
-		return new WebFlowSpringELExpressionParser(new SpelExpressionParser());
-	}
+    protected ExpressionParser getExpressionParser() {
+        return new WebFlowSpringELExpressionParser(new SpelExpressionParser());
+    }
 
 }

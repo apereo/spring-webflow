@@ -23,19 +23,19 @@ import org.springframework.webflow.definition.FlowDefinition;
  * <p>
  * This selection strategy is typically used by the {@link FlowExecutionListenerLoader} to determine which listeners
  * should apply to which flow definitions.
- * 
- * @see org.springframework.webflow.execution.FlowExecutionListener
- * @see org.springframework.webflow.execution.factory.FlowExecutionListenerLoader
- * 
+ *
  * @author Keith Donald
  * @author Erwin Vervaet
+ * @see org.springframework.webflow.execution.FlowExecutionListener
+ * @see org.springframework.webflow.execution.factory.FlowExecutionListenerLoader
  */
 public interface FlowExecutionListenerCriteria {
 
-	/**
-	 * Do the listeners guarded by this criteria object apply to the provided flow definition?
-	 * @param definition the flow definition
-	 * @return true if yes, false if no
-	 */
-	boolean appliesTo(FlowDefinition definition);
+    /**
+     * Do the listeners guarded by this criteria object apply to the provided flow definition?
+     *
+     * @param definition the flow definition
+     * @return true if yes, false if no
+     */
+    boolean appliesTo(FlowDefinition definition);
 }

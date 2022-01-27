@@ -20,21 +20,22 @@ import org.springframework.webflow.execution.FlowExecutionKey;
 /**
  * Thrown when the flow execution with the persistent identifier provided could not be found. This could occur if the
  * execution has been removed from the repository and a client still has a handle to the key.
- * 
+ *
  * @author Keith Donald
  * @author Erwin Vervaet
  */
 public class NoSuchFlowExecutionException extends FlowExecutionAccessException {
 
-	/**
-	 * Creates a new no such flow execution exception.
-	 * @param flowExecutionKey the key of the execution that could not be found
-	 * @param cause the root cause of the failure
-	 */
-	public NoSuchFlowExecutionException(FlowExecutionKey flowExecutionKey, Exception cause) {
-		super(flowExecutionKey, "No flow execution could be found with key '" + flowExecutionKey
-				+ "' -- perhaps this executing flow has ended or expired? "
-				+ "This could happen if your users are relying on browser history "
-				+ "(typically via the back button) that references ended flows.", cause);
-	}
+    /**
+     * Creates a new no such flow execution exception.
+     *
+     * @param flowExecutionKey the key of the execution that could not be found
+     * @param cause            the root cause of the failure
+     */
+    public NoSuchFlowExecutionException(FlowExecutionKey flowExecutionKey, Exception cause) {
+        super(flowExecutionKey, "No flow execution could be found with key '" + flowExecutionKey
+                                + "' -- perhaps this executing flow has ended or expired? "
+                                + "This could happen if your users are relying on browser history "
+                                + "(typically via the back button) that references ended flows.", cause);
+    }
 }

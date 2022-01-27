@@ -27,65 +27,68 @@ import org.springframework.webflow.execution.repository.FlowExecutionRestoration
 
 /**
  * A factory that creates new instances of flow execution snapshots based on standard Java serialization.
- * 
+ *
  * @author Keith Donald
  * @author Erwin Vervaet
  */
 public class SerializedFlowExecutionSnapshotFactory implements FlowExecutionSnapshotFactory {
 
-	private FlowExecutionFactory flowExecutionFactory;
+    private FlowExecutionFactory flowExecutionFactory;
 
-	private FlowDefinitionLocator flowDefinitionLocator;
+    private FlowDefinitionLocator flowDefinitionLocator;
 
-	private boolean compress = true;
+    private boolean compress = true;
 
-	/**
-	 * Creates a new serialized flow execution snapshot factory
-	 * @param flowDefinitionLocator the flow definition locator
-	 * @param flowExecutionFactory the flow execution factory
-	 */
-	public SerializedFlowExecutionSnapshotFactory(FlowExecutionFactory flowExecutionFactory,
-			FlowDefinitionLocator flowDefinitionLocator) {
-		Assert.notNull(flowExecutionFactory, "The FlowExecutionFactory to restore transient flow state is required");
-		Assert.notNull(flowDefinitionLocator, "The FlowDefinitionLocator to restore FlowDefinitions is required");
-		this.flowExecutionFactory = flowExecutionFactory;
-		this.flowDefinitionLocator = flowDefinitionLocator;
-	}
+    /**
+     * Creates a new serialized flow execution snapshot factory
+     *
+     * @param flowDefinitionLocator the flow definition locator
+     * @param flowExecutionFactory  the flow execution factory
+     */
+    public SerializedFlowExecutionSnapshotFactory(FlowExecutionFactory flowExecutionFactory,
+                                                  FlowDefinitionLocator flowDefinitionLocator) {
+        Assert.notNull(flowExecutionFactory, "The FlowExecutionFactory to restore transient flow state is required");
+        Assert.notNull(flowDefinitionLocator, "The FlowDefinitionLocator to restore FlowDefinitions is required");
+        this.flowExecutionFactory = flowExecutionFactory;
+        this.flowDefinitionLocator = flowDefinitionLocator;
+    }
 
-	/**
-	 * Returns whether or not the snapshots should be compressed.
+    /**
+     * Returns whether or not the snapshots should be compressed.
+     *
      * @return
      */
-	public boolean getCompress() {
-		return compress;
-	}
+    public boolean getCompress() {
+        return compress;
+    }
 
-	/**
-	 * Set whether or not the snapshots should be compressed.
+    /**
+     * Set whether or not the snapshots should be compressed.
+     *
      * @param compress
      * @param compress
      */
-	public void setCompress(boolean compress) {
-		this.compress = compress;
-	}
+    public void setCompress(boolean compress) {
+        this.compress = compress;
+    }
 
-	public FlowExecutionSnapshot createSnapshot(FlowExecution flowExecution) throws SnapshotCreationException {
-		return new SerializedFlowExecutionSnapshot(flowExecution, compress);
-	}
+    public FlowExecutionSnapshot createSnapshot(FlowExecution flowExecution) throws SnapshotCreationException {
+        return new SerializedFlowExecutionSnapshot(flowExecution, compress);
+    }
 
-	public FlowExecution restoreExecution(FlowExecutionSnapshot snapshot, String flowId, FlowExecutionKey key,
-			MutableAttributeMap<Object> conversationScope, FlowExecutionKeyFactory keyFactory)
-			throws FlowExecutionRestorationFailureException {
-		SerializedFlowExecutionSnapshot snapshotImpl = (SerializedFlowExecutionSnapshot) snapshot;
-		FlowDefinition def = flowDefinitionLocator.getFlowDefinition(flowId);
-		FlowExecution execution;
-		try {
-			execution = snapshotImpl.unmarshal(def.getClassLoader());
-		} catch (SnapshotUnmarshalException e) {
-			throw new FlowExecutionRestorationFailureException(key, e);
-		}
-		flowExecutionFactory.restoreFlowExecution(execution, def, key, conversationScope, flowDefinitionLocator);
-		return execution;
-	}
+    public FlowExecution restoreExecution(FlowExecutionSnapshot snapshot, String flowId, FlowExecutionKey key,
+                                          MutableAttributeMap<Object> conversationScope, FlowExecutionKeyFactory keyFactory)
+        throws FlowExecutionRestorationFailureException {
+        SerializedFlowExecutionSnapshot snapshotImpl = (SerializedFlowExecutionSnapshot) snapshot;
+        FlowDefinition def = flowDefinitionLocator.getFlowDefinition(flowId);
+        FlowExecution execution;
+        try {
+            execution = snapshotImpl.unmarshal(def.getClassLoader());
+        } catch (SnapshotUnmarshalException e) {
+            throw new FlowExecutionRestorationFailureException(key, e);
+        }
+        flowExecutionFactory.restoreFlowExecution(execution, def, key, conversationScope, flowDefinitionLocator);
+        return execution;
+    }
 
 }

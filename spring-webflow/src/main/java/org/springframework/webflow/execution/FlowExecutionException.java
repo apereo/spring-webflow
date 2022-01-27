@@ -23,61 +23,65 @@ import org.springframework.webflow.core.FlowException;
  * <p>
  * Execution exceptions occur at runtime when the flow is executing requests on behalf of a client. They signal that an
  * execution problem occurred: e.g. action execution failed or no transition matched the current request context.
- * 
+ *
  * @author Keith Donald
  * @author Erwin Vervaet
  */
 public class FlowExecutionException extends FlowException {
 
-	/**
-	 * The id of the flow definition in which the exception occurred.
-	 */
-	private String flowId;
+    /**
+     * The id of the flow definition in which the exception occurred.
+     */
+    private String flowId;
 
-	/**
-	 * The state of the flow where the exception occurred (optional).
-	 */
-	private String stateId;
+    /**
+     * The state of the flow where the exception occurred (optional).
+     */
+    private String stateId;
 
-	/**
-	 * Creates a new flow execution exception.
-	 * @param flowId the flow where the exception occurred
-	 * @param stateId the state where the exception occurred
-	 * @param message a descriptive message
-	 */
-	public FlowExecutionException(String flowId, String stateId, String message) {
-		super(message);
-		this.stateId = stateId;
-		this.flowId = flowId;
-	}
+    /**
+     * Creates a new flow execution exception.
+     *
+     * @param flowId  the flow where the exception occurred
+     * @param stateId the state where the exception occurred
+     * @param message a descriptive message
+     */
+    public FlowExecutionException(String flowId, String stateId, String message) {
+        super(message);
+        this.stateId = stateId;
+        this.flowId = flowId;
+    }
 
-	/**
-	 * Creates a new flow execution exception.
-	 * @param flowId the flow where the exception occured
-	 * @param stateId the state where the exception occured
-	 * @param message a descriptive message
-	 * @param cause the root cause
-	 */
-	public FlowExecutionException(String flowId, String stateId, String message, Throwable cause) {
-		super(message, cause);
-		this.stateId = stateId;
-		this.flowId = flowId;
-	}
+    /**
+     * Creates a new flow execution exception.
+     *
+     * @param flowId  the flow where the exception occured
+     * @param stateId the state where the exception occured
+     * @param message a descriptive message
+     * @param cause   the root cause
+     */
+    public FlowExecutionException(String flowId, String stateId, String message, Throwable cause) {
+        super(message, cause);
+        this.stateId = stateId;
+        this.flowId = flowId;
+    }
 
-	/**
-	 * Returns the id of the flow definition that was executing when this exception occured.
+    /**
+     * Returns the id of the flow definition that was executing when this exception occured.
+     *
      * @return
      */
-	public String getFlowId() {
-		return flowId;
-	}
+    public String getFlowId() {
+        return flowId;
+    }
 
-	/**
-	 * Returns the id of the state definition where the exception occured. Could be null if no state was active at the
-	 * time when the exception was thrown.
+    /**
+     * Returns the id of the state definition where the exception occured. Could be null if no state was active at the
+     * time when the exception was thrown.
+     *
      * @return
      */
-	public String getStateId() {
-		return stateId;
-	}
+    public String getStateId() {
+        return stateId;
+    }
 }

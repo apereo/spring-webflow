@@ -31,27 +31,27 @@ import org.springframework.binding.expression.ParserContext;
  */
 public final class SimpleParserContext implements ParserContext {
 
-	private Class<?> evaluationContextType;
+    private Class<?> evaluationContextType;
 
 
-	public SimpleParserContext(Class<?> evaluationContextType) {
-		this.evaluationContextType = evaluationContextType;
-	}
+    public SimpleParserContext(Class<?> evaluationContextType) {
+        this.evaluationContextType = evaluationContextType;
+    }
 
 
-	public Class<?> getEvaluationContextType() {
-		return this.evaluationContextType;
-	}
+    public Class<?> getEvaluationContextType() {
+        return this.evaluationContextType;
+    }
 
-	public Class<?> getExpectedEvaluationResultType() {
-		return null;
-	}
+    public Class<?> getExpectedEvaluationResultType() {
+        return null;
+    }
 
-	public ExpressionVariable[] getExpressionVariables() {
-		return null;
-	}
+    public ExpressionVariable[] getExpressionVariables() {
+        return null;
+    }
 
-	public boolean isTemplate() {
-		return false;
-	}
+    public boolean isTemplate() {
+        return false;
+    }
 }

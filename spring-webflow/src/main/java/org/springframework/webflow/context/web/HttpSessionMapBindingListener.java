@@ -15,65 +15,67 @@
  */
 package org.springframework.webflow.context.web;
 
-import java.util.Map;
-
 import jakarta.servlet.http.HttpSessionBindingEvent;
 import jakarta.servlet.http.HttpSessionBindingListener;
-
 import org.springframework.webflow.core.collection.AttributeMapBindingEvent;
 import org.springframework.webflow.core.collection.AttributeMapBindingListener;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 
+import java.util.Map;
+
 /**
  * Helper class that adapts a generic {@link AttributeMapBindingListener} to a HTTP specific
  * {@link HttpSessionBindingListener}. Calls will be forwarded to the wrapped listener.
- * 
+ *
  * @author Keith Donald
  */
 public class HttpSessionMapBindingListener implements HttpSessionBindingListener {
 
-	private AttributeMapBindingListener listener;
+    private AttributeMapBindingListener listener;
 
-	private Map<String, Object> sessionMap;
+    private Map<String, Object> sessionMap;
 
-	/**
-	 * Create a new wrapper for given listener.
-	 * @param listener the listener to wrap
-	 * @param sessionMap the session map containing the listener
-	 */
-	public HttpSessionMapBindingListener(AttributeMapBindingListener listener, Map<String, Object> sessionMap) {
-		this.listener = listener;
-		this.sessionMap = sessionMap;
-	}
+    /**
+     * Create a new wrapper for given listener.
+     *
+     * @param listener   the listener to wrap
+     * @param sessionMap the session map containing the listener
+     */
+    public HttpSessionMapBindingListener(AttributeMapBindingListener listener, Map<String, Object> sessionMap) {
+        this.listener = listener;
+        this.sessionMap = sessionMap;
+    }
 
-	/**
-	 * Returns the wrapped listener.
+    /**
+     * Returns the wrapped listener.
+     *
      * @return
      */
-	public AttributeMapBindingListener getListener() {
-		return listener;
-	}
+    public AttributeMapBindingListener getListener() {
+        return listener;
+    }
 
-	/**
-	 * Returns the session map containing the listener.
+    /**
+     * Returns the session map containing the listener.
+     *
      * @return
      */
-	public Map<String, Object> getSessionMap() {
-		return sessionMap;
-	}
+    public Map<String, Object> getSessionMap() {
+        return sessionMap;
+    }
 
-	public void valueBound(HttpSessionBindingEvent event) {
-		listener.valueBound(getContextBindingEvent(event));
-	}
+    public void valueBound(HttpSessionBindingEvent event) {
+        listener.valueBound(getContextBindingEvent(event));
+    }
 
-	public void valueUnbound(HttpSessionBindingEvent event) {
-		listener.valueUnbound(getContextBindingEvent(event));
-	}
+    public void valueUnbound(HttpSessionBindingEvent event) {
+        listener.valueUnbound(getContextBindingEvent(event));
+    }
 
-	/**
-	 * Create a attribute map binding event for given HTTP session binding event.
-	 */
-	private AttributeMapBindingEvent getContextBindingEvent(HttpSessionBindingEvent event) {
-		return new AttributeMapBindingEvent(new LocalAttributeMap<>(sessionMap), event.getName(), listener);
-	}
+    /**
+     * Create a attribute map binding event for given HTTP session binding event.
+     */
+    private AttributeMapBindingEvent getContextBindingEvent(HttpSessionBindingEvent event) {
+        return new AttributeMapBindingEvent(new LocalAttributeMap<>(sessionMap), event.getName(), listener);
+    }
 }

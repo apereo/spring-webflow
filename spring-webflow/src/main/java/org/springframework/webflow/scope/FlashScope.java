@@ -20,10 +20,11 @@ import org.springframework.webflow.core.collection.MutableAttributeMap;
 
 /**
  * Flash {@link Scope scope} implementation.
+ *
  * @author Ben Hale
  */
 public class FlashScope extends AbstractWebFlowScope {
-	protected MutableAttributeMap<Object> getScope() {
-		return getRequiredRequestContext().getFlashScope();
-	}
+    protected MutableAttributeMap<Object> getScope() {
+        return getRequiredRequestContext().getFlashScope();
+    }
 }

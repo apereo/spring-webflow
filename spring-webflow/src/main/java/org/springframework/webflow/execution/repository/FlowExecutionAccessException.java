@@ -19,42 +19,45 @@ import org.springframework.webflow.execution.FlowExecutionKey;
 
 /**
  * Base class for exceptions that indicate a flow execution could not be accessed within a repository.
- * 
+ *
  * @author Keith Donald
  * @author Erwin Vervaet
  */
 public abstract class FlowExecutionAccessException extends FlowExecutionRepositoryException {
 
-	/**
-	 * The key of the execution that could not be accessed.
-	 */
-	private FlowExecutionKey flowExecutionKey;
+    /**
+     * The key of the execution that could not be accessed.
+     */
+    private FlowExecutionKey flowExecutionKey;
 
-	/**
-	 * Creates a new flow execution access exception.
-	 * @param flowExecutionKey the key of the execution that could not be accessed
-	 * @param message a descriptive message
-	 */
-	public FlowExecutionAccessException(FlowExecutionKey flowExecutionKey, String message) {
-		this(flowExecutionKey, message, null);
-	}
+    /**
+     * Creates a new flow execution access exception.
+     *
+     * @param flowExecutionKey the key of the execution that could not be accessed
+     * @param message          a descriptive message
+     */
+    public FlowExecutionAccessException(FlowExecutionKey flowExecutionKey, String message) {
+        this(flowExecutionKey, message, null);
+    }
 
-	/**
-	 * Creates a new flow execution access exception.
-	 * @param flowExecutionKey the key of the execution that could not be accessed
-	 * @param message a descriptive message
-	 * @param cause the root cause of the access failure
-	 */
-	public FlowExecutionAccessException(FlowExecutionKey flowExecutionKey, String message, Exception cause) {
-		super(message, cause);
-		this.flowExecutionKey = flowExecutionKey;
-	}
+    /**
+     * Creates a new flow execution access exception.
+     *
+     * @param flowExecutionKey the key of the execution that could not be accessed
+     * @param message          a descriptive message
+     * @param cause            the root cause of the access failure
+     */
+    public FlowExecutionAccessException(FlowExecutionKey flowExecutionKey, String message, Exception cause) {
+        super(message, cause);
+        this.flowExecutionKey = flowExecutionKey;
+    }
 
-	/**
-	 * Returns key of the flow execution that could not be accessed.
+    /**
+     * Returns key of the flow execution that could not be accessed.
+     *
      * @return
      */
-	public FlowExecutionKey getFlowExecutionKey() {
-		return flowExecutionKey;
-	}
+    public FlowExecutionKey getFlowExecutionKey() {
+        return flowExecutionKey;
+    }
 }

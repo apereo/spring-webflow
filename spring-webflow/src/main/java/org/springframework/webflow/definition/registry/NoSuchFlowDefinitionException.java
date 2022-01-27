@@ -19,31 +19,33 @@ import org.springframework.webflow.core.FlowException;
 
 /**
  * Thrown when no flow definition was found during a lookup operation by a flow locator.
- * 
+ *
  * @author Keith Donald
  * @author Erwin Vervaet
  */
 public class NoSuchFlowDefinitionException extends FlowException {
 
-	/**
-	 * The id of the flow definition that could not be located.
-	 */
-	private String flowDefinitionId;
+    /**
+     * The id of the flow definition that could not be located.
+     */
+    private String flowDefinitionId;
 
-	/**
-	 * Creates an exception indicating a flow definition could not be found.
-	 * @param flowDefinitionId the flow definition id
-	 */
-	public NoSuchFlowDefinitionException(String flowDefinitionId) {
-		super("No flow definition '" + flowDefinitionId + "' found");
-		this.flowDefinitionId = flowDefinitionId;
-	}
+    /**
+     * Creates an exception indicating a flow definition could not be found.
+     *
+     * @param flowDefinitionId the flow definition id
+     */
+    public NoSuchFlowDefinitionException(String flowDefinitionId) {
+        super("No flow definition '" + flowDefinitionId + "' found");
+        this.flowDefinitionId = flowDefinitionId;
+    }
 
-	/**
-	 * Returns the id of the flow definition that could not be found.
+    /**
+     * Returns the id of the flow definition that could not be found.
+     *
      * @return
      */
-	public String getFlowDefinitionId() {
-		return flowDefinitionId;
-	}
+    public String getFlowDefinitionId() {
+        return flowDefinitionId;
+    }
 }

@@ -20,46 +20,52 @@ import java.util.List;
 
 /**
  * Exposes information about the results of a mapping transaction.
- * 
+ *
  * @author Keith Donald
  */
 public interface MappingResults extends Serializable {
 
-	/**
-	 * The source object that was mapped from.
+    /**
+     * The source object that was mapped from.
+     *
      * @return
      */
-	Object getSource();
+    Object getSource();
 
-	/**
-	 * The target object that was mapped to.
+    /**
+     * The target object that was mapped to.
+     *
      * @return
      */
-	Object getTarget();
+    Object getTarget();
 
-	/**
-	 * A list of all the mapping results between the source and target.
+    /**
+     * A list of all the mapping results between the source and target.
+     *
      * @return
      */
-	List<MappingResult> getAllResults();
+    List<MappingResult> getAllResults();
 
-	/**
-	 * Whether some results were errors. Returns true if mapping errors occurred.
+    /**
+     * Whether some results were errors. Returns true if mapping errors occurred.
+     *
      * @return
      */
-	boolean hasErrorResults();
+    boolean hasErrorResults();
 
-	/**
-	 * A list of all error results that occurred.
+    /**
+     * A list of all error results that occurred.
+     *
      * @return
      */
-	List<MappingResult> getErrorResults();
+    List<MappingResult> getErrorResults();
 
-	/**
-	 * Get all results that meet the given result criteria.
-	 * @param criteria the mapping result criteria
+    /**
+     * Get all results that meet the given result criteria.
+     *
+     * @param criteria the mapping result criteria
      * @return
-	 */
-	List<MappingResult> getResults(MappingResultsCriteria criteria);
+     */
+    List<MappingResult> getResults(MappingResultsCriteria criteria);
 
 }

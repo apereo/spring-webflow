@@ -31,7 +31,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest]
+        os: [ ubuntu-latest ]
     runs-on: ${{ matrix.os }}
     needs: cancel-previous-runs
     steps:
@@ -49,7 +49,7 @@ jobs:
 
   publish-snapshots:
     runs-on: ubuntu-latest
-    needs: [build]
+    needs: [ build ]
     if: ${{ github.event_name == 'push' }}
     steps:
       - uses: actions/checkout@v2

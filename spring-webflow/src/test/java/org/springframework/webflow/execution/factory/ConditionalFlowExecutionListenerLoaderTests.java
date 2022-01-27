@@ -15,57 +15,61 @@
  */
 package org.springframework.webflow.execution.factory;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertSame;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.execution.FlowExecutionListener;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit tests for {@link ConditionalFlowExecutionListenerLoader}.
  */
 public class ConditionalFlowExecutionListenerLoaderTests {
 
-	private FlowExecutionListenerCriteriaFactory criteriaFactory;
-	private ConditionalFlowExecutionListenerLoader loader;
+    private FlowExecutionListenerCriteriaFactory criteriaFactory;
 
-	@BeforeEach
-	public void setUp() {
-		loader = new ConditionalFlowExecutionListenerLoader();
-		criteriaFactory = new FlowExecutionListenerCriteriaFactory();
-	}
+    private ConditionalFlowExecutionListenerLoader loader;
 
-	@Test
-	public void testAddConditionalListener() {
-		FlowExecutionListener listener = new FlowExecutionListener() {};
-		loader.addListener(listener, criteriaFactory.allFlows());
-		Flow flow = new Flow("foo");
-		FlowExecutionListener[] listeners = loader.getListeners(flow);
-		assertEquals(1, listeners.length);
-		assertSame(listener, listeners[0]);
-	}
+    @BeforeEach
+    public void setUp() {
+        loader = new ConditionalFlowExecutionListenerLoader();
+        criteriaFactory = new FlowExecutionListenerCriteriaFactory();
+    }
 
-	@Test
-	public void testAddMultipleListeners() {
-		FlowExecutionListener listener1 = new FlowExecutionListener() {};
-		FlowExecutionListener listener2 = new FlowExecutionListener() {};
-		loader.addListener(listener1, criteriaFactory.allFlows());
-		loader.addListener(listener2, criteriaFactory.allFlows());
-		Flow flow = new Flow("foo");
-		FlowExecutionListener[] listeners = loader.getListeners(flow);
-		assertEquals(2, listeners.length);
-		assertSame(listener1, listeners[0]);
-		assertSame(listener2, listeners[1]);
-	}
+    @Test
+    public void testAddConditionalListener() {
+        FlowExecutionListener listener = new FlowExecutionListener() {
+        };
+        loader.addListener(listener, criteriaFactory.allFlows());
+        Flow flow = new Flow("foo");
+        FlowExecutionListener[] listeners = loader.getListeners(flow);
+        assertEquals(1, listeners.length);
+        assertSame(listener, listeners[0]);
+    }
 
-	@Test
-	public void testAddListenerButNoMatch() {
-		FlowExecutionListener listener = new FlowExecutionListener() {};
-		loader.addListener(listener, criteriaFactory.flow("bar"));
-		Flow flow = new Flow("foo");
-		FlowExecutionListener[] listeners = loader.getListeners(flow);
-		assertEquals(0, listeners.length);
-	}
+    @Test
+    public void testAddMultipleListeners() {
+        FlowExecutionListener listener1 = new FlowExecutionListener() {
+        };
+        FlowExecutionListener listener2 = new FlowExecutionListener() {
+        };
+        loader.addListener(listener1, criteriaFactory.allFlows());
+        loader.addListener(listener2, criteriaFactory.allFlows());
+        Flow flow = new Flow("foo");
+        FlowExecutionListener[] listeners = loader.getListeners(flow);
+        assertEquals(2, listeners.length);
+        assertSame(listener1, listeners[0]);
+        assertSame(listener2, listeners[1]);
+    }
+
+    @Test
+    public void testAddListenerButNoMatch() {
+        FlowExecutionListener listener = new FlowExecutionListener() {
+        };
+        loader.addListener(listener, criteriaFactory.flow("bar"));
+        Flow flow = new Flow("foo");
+        FlowExecutionListener[] listeners = loader.getListeners(flow);
+        assertEquals(0, listeners.length);
+    }
 }

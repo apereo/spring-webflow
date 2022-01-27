@@ -20,12 +20,12 @@ import java.util.Locale;
 
 /**
  * Produces NumberFormat instances that format integer values.
- * 
- * @see NumberFormat
+ *
  * @author Keith Donald
+ * @see NumberFormat
  */
 public class IntegerNumberFormatFactory extends AbstractNumberFormatFactory {
-	protected NumberFormat getNumberFormat(Locale locale) {
-		return NumberFormat.getIntegerInstance(locale);
-	}
+    protected NumberFormat getNumberFormat(Locale locale) {
+        return NumberFormat.getIntegerInstance(locale);
+    }
 }

@@ -20,41 +20,43 @@ import org.springframework.binding.mapping.Mapping;
 /**
  * The "required" error result--indicates a required mapping could not be performed because the source value to map was
  * empty.
+ *
  * @author Keith Donald
  */
 public class RequiredError extends AbstractMappingResult {
 
-	private Object originalValue;
+    private Object originalValue;
 
-	/**
-	 * Creates a new required error result
-	 * @param mapping
+    /**
+     * Creates a new required error result
+     *
+     * @param mapping
      * @param mapping
      * @param originalValue the original source value (empty)
-	 */
-	public RequiredError(Mapping mapping, Object originalValue) {
-		super(mapping);
-		this.originalValue = originalValue;
-	}
+     */
+    public RequiredError(Mapping mapping, Object originalValue) {
+        super(mapping);
+        this.originalValue = originalValue;
+    }
 
-	public String getCode() {
-		return "required";
-	}
+    public String getCode() {
+        return "required";
+    }
 
-	public boolean isError() {
-		return true;
-	}
+    public boolean isError() {
+        return true;
+    }
 
-	public Throwable getErrorCause() {
-		return null;
-	}
+    public Throwable getErrorCause() {
+        return null;
+    }
 
-	public Object getOriginalValue() {
-		return originalValue;
-	}
+    public Object getOriginalValue() {
+        return originalValue;
+    }
 
-	public Object getMappedValue() {
-		return null;
-	}
+    public Object getMappedValue() {
+        return null;
+    }
 
 }

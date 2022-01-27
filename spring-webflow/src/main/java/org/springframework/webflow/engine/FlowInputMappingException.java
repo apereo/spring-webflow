@@ -19,29 +19,31 @@ import org.springframework.binding.mapping.MappingResults;
 
 /**
  * Thrown when flow input mapping fails.
- * 
+ *
  * @author Keith Donald
  */
 public class FlowInputMappingException extends FlowAttributeMappingException {
 
-	/**
-	 * Creates a new flow input mapping exception.
-	 * @param flowId the id of the flow where input mapping failed
-	 * @param results the mapping errors with errors
-	 */
-	public FlowInputMappingException(String flowId, MappingResults results) {
-		super(flowId, null, results, "Errors occurred during input mapping on startup of the '" + flowId
-				+ "' flow; errors = " + results.getErrorResults());
-	}
+    /**
+     * Creates a new flow input mapping exception.
+     *
+     * @param flowId  the id of the flow where input mapping failed
+     * @param results the mapping errors with errors
+     */
+    public FlowInputMappingException(String flowId, MappingResults results) {
+        super(flowId, null, results, "Errors occurred during input mapping on startup of the '" + flowId
+                                     + "' flow; errors = " + results.getErrorResults());
+    }
 
-	/**
-	 * Creates a new flow input mapping exception.
-	 * @param flowId the id of the flow where input mapping failed
-	 * @param stateId the state where input mapping failed
-	 * @param results the mapping errors with errors
-	 */
-	public FlowInputMappingException(String flowId, String stateId, MappingResults results) {
-		super(flowId, stateId, results, "Errors occurred during input mapping in state '" + stateId + "' of flow '"
-				+ flowId + "'; errors = " + results.getErrorResults());
-	}
+    /**
+     * Creates a new flow input mapping exception.
+     *
+     * @param flowId  the id of the flow where input mapping failed
+     * @param stateId the state where input mapping failed
+     * @param results the mapping errors with errors
+     */
+    public FlowInputMappingException(String flowId, String stateId, MappingResults results) {
+        super(flowId, stateId, results, "Errors occurred during input mapping in state '" + stateId + "' of flow '"
+                                        + flowId + "'; errors = " + results.getErrorResults());
+    }
 }

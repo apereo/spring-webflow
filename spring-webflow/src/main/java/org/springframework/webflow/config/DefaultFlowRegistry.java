@@ -22,22 +22,23 @@ import org.springframework.webflow.engine.model.registry.FlowModelRegistryImpl;
 
 /**
  * Flow registry implementation created by FlowRegistryFactoryBean.
+ *
  * @author Keith Donald
  */
 class DefaultFlowRegistry extends FlowDefinitionRegistryImpl {
 
-	private FlowModelRegistry flowModelRegistry = new FlowModelRegistryImpl();
+    private FlowModelRegistry flowModelRegistry = new FlowModelRegistryImpl();
 
-	public FlowModelRegistry getFlowModelRegistry() {
-		return flowModelRegistry;
-	}
+    public FlowModelRegistry getFlowModelRegistry() {
+        return flowModelRegistry;
+    }
 
-	public void setParent(FlowDefinitionRegistry parent) {
-		super.setParent(parent);
-		if (parent instanceof DefaultFlowRegistry) {
-			DefaultFlowRegistry parentFlowRegistry = (DefaultFlowRegistry) parent;
-			// link so a flow in the child registry that extends from a flow in the parent registry can find its parent
-			flowModelRegistry.setParent(parentFlowRegistry.getFlowModelRegistry());
-		}
-	}
+    public void setParent(FlowDefinitionRegistry parent) {
+        super.setParent(parent);
+        if (parent instanceof DefaultFlowRegistry) {
+            DefaultFlowRegistry parentFlowRegistry = (DefaultFlowRegistry) parent;
+            // link so a flow in the child registry that extends from a flow in the parent registry can find its parent
+            flowModelRegistry.setParent(parentFlowRegistry.getFlowModelRegistry());
+        }
+    }
 }

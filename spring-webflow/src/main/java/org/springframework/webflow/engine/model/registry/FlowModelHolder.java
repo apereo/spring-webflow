@@ -21,36 +21,38 @@ import org.springframework.webflow.engine.model.FlowModel;
 /**
  * A holder holding a reference to a Flow model. Provides a layer of indirection, enabling things like "hot-reloadable"
  * flow models.
- * 
- * @see FlowModelRegistry#registerFlowModel(String, FlowModelHolder)
- * 
+ *
  * @author Keith Donald
  * @author Scott Andrews
+ * @see FlowModelRegistry#registerFlowModel(String, FlowModelHolder)
  */
 public interface FlowModelHolder {
 
-	/**
-	 * Returns the flow model held by this holder. Calling this method the first time may trigger flow model assembly.
+    /**
+     * Returns the flow model held by this holder. Calling this method the first time may trigger flow model assembly.
+     *
      * @return
      */
-	FlowModel getFlowModel();
+    FlowModel getFlowModel();
 
-	/**
-	 * Has the underlying flow model changed since it was last accessed via a call to {@link #getFlowModel()}.
-	 * @return true if yes, false if not
-	 */
-	boolean hasFlowModelChanged();
+    /**
+     * Has the underlying flow model changed since it was last accessed via a call to {@link #getFlowModel()}.
+     *
+     * @return true if yes, false if not
+     */
+    boolean hasFlowModelChanged();
 
-	/**
-	 * Returns the underlying resource defining the flow model.
-	 * @return the flow model resource
-	 */
-	Resource getFlowModelResource();
+    /**
+     * Returns the underlying resource defining the flow model.
+     *
+     * @return the flow model resource
+     */
+    Resource getFlowModelResource();
 
-	/**
-	 * Refresh the flow model held by this holder. Calling this method typically triggers flow re-assembly, which may
-	 * include a refresh from an externalized resource such as a file.
-	 */
-	void refresh();
+    /**
+     * Refresh the flow model held by this holder. Calling this method typically triggers flow re-assembly, which may
+     * include a refresh from an externalized resource such as a file.
+     */
+    void refresh();
 
 }

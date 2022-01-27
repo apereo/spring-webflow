@@ -29,40 +29,40 @@ import org.springframework.webflow.executor.FlowExecutor;
  */
 public class FlowExecutorJavaConfigTests extends AbstractFlowExecutorConfigurationTests {
 
-	@Override
-	protected ApplicationContext initApplicationContext() {
-		return new AnnotationConfigApplicationContext(WebFlowConfig.class);
-	}
+    @Override
+    protected ApplicationContext initApplicationContext() {
+        return new AnnotationConfigApplicationContext(WebFlowConfig.class);
+    }
 
 
-	@Configuration
-	static class WebFlowConfig extends AbstractFlowConfiguration {
+    @Configuration
+    static class WebFlowConfig extends AbstractFlowConfiguration {
 
-		@Bean
-		public FlowExecutor flowExecutor() {
-			return getFlowExecutorBuilder(flowRegistry())
-					.setMaxFlowExecutions(1).setMaxFlowExecutionSnapshots(2)
-					.setConversationManager(new ExceptionThrowingConversationManager())
-					.setAlwaysRedirectOnPause(false)
-					.setRedirectInSameState(true)
-					.addFlowExecutionAttribute("foo", "bar")
-					.addFlowExecutionAttribute("bar", 2)
-					.addFlowExecutionListener(new ConfigurationListener(), "*")
-					.build();
-		}
+        @Bean
+        public FlowExecutor flowExecutor() {
+            return getFlowExecutorBuilder(flowRegistry())
+                .setMaxFlowExecutions(1).setMaxFlowExecutionSnapshots(2)
+                .setConversationManager(new ExceptionThrowingConversationManager())
+                .setAlwaysRedirectOnPause(false)
+                .setRedirectInSameState(true)
+                .addFlowExecutionAttribute("foo", "bar")
+                .addFlowExecutionAttribute("bar", 2)
+                .addFlowExecutionListener(new ConfigurationListener(), "*")
+                .build();
+        }
 
-		@Bean
-		public FlowDefinitionRegistry flowRegistry() {
-			return getFlowDefinitionRegistryBuilder()
-					.addFlowLocation("org/springframework/webflow/config/flow.xml").build();
-		}
+        @Bean
+        public FlowDefinitionRegistry flowRegistry() {
+            return getFlowDefinitionRegistryBuilder()
+                .addFlowLocation("org/springframework/webflow/config/flow.xml").build();
+        }
 
-		@Bean
-		public FlowExecutor flowExecutorSimpleRepo() {
-			return getFlowExecutorBuilder(flowRegistry())
-					.setMaxFlowExecutions(1).setMaxFlowExecutionSnapshots(0)
-					.build();
-		}
-	}
+        @Bean
+        public FlowExecutor flowExecutorSimpleRepo() {
+            return getFlowExecutorBuilder(flowRegistry())
+                .setMaxFlowExecutions(1).setMaxFlowExecutionSnapshots(0)
+                .build();
+        }
+    }
 
 }

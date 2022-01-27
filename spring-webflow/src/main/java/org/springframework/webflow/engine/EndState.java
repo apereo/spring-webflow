@@ -36,99 +36,102 @@ import org.springframework.webflow.execution.RequestContext;
  * <p>
  * An end state may be configured with a renderer to render a final response. This renderer will be invoked if the end
  * state terminates the entire flow execution.
- * 
- * @see org.springframework.webflow.engine.SubflowState
- * 
+ *
  * @author Keith Donald
  * @author Colin Sampaleanu
  * @author Erwin Vervaet
+ * @see org.springframework.webflow.engine.SubflowState
  */
 public class EndState extends State {
 
-	/**
-	 * The renderer that will render the final response when a flow execution terminates.
-	 */
-	private Action finalResponseAction;
+    /**
+     * The renderer that will render the final response when a flow execution terminates.
+     */
+    private Action finalResponseAction;
 
-	/**
-	 * The attribute mapper for mapping output attributes exposed by this end state when it is entered.
-	 */
-	private Mapper outputMapper;
+    /**
+     * The attribute mapper for mapping output attributes exposed by this end state when it is entered.
+     */
+    private Mapper outputMapper;
 
-	/**
-	 * Create a new end state with no associated view.
-	 * @param flow the owning flow
-	 * @param id the state identifier (must be unique to the flow)
-	 * @throws IllegalArgumentException when this state cannot be added to given flow, e.g. because the id is not unique
-	 * @see State#State(Flow, String)
-	 * @see #setFinalResponseAction(Action)
-	 * @see #setOutputMapper(Mapper)
-	 */
-	public EndState(Flow flow, String id) throws IllegalArgumentException {
-		super(flow, id);
-	}
+    /**
+     * Create a new end state with no associated view.
+     *
+     * @param flow the owning flow
+     * @param id   the state identifier (must be unique to the flow)
+     * @throws IllegalArgumentException when this state cannot be added to given flow, e.g. because the id is not unique
+     * @see State#State(Flow, String)
+     * @see #setFinalResponseAction(Action)
+     * @see #setOutputMapper(Mapper)
+     */
+    public EndState(Flow flow, String id) throws IllegalArgumentException {
+        super(flow, id);
+    }
 
-	/**
-	 * Sets the renderer that will render the final flow execution response.
+    /**
+     * Sets the renderer that will render the final flow execution response.
+     *
      * @param finalResponseAction
      * @param finalResponseAction
      */
-	public void setFinalResponseAction(Action finalResponseAction) {
-		this.finalResponseAction = finalResponseAction;
-	}
+    public void setFinalResponseAction(Action finalResponseAction) {
+        this.finalResponseAction = finalResponseAction;
+    }
 
-	/**
-	 * Sets the attribute mapper to use for mapping output attributes exposed by this end state when it is entered.
+    /**
+     * Sets the attribute mapper to use for mapping output attributes exposed by this end state when it is entered.
+     *
      * @param outputMapper
      * @param outputMapper
      */
-	public void setOutputMapper(Mapper outputMapper) {
-		this.outputMapper = outputMapper;
-	}
+    public void setOutputMapper(Mapper outputMapper) {
+        this.outputMapper = outputMapper;
+    }
 
-	/**
-	 * Specialization of State's <code>doEnter</code> template method that executes behavior specific to this state type
-	 * in polymorphic fashion.
-	 * <p>
-	 * This implementation pops the top (active) flow session off the execution stack, ending it, and resumes control in
-	 * the parent flow (if necessary). If the ended session is the root flow, a final response is rendered.
-	 * @param context the control context for the currently executing flow, used by this state to manipulate the flow
-	 * execution
-	 * @throws FlowExecutionException if an exception occurs in this state
-	 */
-	protected void doEnter(final RequestControlContext context) throws FlowExecutionException {
-		FlowSession activeSession = context.getFlowExecutionContext().getActiveSession();
-		if (activeSession.isRoot()) {
-			// entire flow execution is ending; issue the final response
-			if (finalResponseAction != null && !context.getExternalContext().isResponseComplete()) {
-				ActionExecutor.execute(finalResponseAction, context);
-				context.getExternalContext().recordResponseComplete();
-			}
-			context.endActiveFlowSession(getId(), createSessionOutput(context));
-		} else {
-			// there is a parent flow that will resume (this flow is a subflow)
-			LocalAttributeMap<Object> sessionOutput = createSessionOutput(context);
-			context.endActiveFlowSession(getId(), sessionOutput);
-		}
-	}
+    /**
+     * Specialization of State's <code>doEnter</code> template method that executes behavior specific to this state type
+     * in polymorphic fashion.
+     * <p>
+     * This implementation pops the top (active) flow session off the execution stack, ending it, and resumes control in
+     * the parent flow (if necessary). If the ended session is the root flow, a final response is rendered.
+     *
+     * @param context the control context for the currently executing flow, used by this state to manipulate the flow
+     *                execution
+     * @throws FlowExecutionException if an exception occurs in this state
+     */
+    protected void doEnter(final RequestControlContext context) throws FlowExecutionException {
+        FlowSession activeSession = context.getFlowExecutionContext().getActiveSession();
+        if (activeSession.isRoot()) {
+            // entire flow execution is ending; issue the final response
+            if (finalResponseAction != null && !context.getExternalContext().isResponseComplete()) {
+                ActionExecutor.execute(finalResponseAction, context);
+                context.getExternalContext().recordResponseComplete();
+            }
+            context.endActiveFlowSession(getId(), createSessionOutput(context));
+        } else {
+            // there is a parent flow that will resume (this flow is a subflow)
+            LocalAttributeMap<Object> sessionOutput = createSessionOutput(context);
+            context.endActiveFlowSession(getId(), sessionOutput);
+        }
+    }
 
-	/**
-	 * Returns the subflow output map. This will invoke the output mapper (if any) to map data available in the flow
-	 * execution request context into a newly created empty map.
-	 */
-	protected LocalAttributeMap<Object> createSessionOutput(RequestContext context) {
-		LocalAttributeMap<Object> output = new LocalAttributeMap<>();
-		if (outputMapper != null) {
-			MappingResults results = outputMapper.map(context, output);
-			if (results != null && results.hasErrorResults()) {
-				throw new FlowOutputMappingException(getOwner().getId(), getId(), results);
-			}
-		}
-		return output;
-	}
+    /**
+     * Returns the subflow output map. This will invoke the output mapper (if any) to map data available in the flow
+     * execution request context into a newly created empty map.
+     */
+    protected LocalAttributeMap<Object> createSessionOutput(RequestContext context) {
+        LocalAttributeMap<Object> output = new LocalAttributeMap<>();
+        if (outputMapper != null) {
+            MappingResults results = outputMapper.map(context, output);
+            if (results != null && results.hasErrorResults()) {
+                throw new FlowOutputMappingException(getOwner().getId(), getId(), results);
+            }
+        }
+        return output;
+    }
 
-	protected void appendToString(ToStringCreator creator) {
-		creator.append("finalResponseAction", finalResponseAction).append("outputMapper", outputMapper);
-	}
+    protected void appendToString(ToStringCreator creator) {
+        creator.append("finalResponseAction", finalResponseAction).append("outputMapper", outputMapper);
+    }
 
 }

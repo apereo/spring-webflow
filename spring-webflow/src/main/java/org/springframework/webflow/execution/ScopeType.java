@@ -24,78 +24,79 @@ import org.springframework.webflow.definition.FlowDefinition;
  * <p>
  * A "scope" defines a data structure for storing custom user attributes within a flow execution. Different scope types
  * have different semantics in terms of how long attributes placed in those scope maps remain valid.
- * 
+ *
  * @author Keith Donald
  * @author Erwin Vervaet
  */
 public enum ScopeType {
 
-	/**
-	 * The "request" scope type. Attributes placed in request scope exist for the life of the current request into the
-	 * flow execution. When the request ends any attributes in request scope go out of scope.
-	 */
-	REQUEST() {
-		public MutableAttributeMap<Object> getScope(RequestContext context) {
-			return context.getRequestScope();
-		}
-	},
+    /**
+     * The "request" scope type. Attributes placed in request scope exist for the life of the current request into the
+     * flow execution. When the request ends any attributes in request scope go out of scope.
+     */
+    REQUEST() {
+        public MutableAttributeMap<Object> getScope(RequestContext context) {
+            return context.getRequestScope();
+        }
+    },
 
-	/**
-	 * The "flash" scope type. Attributes placed in flash scope exist through the life of the current request <i>and
-	 * until the next view rendering</i>. After the view renders, flash scope is cleared.
-	 * <p>
-	 * Flash scope is typically used to store messages that should be preserved until after the next view renders.
-	 */
-	FLASH() {
-		public MutableAttributeMap<Object> getScope(RequestContext context) {
-			return context.getFlashScope();
-		}
-	},
+    /**
+     * The "flash" scope type. Attributes placed in flash scope exist through the life of the current request <i>and
+     * until the next view rendering</i>. After the view renders, flash scope is cleared.
+     * <p>
+     * Flash scope is typically used to store messages that should be preserved until after the next view renders.
+     */
+    FLASH() {
+        public MutableAttributeMap<Object> getScope(RequestContext context) {
+            return context.getFlashScope();
+        }
+    },
 
-	/**
-	 * The "view" scope type. Attributes placed in view scope exist through the life of the current view state <i>and
-	 * until the view state exits in a subsequent request</i>.
-	 * <p>
-	 * View scope is typically used to store view model objects manipulated over a series of Ajax requests.
-	 */
-	VIEW() {
-		public MutableAttributeMap<Object> getScope(RequestContext context) {
-			return context.getViewScope();
-		}
-	},
+    /**
+     * The "view" scope type. Attributes placed in view scope exist through the life of the current view state <i>and
+     * until the view state exits in a subsequent request</i>.
+     * <p>
+     * View scope is typically used to store view model objects manipulated over a series of Ajax requests.
+     */
+    VIEW() {
+        public MutableAttributeMap<Object> getScope(RequestContext context) {
+            return context.getViewScope();
+        }
+    },
 
-	/**
-	 * The "flow" scope type. Attributes placed in flow scope exist through the life of an executing flow session,
-	 * representing an instance a single {@link FlowDefinition flow definition}. When the flow session ends any data in
-	 * flow scope goes out of scope.
-	 */
-	FLOW() {
-		public MutableAttributeMap<Object> getScope(RequestContext context) {
-			return context.getFlowScope();
-		}
-	},
+    /**
+     * The "flow" scope type. Attributes placed in flow scope exist through the life of an executing flow session,
+     * representing an instance a single {@link FlowDefinition flow definition}. When the flow session ends any data in
+     * flow scope goes out of scope.
+     */
+    FLOW() {
+        public MutableAttributeMap<Object> getScope(RequestContext context) {
+            return context.getFlowScope();
+        }
+    },
 
-	/**
-	 * The "conversation" scope type. Attributes placed in conversation scope are shared by all flow sessions started
-	 * within a flow execution and live for the life of the entire flow execution (representing a single logical user
-	 * conversation). When the governing execution ends, any data in conversation scope goes out of scope.
-	 */
-	CONVERSATION() {
-		public MutableAttributeMap<Object> getScope(RequestContext context) {
-			return context.getConversationScope();
-		}
-	};
+    /**
+     * The "conversation" scope type. Attributes placed in conversation scope are shared by all flow sessions started
+     * within a flow execution and live for the life of the entire flow execution (representing a single logical user
+     * conversation). When the governing execution ends, any data in conversation scope goes out of scope.
+     */
+    CONVERSATION() {
+        public MutableAttributeMap<Object> getScope(RequestContext context) {
+            return context.getConversationScope();
+        }
+    };
 
-	public Class<?> getType() {
-		// force ScopeType as type
-		return ScopeType.class;
-	}
+    public Class<?> getType() {
+        // force ScopeType as type
+        return ScopeType.class;
+    }
 
-	/**
-	 * Accessor that returns the mutable attribute map for this scope type for a given flow execution request context.
-	 * @param context the context representing an executing request
-	 * @return the scope map of this type for that request, allowing attributes to be accessed and set
-	 */
-	public abstract MutableAttributeMap<Object> getScope(RequestContext context);
+    /**
+     * Accessor that returns the mutable attribute map for this scope type for a given flow execution request context.
+     *
+     * @param context the context representing an executing request
+     * @return the scope map of this type for that request, allowing attributes to be accessed and set
+     */
+    public abstract MutableAttributeMap<Object> getScope(RequestContext context);
 
 }

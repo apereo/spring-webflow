@@ -23,124 +23,127 @@ import java.util.List;
 
 /**
  * A utility class for working with attribute and parameter collections used by Spring Web FLow.
- * 
+ *
  * @author Keith Donald
  * @author Erwin Vervaet
  */
 public class CollectionUtils {
 
-	/**
-	 * The shared, singleton empty iterator instance.
-	 */
-	@SuppressWarnings("rawtypes")
-	public static final Iterator EMPTY_ITERATOR = new EmptyIterator();
+    /**
+     * The shared, singleton empty iterator instance.
+     */
+    @SuppressWarnings("rawtypes")
+    public static final Iterator EMPTY_ITERATOR = new EmptyIterator();
 
-	/**
-	 * The shared, singleton empty attribute map instance.
-	 */
-	public static final AttributeMap<Object> EMPTY_ATTRIBUTE_MAP = new LocalAttributeMap<>(Collections.emptyMap());
+    /**
+     * The shared, singleton empty attribute map instance.
+     */
+    public static final AttributeMap<Object> EMPTY_ATTRIBUTE_MAP = new LocalAttributeMap<>(Collections.emptyMap());
 
-	/**
-	 * Private constructor to avoid instantiation.
-	 */
-	private CollectionUtils() {
-	}
+    /**
+     * Private constructor to avoid instantiation.
+     */
+    private CollectionUtils() {
+    }
 
-	@SuppressWarnings("unchecked")
-	public static <E> Iterator<E> emptyIterator() {
-		return EMPTY_ITERATOR;
-	}
+    @SuppressWarnings("unchecked")
+    public static <E> Iterator<E> emptyIterator() {
+        return EMPTY_ITERATOR;
+    }
 
-	/**
-	 * Factory method that adapts an enumeration to an iterator.
-	 * @param enumeration the enumeration
-	 * @return the iterator
+    /**
+     * Factory method that adapts an enumeration to an iterator.
+     *
+     * @param enumeration the enumeration
      * @param <E>
      * @param <E>
-	 */
-	public static <E> Iterator<E> toIterator(Enumeration<E> enumeration) {
-		return new EnumerationIterator<>(enumeration);
-	}
+     * @return the iterator
+     */
+    public static <E> Iterator<E> toIterator(Enumeration<E> enumeration) {
+        return new EnumerationIterator<>(enumeration);
+    }
 
-	/**
-	 * Factory method that returns a unmodifiable attribute map with a single entry.
-	 * @param attributeName the attribute name
-	 * @param attributeValue the attribute value
-	 * @return the unmodifiable map with a single element
+    /**
+     * Factory method that returns a unmodifiable attribute map with a single entry.
+     *
+     * @param attributeName  the attribute name
+     * @param attributeValue the attribute value
      * @param <V>
      * @param <V>
-	 */
-	public static <V> AttributeMap<V> singleEntryMap(String attributeName, V attributeValue) {
-		return new LocalAttributeMap<>(attributeName, attributeValue);
-	}
+     * @return the unmodifiable map with a single element
+     */
+    public static <V> AttributeMap<V> singleEntryMap(String attributeName, V attributeValue) {
+        return new LocalAttributeMap<>(attributeName, attributeValue);
+    }
 
-	/**
-	 * Add all given objects to given target list. No duplicates will be added. The contains() method of the given
-	 * target list will be used to determine whether or not an object is already in the list.
-	 * @param target the collection to which to objects will be added
-	 * @param objects the objects to add
-	 * @return whether or not the target collection changed
+    /**
+     * Add all given objects to given target list. No duplicates will be added. The contains() method of the given
+     * target list will be used to determine whether or not an object is already in the list.
+     *
+     * @param target  the collection to which to objects will be added
+     * @param objects the objects to add
      * @param <T>
      * @param <T>
-	 */
-	@SuppressWarnings("unchecked")
-	public static <T> boolean addAllNoDuplicates(List<T> target, T... objects) {
-		if (objects == null || objects.length == 0) {
-			return false;
-		} else {
-			boolean changed = false;
-			for (T object : objects) {
-				if (!target.contains(object)) {
-					target.add(object);
-					changed = true;
-				}
-			}
-			return changed;
-		}
-	}
+     * @return whether or not the target collection changed
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> boolean addAllNoDuplicates(List<T> target, T... objects) {
+        if (objects == null || objects.length == 0) {
+            return false;
+        } else {
+            boolean changed = false;
+            for (T object : objects) {
+                if (!target.contains(object)) {
+                    target.add(object);
+                    changed = true;
+                }
+            }
+            return changed;
+        }
+    }
 
-	/**
-	 * Iterator iterating over no elements (hasNext() always returns false).
-	 */
-	private static class EmptyIterator<E> implements Iterator<E>, Serializable {
+    /**
+     * Iterator iterating over no elements (hasNext() always returns false).
+     */
+    private static class EmptyIterator<E> implements Iterator<E>, Serializable {
 
-		private EmptyIterator() {
-		}
+        private EmptyIterator() {
+        }
 
-		public boolean hasNext() {
-			return false;
-		}
+        public boolean hasNext() {
+            return false;
+        }
 
-		public E next() {
-			throw new UnsupportedOperationException("There are no elements");
-		}
+        public E next() {
+            throw new UnsupportedOperationException("There are no elements");
+        }
 
-		public void remove() {
-			throw new UnsupportedOperationException("There are no elements");
-		}
-	}
+        public void remove() {
+            throw new UnsupportedOperationException("There are no elements");
+        }
+    }
 
-	/**
-	 * Iterator wrapping an Enumeration.
-	 */
-	private static class EnumerationIterator<E> implements Iterator<E> {
+    /**
+     * Iterator wrapping an Enumeration.
+     */
+    private static class EnumerationIterator<E> implements Iterator<E> {
 
-		private Enumeration<E> enumeration;
+        private Enumeration<E> enumeration;
 
-		public EnumerationIterator(Enumeration<E> enumeration) {
-			this.enumeration = enumeration;
-		}
+        public EnumerationIterator(Enumeration<E> enumeration) {
+            this.enumeration = enumeration;
+        }
 
-		public boolean hasNext() {
-			return enumeration.hasMoreElements();
-		}
+        public boolean hasNext() {
+            return enumeration.hasMoreElements();
+        }
 
-		public E next() {
-			return enumeration.nextElement();
-		}
+        public E next() {
+            return enumeration.nextElement();
+        }
 
-		public void remove() throws UnsupportedOperationException {
-			throw new UnsupportedOperationException("Not supported");
-		}
-	}
+        public void remove() throws UnsupportedOperationException {
+            throw new UnsupportedOperationException("Not supported");
+        }
+    }
 }

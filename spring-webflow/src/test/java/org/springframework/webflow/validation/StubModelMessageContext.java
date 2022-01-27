@@ -23,12 +23,12 @@ import org.springframework.binding.message.MessageContext;
  */
 public class StubModelMessageContext {
 
-	public void validateMockState(MessageContext context) {
-		context.addMessage(new MessageBuilder().source("messagecontext").defaultText("").build());
-	}
+    public void validateMockState(MessageContext context) {
+        context.addMessage(new MessageBuilder().source("messagecontext").defaultText("").build());
+    }
 
-	public void validateMockState(Object model, MessageContext context) {
-		context.addMessage(new MessageBuilder().source("messagecontext-external").defaultText("").build());
-	}
+    public void validateMockState(Object model, MessageContext context) {
+        context.addMessage(new MessageBuilder().source("messagecontext-external").defaultText("").build());
+    }
 
 }

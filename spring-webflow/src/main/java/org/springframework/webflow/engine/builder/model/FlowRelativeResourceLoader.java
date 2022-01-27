@@ -15,46 +15,46 @@
  */
 package org.springframework.webflow.engine.builder.model;
 
-import java.io.IOException;
-
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 
+import java.io.IOException;
+
 /**
  * A resource loader that loads other resources relative to a Flow definition resource. Allows for easy loading of
  * flow-relative resources using the standard {@link ResourceLoader} interface.
- * 
+ *
  * @author Keith Donald
  */
 class FlowRelativeResourceLoader implements ResourceLoader {
 
-	private Resource flowResource;
+    private Resource flowResource;
 
-	public FlowRelativeResourceLoader(Resource resource) {
-		this.flowResource = resource;
-	}
+    public FlowRelativeResourceLoader(Resource resource) {
+        this.flowResource = resource;
+    }
 
-	public ClassLoader getClassLoader() {
-		return flowResource.getClass().getClassLoader();
-	}
+    public ClassLoader getClassLoader() {
+        return flowResource.getClass().getClassLoader();
+    }
 
-	public Resource getResource(String location) {
-		if (location.startsWith(CLASSPATH_URL_PREFIX)) {
-			return new ClassPathResource(location.substring(CLASSPATH_URL_PREFIX.length()), getClassLoader());
-		} else {
-			return createFlowRelativeResource(location);
-		}
-	}
+    public Resource getResource(String location) {
+        if (location.startsWith(CLASSPATH_URL_PREFIX)) {
+            return new ClassPathResource(location.substring(CLASSPATH_URL_PREFIX.length()), getClassLoader());
+        } else {
+            return createFlowRelativeResource(location);
+        }
+    }
 
-	private Resource createFlowRelativeResource(String location) {
-		try {
-			return flowResource.createRelative(location);
-		} catch (IOException e) {
-			IllegalArgumentException iae = new IllegalArgumentException(
-					"Unable to access a flow relative resource at location '" + location + "'");
-			iae.initCause(e);
-			throw iae;
-		}
-	}
+    private Resource createFlowRelativeResource(String location) {
+        try {
+            return flowResource.createRelative(location);
+        } catch (IOException e) {
+            IllegalArgumentException iae = new IllegalArgumentException(
+                "Unable to access a flow relative resource at location '" + location + "'");
+            iae.initCause(e);
+            throw iae;
+        }
+    }
 }

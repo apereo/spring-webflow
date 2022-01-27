@@ -15,9 +15,6 @@
  */
 package org.springframework.webflow.engine;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.webflow.engine.support.DefaultTargetStateResolver;
@@ -26,73 +23,78 @@ import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.TestAction;
 import org.springframework.webflow.test.MockRequestControlContext;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 /**
  * Tests ActionState behavior
+ *
  * @author Keith Donald
  */
 public class ActionStateTests {
 
-	private Flow flow;
-	private ActionState state;
-	private MockRequestControlContext context;
+    private Flow flow;
 
-	@BeforeEach
-	public void setUp() {
-		flow = new Flow("myFlow");
-		state = new ActionState(flow, "actionState");
-		new EndState(flow, "finish");
-		context = new MockRequestControlContext(flow);
-	}
+    private ActionState state;
 
-	@Test
-	public void testExecuteSingleAction() {
-		state.getActionList().add(new TestAction());
-		state.getTransitionSet().add(new Transition(on("success"), to("finish")));
-		state.enter(context);
-		assertEquals(1, ((TestAction) state.getActionList().get(0)).getExecutionCount());
-	}
+    private MockRequestControlContext context;
 
-	@Test
-	public void testExecuteNothing() {
-		try {
-			state.enter(context);
-			fail("Should've failed");
-		} catch (IllegalStateException e) {
-			// expected
-		}
-	}
+    @BeforeEach
+    public void setUp() {
+        flow = new Flow("myFlow");
+        state = new ActionState(flow, "actionState");
+        new EndState(flow, "finish");
+        context = new MockRequestControlContext(flow);
+    }
 
-	@Test
-	public void testExecuteActionCannotHandleResultEvent() {
-		state.getActionList().add(new TestAction());
-		try {
-			state.enter(context);
-			fail("Should've failed");
-		} catch (NoMatchingTransitionException e) {
-			assertEquals(1, ((TestAction) state.getActionList().get(0)).getExecutionCount());
-		}
-	}
+    @Test
+    public void testExecuteSingleAction() {
+        state.getActionList().add(new TestAction());
+        state.getTransitionSet().add(new Transition(on("success"), to("finish")));
+        state.enter(context);
+        assertEquals(1, ((TestAction) state.getActionList().get(0)).getExecutionCount());
+    }
 
-	@Test
-	public void testExecuteActionChain() {
-		state.getActionList().add(new TestAction("not mapped result"));
-		state.getActionList().add(new TestAction(null));
-		state.getActionList().add(new TestAction(""));
-		state.getActionList().add(new TestAction("success"));
-		state.getTransitionSet().add(new Transition(on("success"), to("finish")));
-		state.enter(context);
-		Action[] actions = state.getActionList().toArray();
-		for (Action action2 : actions) {
-			TestAction action = (TestAction) action2;
-			assertEquals(1, action.getExecutionCount());
-		}
-	}
+    @Test
+    public void testExecuteNothing() {
+        try {
+            state.enter(context);
+            fail("Should've failed");
+        } catch (IllegalStateException e) {
+            // expected
+        }
+    }
 
-	protected TransitionCriteria on(String event) {
-		return new MockTransitionCriteria(event);
-	}
+    @Test
+    public void testExecuteActionCannotHandleResultEvent() {
+        state.getActionList().add(new TestAction());
+        try {
+            state.enter(context);
+            fail("Should've failed");
+        } catch (NoMatchingTransitionException e) {
+            assertEquals(1, ((TestAction) state.getActionList().get(0)).getExecutionCount());
+        }
+    }
 
-	protected TargetStateResolver to(String stateId) {
-		return new DefaultTargetStateResolver(stateId);
-	}
+    @Test
+    public void testExecuteActionChain() {
+        state.getActionList().add(new TestAction("not mapped result"));
+        state.getActionList().add(new TestAction(null));
+        state.getActionList().add(new TestAction(""));
+        state.getActionList().add(new TestAction("success"));
+        state.getTransitionSet().add(new Transition(on("success"), to("finish")));
+        state.enter(context);
+        Action[] actions = state.getActionList().toArray();
+        for (Action action2 : actions) {
+            TestAction action = (TestAction) action2;
+            assertEquals(1, action.getExecutionCount());
+        }
+    }
+
+    protected TransitionCriteria on(String event) {
+        return new MockTransitionCriteria(event);
+    }
+
+    protected TargetStateResolver to(String stateId) {
+        return new DefaultTargetStateResolver(stateId);
+    }
 }

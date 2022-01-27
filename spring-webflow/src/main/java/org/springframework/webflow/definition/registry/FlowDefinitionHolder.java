@@ -20,49 +20,52 @@ import org.springframework.webflow.definition.FlowDefinition;
 /**
  * A holder holding a reference to a Flow definition. Provides a layer of indirection, enabling things like
  * "hot-reloadable" flow definitions.
- * 
- * @see FlowDefinitionRegistry#registerFlowDefinition(FlowDefinitionHolder)
- * 
+ *
  * @author Keith Donald
+ * @see FlowDefinitionRegistry#registerFlowDefinition(FlowDefinitionHolder)
  */
 public interface FlowDefinitionHolder {
 
-	/**
-	 * Returns the <code>id</code> of the flow definition held by this holder. This is a <i>lightweight</i> method
-	 * callers may call to obtain the id of the flow without triggering full flow definition assembly (which may be an
-	 * expensive operation).
+    /**
+     * Returns the <code>id</code> of the flow definition held by this holder. This is a <i>lightweight</i> method
+     * callers may call to obtain the id of the flow without triggering full flow definition assembly (which may be an
+     * expensive operation).
+     *
      * @return
      */
-	String getFlowDefinitionId();
+    String getFlowDefinitionId();
 
-	/**
-	 * Returns a descriptive string that identifies the source of this FlowDefinition. This is also a lightweight method
-	 * callers may call to obtain the logical resource where the flow definition resides without triggering flow
-	 * definition assembly. Used for informational purposes.
-	 * @return the flow definition resource string
-	 */
-	String getFlowDefinitionResourceString();
+    /**
+     * Returns a descriptive string that identifies the source of this FlowDefinition. This is also a lightweight method
+     * callers may call to obtain the logical resource where the flow definition resides without triggering flow
+     * definition assembly. Used for informational purposes.
+     *
+     * @return the flow definition resource string
+     */
+    String getFlowDefinitionResourceString();
 
-	/**
-	 * Returns the flow definition held by this holder. Calling this method the first time may trigger flow assembly
-	 * (which may be expensive).
-	 * @throws FlowDefinitionConstructionException if there is a problem constructing the target flow definition
+    /**
+     * Returns the flow definition held by this holder. Calling this method the first time may trigger flow assembly
+     * (which may be expensive).
+     *
      * @return
-	 */
-	FlowDefinition getFlowDefinition() throws FlowDefinitionConstructionException;
+     * @throws FlowDefinitionConstructionException if there is a problem constructing the target flow definition
+     */
+    FlowDefinition getFlowDefinition() throws FlowDefinitionConstructionException;
 
-	/**
-	 * Refresh the flow definition held by this holder. Calling this method typically triggers flow re-assembly, which
-	 * may include a refresh from an externalized resource such as a file.
-	 * @throws FlowDefinitionConstructionException if there is a problem constructing the target flow definition
-	 */
-	void refresh() throws FlowDefinitionConstructionException;
+    /**
+     * Refresh the flow definition held by this holder. Calling this method typically triggers flow re-assembly, which
+     * may include a refresh from an externalized resource such as a file.
+     *
+     * @throws FlowDefinitionConstructionException if there is a problem constructing the target flow definition
+     */
+    void refresh() throws FlowDefinitionConstructionException;
 
-	/**
-	 * Indicates that the system is being shutdown and any resources flow resources should be released. After this
-	 * method is called, calls to {@link #getFlowDefinition()} are undefined. Should only be called once. May be a no-op
-	 * if the held flow was never constructed to begin with.
-	 */
-	void destroy();
+    /**
+     * Indicates that the system is being shutdown and any resources flow resources should be released. After this
+     * method is called, calls to {@link #getFlowDefinition()} are undefined. Should only be called once. May be a no-op
+     * if the held flow was never constructed to begin with.
+     */
+    void destroy();
 
 }

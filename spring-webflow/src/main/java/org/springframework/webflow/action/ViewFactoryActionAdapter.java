@@ -21,24 +21,26 @@ import org.springframework.webflow.execution.ViewFactory;
 
 /**
  * Simple adapter that adapts a view factory render cycle to the action interface.
+ *
  * @author Keith Donald
  */
 public class ViewFactoryActionAdapter extends AbstractAction {
 
-	private ViewFactory viewFactory;
+    private ViewFactory viewFactory;
 
-	/**
-	 * Creates a new view factory action adapter
-	 * @param viewFactory the view factory to adapt to the Action interface.
-	 */
-	public ViewFactoryActionAdapter(ViewFactory viewFactory) {
-		this.viewFactory = viewFactory;
-	}
+    /**
+     * Creates a new view factory action adapter
+     *
+     * @param viewFactory the view factory to adapt to the Action interface.
+     */
+    public ViewFactoryActionAdapter(ViewFactory viewFactory) {
+        this.viewFactory = viewFactory;
+    }
 
-	protected Event doExecute(RequestContext context) throws Exception {
-		if (viewFactory != null) {
-			viewFactory.getView(context).render();
-		}
-		return new Event(this, "success");
-	}
+    protected Event doExecute(RequestContext context) throws Exception {
+        if (viewFactory != null) {
+            viewFactory.getView(context).render();
+        }
+        return new Event(this, "success");
+    }
 }

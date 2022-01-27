@@ -15,13 +15,13 @@
  */
 package org.springframework.binding.expression.spel;
 
-import java.util.List;
-
 import org.springframework.binding.convert.ConversionService;
 import org.springframework.expression.EvaluationContext;
 import org.springframework.expression.PropertyAccessor;
 import org.springframework.expression.spel.support.DataBindingPropertyAccessor;
 import org.springframework.expression.spel.support.SimpleEvaluationContext;
+
+import java.util.List;
 
 /**
  * Creates {@link SimpleEvaluationContext}, for use with data binding.
@@ -31,37 +31,37 @@ import org.springframework.expression.spel.support.SimpleEvaluationContext;
  */
 public class SimpleEvaluationContextFactory implements EvaluationContextFactory {
 
-	private static final PropertyAccessor dataBindingPropertyAccessor =
-			DataBindingPropertyAccessor.forReadWriteAccess();
+    private static final PropertyAccessor dataBindingPropertyAccessor =
+        DataBindingPropertyAccessor.forReadWriteAccess();
 
 
-	private final List<PropertyAccessor> propertyAccessors;
+    private final List<PropertyAccessor> propertyAccessors;
 
-	private final ConversionService conversionService;
-
-
-	public SimpleEvaluationContextFactory(List<PropertyAccessor> propertyAccessors,
-			ConversionService conversionService) {
-
-		this.propertyAccessors = propertyAccessors;
-		this.conversionService = conversionService;
-	}
+    private final ConversionService conversionService;
 
 
-	@Override
-	public EvaluationContext createContext(Object rootObject) {
-		return SimpleEvaluationContext
-				.forPropertyAccessors(getAccessorsArray())
-				.withConversionService(conversionService.getDelegateConversionService())
-				.withRootObject(rootObject)
-				.build();
-	}
+    public SimpleEvaluationContextFactory(List<PropertyAccessor> propertyAccessors,
+                                          ConversionService conversionService) {
 
-	private PropertyAccessor[] getAccessorsArray() {
-		int length = propertyAccessors.size() + 1;
-		PropertyAccessor[] result = propertyAccessors.toArray(new PropertyAccessor[length]);
-		result[length - 1] = dataBindingPropertyAccessor;
-		return result;
-	}
+        this.propertyAccessors = propertyAccessors;
+        this.conversionService = conversionService;
+    }
+
+
+    @Override
+    public EvaluationContext createContext(Object rootObject) {
+        return SimpleEvaluationContext
+            .forPropertyAccessors(getAccessorsArray())
+            .withConversionService(conversionService.getDelegateConversionService())
+            .withRootObject(rootObject)
+            .build();
+    }
+
+    private PropertyAccessor[] getAccessorsArray() {
+        int length = propertyAccessors.size() + 1;
+        PropertyAccessor[] result = propertyAccessors.toArray(new PropertyAccessor[length]);
+        result[length - 1] = dataBindingPropertyAccessor;
+        return result;
+    }
 
 }

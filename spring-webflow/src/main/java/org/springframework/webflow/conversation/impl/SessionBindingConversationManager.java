@@ -31,123 +31,130 @@ import org.springframework.webflow.core.collection.SharedAttributeMap;
  * automatically end the oldest conversation. The default is 5, which should be fine for most situations. Set it to -1
  * for no limit. Setting maxConversations to 1 allows easy resource cleanup in situations where there should only be one
  * active conversation per session.
- * 
+ *
  * @author Erwin Vervaet
  */
 public class SessionBindingConversationManager implements ConversationManager {
 
-	/**
-	 * The name of the session attribute that will hold the conversation container used by this conversation manager.
-	 * 
-	 * To support multiple independent conversation containers in the same web application, for example, for use with
-	 * multiple flow executors each configured with their own session-binding conversation manager, set this field's
-	 * value to something unique.
-	 * @see #setSessionKey(String)
-	 */
-	private String sessionKey = "webflowConversationContainer";
+    /**
+     * The name of the session attribute that will hold the conversation container used by this conversation manager.
+     * <p>
+     * To support multiple independent conversation containers in the same web application, for example, for use with
+     * multiple flow executors each configured with their own session-binding conversation manager, set this field's
+     * value to something unique.
+     *
+     * @see #setSessionKey(String)
+     */
+    private String sessionKey = "webflowConversationContainer";
 
-	/**
-	 * The maximum number of active conversations allowed in a session. The default is 5. This is high enough for most
-	 * practical situations and low enough to avoid excessive resource usage or easy denial of service attacks.
-	 */
-	private int maxConversations = 5;
+    /**
+     * The maximum number of active conversations allowed in a session. The default is 5. This is high enough for most
+     * practical situations and low enough to avoid excessive resource usage or easy denial of service attacks.
+     */
+    private int maxConversations = 5;
 
-	/**
-	 * The lock timeout in seconds.
-	 */
-	private int lockTimeoutSeconds = 30;
+    /**
+     * The lock timeout in seconds.
+     */
+    private int lockTimeoutSeconds = 30;
 
-	/**
-	 * Returns the key this conversation manager uses to store conversation data in the session.
-	 * @return the session key
-	 */
-	public String getSessionKey() {
-		return sessionKey;
-	}
+    /**
+     * Returns the key this conversation manager uses to store conversation data in the session.
+     *
+     * @return the session key
+     */
+    public String getSessionKey() {
+        return sessionKey;
+    }
 
-	/**
-	 * Sets the key this conversation manager uses to store conversation data in the session. If multiple session
-	 * binding conversation managers are used in the same web application to back independent flow executors, this value
-	 * should be unique among them.
-	 * @param sessionKey the session key
-	 */
-	public void setSessionKey(String sessionKey) {
-		this.sessionKey = sessionKey;
-	}
+    /**
+     * Sets the key this conversation manager uses to store conversation data in the session. If multiple session
+     * binding conversation managers are used in the same web application to back independent flow executors, this value
+     * should be unique among them.
+     *
+     * @param sessionKey the session key
+     */
+    public void setSessionKey(String sessionKey) {
+        this.sessionKey = sessionKey;
+    }
 
-	/**
-	 * Returns the maximum number of allowed concurrent conversations. The default is 5.
+    /**
+     * Returns the maximum number of allowed concurrent conversations. The default is 5.
+     *
      * @return
      */
-	public int getMaxConversations() {
-		return maxConversations;
-	}
+    public int getMaxConversations() {
+        return maxConversations;
+    }
 
-	/**
-	 * Set the maximum number of allowed concurrent conversations. Set to -1 for no limit. The default is 5.
+    /**
+     * Set the maximum number of allowed concurrent conversations. Set to -1 for no limit. The default is 5.
+     *
      * @param maxConversations
      * @param maxConversations
      */
-	public void setMaxConversations(int maxConversations) {
-		this.maxConversations = maxConversations;
-	}
+    public void setMaxConversations(int maxConversations) {
+        this.maxConversations = maxConversations;
+    }
 
-	/**
-	 * Returns the time period that can elapse before a timeout occurs on an attempt to acquire a conversation lock. The
-	 * default is 30 seconds.
+    /**
+     * Returns the time period that can elapse before a timeout occurs on an attempt to acquire a conversation lock. The
+     * default is 30 seconds.
+     *
      * @return
      */
-	public int getLockTimeoutSeconds() {
-		return lockTimeoutSeconds;
-	}
+    public int getLockTimeoutSeconds() {
+        return lockTimeoutSeconds;
+    }
 
-	/**
-	 * Sets the time period that can elapse before a timeout occurs on an attempt to acquire a conversation lock. The
-	 * default is 30 seconds.
-	 * @param lockTimeoutSeconds the timeout period in seconds
-	 */
-	public void setLockTimeoutSeconds(int lockTimeoutSeconds) {
-		this.lockTimeoutSeconds = lockTimeoutSeconds;
-	}
+    /**
+     * Sets the time period that can elapse before a timeout occurs on an attempt to acquire a conversation lock. The
+     * default is 30 seconds.
+     *
+     * @param lockTimeoutSeconds the timeout period in seconds
+     */
+    public void setLockTimeoutSeconds(int lockTimeoutSeconds) {
+        this.lockTimeoutSeconds = lockTimeoutSeconds;
+    }
 
-	// implementing conversation manager
+    // implementing conversation manager
 
-	public Conversation beginConversation(ConversationParameters conversationParameters) throws ConversationException {
-		ConversationLock lock = new JdkConcurrentConversationLock(lockTimeoutSeconds);
-		return getConversationContainer().createConversation(conversationParameters, lock);
-	}
+    public Conversation beginConversation(ConversationParameters conversationParameters) throws ConversationException {
+        ConversationLock lock = new JdkConcurrentConversationLock(lockTimeoutSeconds);
+        return getConversationContainer().createConversation(conversationParameters, lock);
+    }
 
-	public Conversation getConversation(ConversationId id) throws ConversationException {
-		return getConversationContainer().getConversation(id);
-	}
+    public Conversation getConversation(ConversationId id) throws ConversationException {
+        return getConversationContainer().getConversation(id);
+    }
 
-	public ConversationId parseConversationId(String encodedId) throws ConversationException {
-		try {
-			return new SimpleConversationId(Integer.valueOf(encodedId));
-		} catch (NumberFormatException e) {
-			throw new BadlyFormattedConversationIdException(encodedId, e);
-		}
-	}
+    public ConversationId parseConversationId(String encodedId) throws ConversationException {
+        try {
+            return new SimpleConversationId(Integer.valueOf(encodedId));
+        } catch (NumberFormatException e) {
+            throw new BadlyFormattedConversationIdException(encodedId, e);
+        }
+    }
 
-	// hooks for subclassing
+    // hooks for subclassing
 
-	protected ConversationContainer createConversationContainer() {
-		return new ConversationContainer(maxConversations, sessionKey);
-	}
+    protected ConversationContainer createConversationContainer() {
+        return new ConversationContainer(maxConversations, sessionKey);
+    }
 
-	/**
-	 * Obtain the conversation container from the session. Create a new empty container and add it to the session if no
-	 * existing container can be found.
-	 */
-	protected final ConversationContainer getConversationContainer() {
-		SharedAttributeMap<Object> sessionMap = ExternalContextHolder.getExternalContext().getSessionMap();
-		synchronized (sessionMap.getMutex()) {
-			ConversationContainer container = (ConversationContainer) sessionMap.get(sessionKey);
-			if (container == null) {
-				container = createConversationContainer();
-				sessionMap.put(sessionKey, container);
-			}
-			return container;
-		}
-	}
+    /**
+     * Obtain the conversation container from the session. Create a new empty container and add it to the session if no
+     * existing container can be found.
+     */
+    protected final ConversationContainer getConversationContainer() {
+        SharedAttributeMap<Object> sessionMap = ExternalContextHolder.getExternalContext().getSessionMap();
+        synchronized (sessionMap.getMutex()) {
+            ConversationContainer container = (ConversationContainer) sessionMap.get(sessionKey);
+            if (container == null) {
+                container = createConversationContainer();
+                sessionMap.put(sessionKey, container);
+            }
+            return container;
+        }
+    }
 }

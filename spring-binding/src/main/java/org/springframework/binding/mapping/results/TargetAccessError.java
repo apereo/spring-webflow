@@ -23,51 +23,53 @@ import org.springframework.binding.mapping.Mapping;
 /**
  * Indicates an exception occurred accessing the target object to be mapped to. Used to report source
  * {@link PropertyNotFoundException} errors and general {@link EvaluationException} errors.
+ *
  * @author Keith Donald
  */
 public class TargetAccessError extends AbstractMappingResult {
 
-	private Object originalValue;
+    private Object originalValue;
 
-	private EvaluationException cause;
+    private EvaluationException cause;
 
-	/**
-	 * Creates a new target access error.
-	 * @param mapping
+    /**
+     * Creates a new target access error.
+     *
+     * @param mapping
      * @param mapping
      * @param originalValue the value that was attempted to be mapped
-	 * @param cause the underlying evaluation exception that occurred
-	 */
-	public TargetAccessError(Mapping mapping, Object originalValue, EvaluationException cause) {
-		super(mapping);
-		this.originalValue = originalValue;
-		this.cause = cause;
-	}
+     * @param cause         the underlying evaluation exception that occurred
+     */
+    public TargetAccessError(Mapping mapping, Object originalValue, EvaluationException cause) {
+        super(mapping);
+        this.originalValue = originalValue;
+        this.cause = cause;
+    }
 
-	public String getCode() {
-		if (cause instanceof PropertyNotFoundException) {
-			return "propertyNotFound";
-		} else if (cause instanceof ValueCoercionException) {
-			return "typeMismatch";
-		} else {
-			return "evaluationException";
-		}
-	}
+    public String getCode() {
+        if (cause instanceof PropertyNotFoundException) {
+            return "propertyNotFound";
+        } else if (cause instanceof ValueCoercionException) {
+            return "typeMismatch";
+        } else {
+            return "evaluationException";
+        }
+    }
 
-	public boolean isError() {
-		return true;
-	}
+    public boolean isError() {
+        return true;
+    }
 
-	public Throwable getErrorCause() {
-		return cause;
-	}
+    public Throwable getErrorCause() {
+        return cause;
+    }
 
-	public Object getOriginalValue() {
-		return originalValue;
-	}
+    public Object getOriginalValue() {
+        return originalValue;
+    }
 
-	public Object getMappedValue() {
-		return null;
-	}
+    public Object getMappedValue() {
+        return null;
+    }
 
 }

@@ -15,18 +15,18 @@
  */
 package org.springframework.webflow.engine.model;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit tests for {@link VarModel}.
  */
 public class VarModelTests {
 
-	@Test
-	public void testMergeable() {
-		VarModel child = new VarModel("name", "value");
-		assertTrue(child.isMergeableWith(child));
-	}
+    @Test
+    public void testMergeable() {
+        VarModel child = new VarModel("name", "value");
+        assertTrue(child.isMergeableWith(child));
+    }
 }

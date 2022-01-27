@@ -27,43 +27,43 @@ import org.springframework.webflow.execution.RequestContextHolder;
 
 /**
  * Spring EL PropertyAccessor for reading beans in a {@link org.springframework.beans.factory.BeanFactory}.
- * 
+ *
  * @author Rossen Stoyanchev
  * @since 2.1
  */
 public class BeanFactoryPropertyAccessor implements PropertyAccessor {
 
-	private static final BeanFactory EMPTY_BEAN_FACTORY = new StaticListableBeanFactory();
+    private static final BeanFactory EMPTY_BEAN_FACTORY = new StaticListableBeanFactory();
 
-	public Class<?>[] getSpecificTargetClasses() {
-		return null;
-	}
+    public Class<?>[] getSpecificTargetClasses() {
+        return null;
+    }
 
-	public boolean canRead(EvaluationContext context, Object target, String name) {
-		return getBeanFactory().containsBean(name);
-	}
+    public boolean canRead(EvaluationContext context, Object target, String name) {
+        return getBeanFactory().containsBean(name);
+    }
 
-	public TypedValue read(EvaluationContext context, Object target, String name) {
-		return new TypedValue(getBeanFactory().getBean(name));
-	}
+    public TypedValue read(EvaluationContext context, Object target, String name) {
+        return new TypedValue(getBeanFactory().getBean(name));
+    }
 
-	public boolean canWrite(EvaluationContext context, Object target, String name) {
-		return false;
-	}
+    public boolean canWrite(EvaluationContext context, Object target, String name) {
+        return false;
+    }
 
-	public void write(EvaluationContext context, Object target, String name, Object newValue) throws AccessException {
-		throw new AccessException("Beans in a BeanFactory are read-only");
-	}
+    public void write(EvaluationContext context, Object target, String name, Object newValue) throws AccessException {
+        throw new AccessException("Beans in a BeanFactory are read-only");
+    }
 
-	protected BeanFactory getBeanFactory() {
-		RequestContext requestContext = RequestContextHolder.getRequestContext();
-		if (requestContext != null) {
-			BeanFactory beanFactory = requestContext.getActiveFlow().getApplicationContext();
-			if (beanFactory != null) {
-				return beanFactory;
-			}
-		}
-		return EMPTY_BEAN_FACTORY;
-	}
+    protected BeanFactory getBeanFactory() {
+        RequestContext requestContext = RequestContextHolder.getRequestContext();
+        if (requestContext != null) {
+            BeanFactory beanFactory = requestContext.getActiveFlow().getApplicationContext();
+            if (beanFactory != null) {
+                return beanFactory;
+            }
+        }
+        return EMPTY_BEAN_FACTORY;
+    }
 
 }

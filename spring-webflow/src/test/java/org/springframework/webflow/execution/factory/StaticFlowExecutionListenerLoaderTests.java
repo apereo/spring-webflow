@@ -15,40 +15,43 @@
  */
 package org.springframework.webflow.execution.factory;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import org.junit.jupiter.api.Test;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.execution.FlowExecutionListener;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit tests for {@link StaticFlowExecutionListenerLoader}.
  */
 public class StaticFlowExecutionListenerLoaderTests {
 
-	private FlowExecutionListenerLoader loader = StaticFlowExecutionListenerLoader.EMPTY_INSTANCE;
+    private FlowExecutionListenerLoader loader = StaticFlowExecutionListenerLoader.EMPTY_INSTANCE;
 
-	@Test
-	public void testEmptyListenerArray() {
-		assertEquals(0, loader.getListeners(new Flow("foo")).length);
-		assertEquals(0, loader.getListeners(null).length);
-	}
+    @Test
+    public void testEmptyListenerArray() {
+        assertEquals(0, loader.getListeners(new Flow("foo")).length);
+        assertEquals(0, loader.getListeners(null).length);
+    }
 
-	@Test
-	public void testStaticListener() {
-		final FlowExecutionListener listener1 = new FlowExecutionListener() {};
-		loader = new StaticFlowExecutionListenerLoader(listener1);
-		assertEquals(listener1, loader.getListeners(new Flow("foo"))[0]);
-	}
+    @Test
+    public void testStaticListener() {
+        final FlowExecutionListener listener1 = new FlowExecutionListener() {
+        };
+        loader = new StaticFlowExecutionListenerLoader(listener1);
+        assertEquals(listener1, loader.getListeners(new Flow("foo"))[0]);
+    }
 
-	@Test
-	public void testStaticListeners() {
-		final FlowExecutionListener listener1 = new FlowExecutionListener() {};
-		final FlowExecutionListener listener2 = new FlowExecutionListener() {};
+    @Test
+    public void testStaticListeners() {
+        final FlowExecutionListener listener1 = new FlowExecutionListener() {
+        };
+        final FlowExecutionListener listener2 = new FlowExecutionListener() {
+        };
 
-		loader = new StaticFlowExecutionListenerLoader(listener1, listener2);
-		assertEquals(listener1, loader.getListeners(new Flow("foo"))[0]);
-		assertEquals(listener2, loader.getListeners(new Flow("foo"))[1]);
-	}
+        loader = new StaticFlowExecutionListenerLoader(listener1, listener2);
+        assertEquals(listener1, loader.getListeners(new Flow("foo"))[0]);
+        assertEquals(listener2, loader.getListeners(new Flow("foo"))[1]);
+    }
 
 }

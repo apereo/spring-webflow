@@ -1,16 +1,5 @@
 package org.springframework.webflow.mvc.view;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import java.beans.PropertyEditor;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.binding.convert.converters.StringToObject;
@@ -28,194 +17,207 @@ import org.springframework.webflow.TestBean;
 import org.springframework.webflow.engine.builder.BinderConfiguration;
 import org.springframework.webflow.engine.builder.BinderConfiguration.Binding;
 
+import java.beans.PropertyEditor;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static org.junit.jupiter.api.Assertions.*;
+
 public abstract class AbstractBindingModelTests {
 
-	BindingModel model;
-	DefaultMessageContext messages;
-	DefaultConversionService conversionService;
-	TestBean testBean;
-	ExpressionParser expressionParser;
+    BindingModel model;
 
-	@BeforeEach
-	public void setUp() {
-		testBean = new TestBean();
-		messages = new DefaultMessageContext();
-		conversionService = new DefaultConversionService();
-		expressionParser = getExpressionParser();
-		model = new BindingModel("testBean", testBean, expressionParser, conversionService, messages);
-	}
+    DefaultMessageContext messages;
 
-	protected abstract ExpressionParser getExpressionParser();
+    DefaultConversionService conversionService;
 
-	@Test
-	public void testInitialState() {
-		assertEquals(0, model.getErrorCount());
-		assertEquals(0, model.getFieldErrorCount());
-		assertEquals(0, model.getFieldErrorCount("datum1"));
-		assertEquals(0, model.getGlobalErrorCount());
-		assertEquals(0, model.getAllErrors().size());
-		assertEquals(0, model.getFieldErrors().size());
-		assertNull(model.getFieldError("datum1"));
-		assertEquals(String.class, model.getFieldType("datum1"));
-	}
+    TestBean testBean;
 
-	@Test
-	public void testGetValue() {
-		testBean.datum1 = "test";
-		assertEquals("test", model.getFieldValue("datum1"));
-	}
+    ExpressionParser expressionParser;
 
-	@Test
-	public void testGetConvertedValue() {
-		testBean.datum2 = 3;
-		assertEquals("3", model.getFieldValue("datum2"));
-	}
+    @BeforeEach
+    public void setUp() {
+        testBean = new TestBean();
+        messages = new DefaultMessageContext();
+        conversionService = new DefaultConversionService();
+        expressionParser = getExpressionParser();
+        model = new BindingModel("testBean", testBean, expressionParser, conversionService, messages);
+    }
 
-	@Test
-	public void testGetRawValue() {
-		testBean.datum2 = 3;
-		assertEquals(3, model.getRawFieldValue("datum2"));
-	}
+    @Test
+    public void testInitialState() {
+        assertEquals(0, model.getErrorCount());
+        assertEquals(0, model.getFieldErrorCount());
+        assertEquals(0, model.getFieldErrorCount("datum1"));
+        assertEquals(0, model.getGlobalErrorCount());
+        assertEquals(0, model.getAllErrors().size());
+        assertEquals(0, model.getFieldErrors().size());
+        assertNull(model.getFieldError("datum1"));
+        assertEquals(String.class, model.getFieldType("datum1"));
+    }
 
-	@Test
-	public void testGetFieldValueConvertedWithCustomConverter() {
-		testBean.datum2 = 3;
-		conversionService.addConverter("customConverter", new StringToObject(Integer.class) {
-			protected Object toObject(String string, Class<?> targetClass) throws Exception {
-				return Integer.valueOf(string);
-			}
+    @Test
+    public void testGetValue() {
+        testBean.datum1 = "test";
+        assertEquals("test", model.getFieldValue("datum1"));
+    }
 
-			protected String toString(Object object) throws Exception {
-				return "$" + object;
-			}
-		});
-		BinderConfiguration binder = new BinderConfiguration();
-		binder.addBinding(new Binding("datum2", "customConverter", true));
-		model.setBinderConfiguration(binder);
-		assertEquals("$3", model.getFieldValue("datum2"));
-	}
+    @Test
+    public void testGetConvertedValue() {
+        testBean.datum2 = 3;
+        assertEquals("3", model.getFieldValue("datum2"));
+    }
 
-	@Test
-	public void testGetFieldValueError() {
-		Map<String, String> source = new HashMap<>();
-		source.put("datum2", "bogus");
-		List<MappingResult> mappingResults = new ArrayList<>();
-		Mapping mapping = new Mapping() {
-			public Expression getSourceExpression() {
-				return expressionParser.parseExpression("datum2", null);
-			}
+    @Test
+    public void testGetRawValue() {
+        testBean.datum2 = 3;
+        assertEquals(3, model.getRawFieldValue("datum2"));
+    }
 
-			public Expression getTargetExpression() {
-				return expressionParser.parseExpression("datum2", null);
-			}
+    @Test
+    public void testGetFieldValueConvertedWithCustomConverter() {
+        testBean.datum2 = 3;
+        conversionService.addConverter("customConverter", new StringToObject(Integer.class) {
+            protected Object toObject(String string, Class<?> targetClass) throws Exception {
+                return Integer.valueOf(string);
+            }
 
-			public boolean isRequired() {
-				return true;
-			}
-		};
-		mappingResults.add(new TypeConversionError(mapping, "bogus", null));
-		DefaultMappingResults results = new DefaultMappingResults(source, testBean, mappingResults);
-		model.setMappingResults(results);
-		assertEquals("bogus", model.getFieldValue("datum2"));
-		// not offically an error until an actual error message is associated with field
-		assertEquals(0, model.getErrorCount());
-		assertEquals(0, model.getFieldErrorCount());
-	}
+            protected String toString(Object object) throws Exception {
+                return "$" + object;
+            }
+        });
+        BinderConfiguration binder = new BinderConfiguration();
+        binder.addBinding(new Binding("datum2", "customConverter", true));
+        model.setBinderConfiguration(binder);
+        assertEquals("$3", model.getFieldValue("datum2"));
+    }
 
-	@Test
-	public void testGetFieldError() {
-		messages.addMessage(new MessageBuilder().source("datum2").error().defaultText("Error").build());
-		assertEquals(1, model.getErrorCount());
-		assertEquals(1, model.getFieldErrorCount());
-		assertEquals(0, model.getGlobalErrorCount());
+    @Test
+    public void testGetFieldValueError() {
+        Map<String, String> source = new HashMap<>();
+        source.put("datum2", "bogus");
+        List<MappingResult> mappingResults = new ArrayList<>();
+        Mapping mapping = new Mapping() {
+            public Expression getSourceExpression() {
+                return expressionParser.parseExpression("datum2", null);
+            }
 
-		FieldError error = model.getFieldError("datum2");
-		assertEquals(null, error.getCode());
-		assertEquals(null, error.getCodes());
-		assertEquals(null, error.getArguments());
-		assertEquals("Error", error.getDefaultMessage());
-		// we dont track this
-		assertEquals(null, error.getRejectedValue());
-		assertTrue(!error.isBindingFailure());
+            public Expression getTargetExpression() {
+                return expressionParser.parseExpression("datum2", null);
+            }
 
-		FieldError error2 = model.getFieldErrors().get(0);
-		assertEquals(error, error2);
-	}
+            public boolean isRequired() {
+                return true;
+            }
+        };
+        mappingResults.add(new TypeConversionError(mapping, "bogus", null));
+        DefaultMappingResults results = new DefaultMappingResults(source, testBean, mappingResults);
+        model.setMappingResults(results);
+        assertEquals("bogus", model.getFieldValue("datum2"));
+        // not offically an error until an actual error message is associated with field
+        assertEquals(0, model.getErrorCount());
+        assertEquals(0, model.getFieldErrorCount());
+    }
 
-	@Test
-	public void testGetFieldErrorsWildcard() {
-		messages.addMessage(new MessageBuilder().source("datum2").error().defaultText("Error").build());
-		assertEquals(1, model.getFieldErrorCount("da*"));
-		FieldError error = model.getFieldError("da*");
-		assertEquals(null, error.getCode());
-		assertEquals(null, error.getCodes());
-		assertEquals(null, error.getArguments());
-		assertEquals("Error", error.getDefaultMessage());
-	}
+    @Test
+    public void testGetFieldError() {
+        messages.addMessage(new MessageBuilder().source("datum2").error().defaultText("Error").build());
+        assertEquals(1, model.getErrorCount());
+        assertEquals(1, model.getFieldErrorCount());
+        assertEquals(0, model.getGlobalErrorCount());
 
-	@Test
-	public void testFindPropertyEditor() {
-		PropertyEditor editor = model.findEditor("datum2", Integer.class);
-		assertNotNull(editor);
-		editor.setAsText((String) model.getFieldValue("datum2"));
-		assertEquals("0", editor.getAsText());
-	}
+        FieldError error = model.getFieldError("datum2");
+        assertEquals(null, error.getCode());
+        assertEquals(null, error.getCodes());
+        assertEquals(null, error.getArguments());
+        assertEquals("Error", error.getDefaultMessage());
+        // we dont track this
+        assertEquals(null, error.getRejectedValue());
+        assertTrue(!error.isBindingFailure());
 
-	@Test
-	public void testNestedPath() {
-		model = new BindingModel("nestedPathBean", new NestedPathBean(), expressionParser, conversionService, messages);
-		model.pushNestedPath("nestedBean");
-		assertEquals("test", model.getFieldValue("datum1"));
-		assertEquals("0", model.getFieldValue("datum2"));
-		Class<?> clazz = model.getFieldType("datum2");
-		assertTrue(int.class.equals(clazz) || Integer.class.equals(clazz));
+        FieldError error2 = model.getFieldErrors().get(0);
+        assertEquals(error, error2);
+    }
 
-		messages.addMessage(new MessageBuilder().source("nestedBean.datum2").error().defaultText("Error").build());
-		assertNotNull(model.getFieldErrors("datum2").get(0));
-		model.popNestedPath();
-		assertEquals("", model.getFieldValue("datum1"));
-	}
+    @Test
+    public void testGetFieldErrorsWildcard() {
+        messages.addMessage(new MessageBuilder().source("datum2").error().defaultText("Error").build());
+        assertEquals(1, model.getFieldErrorCount("da*"));
+        FieldError error = model.getFieldError("da*");
+        assertEquals(null, error.getCode());
+        assertEquals(null, error.getCodes());
+        assertEquals(null, error.getArguments());
+        assertEquals("Error", error.getDefaultMessage());
+    }
 
-	public static class NestedPathBean {
-		private String datum1 = "";
+    @Test
+    public void testFindPropertyEditor() {
+        PropertyEditor editor = model.findEditor("datum2", Integer.class);
+        assertNotNull(editor);
+        editor.setAsText((String) model.getFieldValue("datum2"));
+        assertEquals("0", editor.getAsText());
+    }
 
-		private NestedBean nestedBean = new NestedBean();
+    @Test
+    public void testNestedPath() {
+        model = new BindingModel("nestedPathBean", new NestedPathBean(), expressionParser, conversionService, messages);
+        model.pushNestedPath("nestedBean");
+        assertEquals("test", model.getFieldValue("datum1"));
+        assertEquals("0", model.getFieldValue("datum2"));
+        Class<?> clazz = model.getFieldType("datum2");
+        assertTrue(int.class.equals(clazz) || Integer.class.equals(clazz));
 
-		public String getDatum1() {
-			return datum1;
-		}
+        messages.addMessage(new MessageBuilder().source("nestedBean.datum2").error().defaultText("Error").build());
+        assertNotNull(model.getFieldErrors("datum2").get(0));
+        model.popNestedPath();
+        assertEquals("", model.getFieldValue("datum1"));
+    }
 
-		public void setDatum1(String datum1) {
-			this.datum1 = datum1;
-		}
+    protected abstract ExpressionParser getExpressionParser();
 
-		public NestedBean getNestedBean() {
-			return nestedBean;
-		}
+    public static class NestedPathBean {
+        private String datum1 = "";
 
-		public void setNestedBean(NestedBean nestedBean) {
-			this.nestedBean = nestedBean;
-		}
+        private NestedBean nestedBean = new NestedBean();
 
-		public static class NestedBean {
-			private String datum1 = "test";
-			private int datum2;
+        public String getDatum1() {
+            return datum1;
+        }
 
-			public int getDatum2() {
-				return datum2;
-			}
+        public void setDatum1(String datum1) {
+            this.datum1 = datum1;
+        }
 
-			public void setDatum2(int datum2) {
-				this.datum2 = datum2;
-			}
+        public NestedBean getNestedBean() {
+            return nestedBean;
+        }
 
-			public String getDatum1() {
-				return datum1;
-			}
+        public void setNestedBean(NestedBean nestedBean) {
+            this.nestedBean = nestedBean;
+        }
 
-			public void setDatum1(String datum1) {
-				this.datum1 = datum1;
-			}
-		}
-	}
+        public static class NestedBean {
+            private String datum1 = "test";
+
+            private int datum2;
+
+            public int getDatum2() {
+                return datum2;
+            }
+
+            public void setDatum2(int datum2) {
+                this.datum2 = datum2;
+            }
+
+            public String getDatum1() {
+                return datum1;
+            }
+
+            public void setDatum1(String datum1) {
+                this.datum1 = datum1;
+            }
+        }
+    }
 }

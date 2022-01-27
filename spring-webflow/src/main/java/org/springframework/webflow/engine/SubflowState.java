@@ -31,96 +31,98 @@ import org.springframework.webflow.execution.FlowExecutionException;
  * when the subflow is spawned. In addition, output data produced by the subflow may be mapped up to the parent flow
  * when the subflow ends and the parent flow resumes. See the {@link SubflowAttributeMapper} interface definition for
  * more information on how to do this. The logic for ending a subflow is located in the {@link EndState} implementation.
- * 
- * @see org.springframework.webflow.engine.SubflowAttributeMapper
- * @see org.springframework.webflow.engine.EndState
- * 
+ *
  * @author Keith Donald
  * @author Erwin Vervaet
+ * @see org.springframework.webflow.engine.SubflowAttributeMapper
+ * @see org.springframework.webflow.engine.EndState
  */
 public class SubflowState extends TransitionableState {
 
-	/**
-	 * The subflow that should be spawned when this subflow state is entered.
-	 */
-	private Expression subflow;
+    /**
+     * The subflow that should be spawned when this subflow state is entered.
+     */
+    private Expression subflow;
 
-	/**
-	 * The attribute mapper that should map attributes from the parent flow down to the spawned subflow and visa versa.
-	 */
-	private SubflowAttributeMapper subflowAttributeMapper;
+    /**
+     * The attribute mapper that should map attributes from the parent flow down to the spawned subflow and visa versa.
+     */
+    private SubflowAttributeMapper subflowAttributeMapper;
 
-	/**
-	 * Create a new subflow state.
-	 * @param flow the owning flow
-	 * @param id the state identifier (must be unique to the flow)
-	 * @param subflow the subflow to spawn
-	 * @throws IllegalArgumentException when this state cannot be added to given flow, e.g. because the id is not unique
-	 * @see #setAttributeMapper(SubflowAttributeMapper)
-	 */
-	public SubflowState(Flow flow, String id, Expression subflow) throws IllegalArgumentException {
-		super(flow, id);
-		setSubflow(subflow);
-	}
+    /**
+     * Create a new subflow state.
+     *
+     * @param flow    the owning flow
+     * @param id      the state identifier (must be unique to the flow)
+     * @param subflow the subflow to spawn
+     * @throws IllegalArgumentException when this state cannot be added to given flow, e.g. because the id is not unique
+     * @see #setAttributeMapper(SubflowAttributeMapper)
+     */
+    public SubflowState(Flow flow, String id, Expression subflow) throws IllegalArgumentException {
+        super(flow, id);
+        setSubflow(subflow);
+    }
 
-	/**
-	 * Set the subflow this state will call.
-	 */
-	private void setSubflow(Expression subflow) {
-		Assert.notNull(subflow, "A subflow state must have a subflow; the subflow is required");
-		this.subflow = subflow;
-	}
-
-	/**
-	 * Set the attribute mapper used to map model data between the parent and child flow.
+    /**
+     * Set the attribute mapper used to map model data between the parent and child flow.
+     *
      * @param attributeMapper
      * @param attributeMapper
      */
-	public void setAttributeMapper(SubflowAttributeMapper attributeMapper) {
-		this.subflowAttributeMapper = attributeMapper;
-	}
+    public void setAttributeMapper(SubflowAttributeMapper attributeMapper) {
+        this.subflowAttributeMapper = attributeMapper;
+    }
 
-	/**
-	 * Specialization of State's <code>doEnter</code> template method that executes behaviour specific to this state
-	 * type in polymorphic fashion.
-	 * <p>
-	 * Entering this state, creates the subflow input map and spawns the subflow in the current flow execution.
-	 * @param context the control context for the currently executing flow, used by this state to manipulate the flow
-	 * execution
-	 * @throws FlowExecutionException if an exception occurs in this state
-	 */
-	protected void doEnter(RequestControlContext context) throws FlowExecutionException {
-		MutableAttributeMap<Object> flowInput;
-		if (subflowAttributeMapper != null) {
-			flowInput = subflowAttributeMapper.createSubflowInput(context);
-		} else {
-			flowInput = new LocalAttributeMap<>();
-		}
-		Flow subflow = (Flow) this.subflow.getValue(context);
-		if (logger.isDebugEnabled()) {
-			logger.debug("Calling subflow '" + subflow.getId() + "' with input " + flowInput);
-		}
-		context.start(subflow, flowInput);
-	}
+    /**
+     * Called on completion of the subflow to handle the subflow result event as determined by the end state reached by
+     * the subflow.
+     */
+    public boolean handleEvent(RequestControlContext context) {
+        if (subflowAttributeMapper != null) {
+            AttributeMap<Object> subflowOutput = context.getCurrentEvent().getAttributes();
+            if (logger.isDebugEnabled()) {
+                logger.debug("Mapping subflow output " + subflowOutput);
+            }
+            subflowAttributeMapper.mapSubflowOutput(subflowOutput, context);
+        }
+        return super.handleEvent(context);
+    }
 
-	/**
-	 * Called on completion of the subflow to handle the subflow result event as determined by the end state reached by
-	 * the subflow.
-	 */
-	public boolean handleEvent(RequestControlContext context) {
-		if (subflowAttributeMapper != null) {
-			AttributeMap<Object> subflowOutput = context.getCurrentEvent().getAttributes();
-			if (logger.isDebugEnabled()) {
-				logger.debug("Mapping subflow output " + subflowOutput);
-			}
-			subflowAttributeMapper.mapSubflowOutput(subflowOutput, context);
-		}
-		return super.handleEvent(context);
-	}
+    /**
+     * Specialization of State's <code>doEnter</code> template method that executes behaviour specific to this state
+     * type in polymorphic fashion.
+     * <p>
+     * Entering this state, creates the subflow input map and spawns the subflow in the current flow execution.
+     *
+     * @param context the control context for the currently executing flow, used by this state to manipulate the flow
+     *                execution
+     * @throws FlowExecutionException if an exception occurs in this state
+     */
+    protected void doEnter(RequestControlContext context) throws FlowExecutionException {
+        MutableAttributeMap<Object> flowInput;
+        if (subflowAttributeMapper != null) {
+            flowInput = subflowAttributeMapper.createSubflowInput(context);
+        } else {
+            flowInput = new LocalAttributeMap<>();
+        }
+        Flow subflow = (Flow) this.subflow.getValue(context);
+        if (logger.isDebugEnabled()) {
+            logger.debug("Calling subflow '" + subflow.getId() + "' with input " + flowInput);
+        }
+        context.start(subflow, flowInput);
+    }
 
-	protected void appendToString(ToStringCreator creator) {
-		creator.append("subflow", subflow).append("subflowAttributeMapper", subflowAttributeMapper);
-		super.appendToString(creator);
-	}
+    protected void appendToString(ToStringCreator creator) {
+        creator.append("subflow", subflow).append("subflowAttributeMapper", subflowAttributeMapper);
+        super.appendToString(creator);
+    }
+
+    /**
+     * Set the subflow this state will call.
+     */
+    private void setSubflow(Expression subflow) {
+        Assert.notNull(subflow, "A subflow state must have a subflow; the subflow is required");
+        this.subflow = subflow;
+    }
 
 }

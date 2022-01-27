@@ -15,6 +15,8 @@
  */
 package org.springframework.binding.collection;
 
+import org.springframework.util.Assert;
+
 import java.io.Serializable;
 import java.lang.ref.Reference;
 import java.lang.ref.WeakReference;
@@ -28,8 +30,6 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
-
-import org.springframework.util.Assert;
 
 /**
  * A simple decorator for a Map, encapsulating the workflow for caching
@@ -46,265 +46,266 @@ import org.springframework.util.Assert;
 @SuppressWarnings("serial")
 public abstract class AbstractCachingMapDecorator<K, V> implements Map<K, V>, Serializable {
 
-	private static Object NULL_VALUE = new Object();
+    private static Object NULL_VALUE = new Object();
 
 
-	private final Map<K, Object> targetMap;
+    private final Map<K, Object> targetMap;
 
-	private final boolean synchronize;
+    private final boolean synchronize;
 
-	private final boolean weak;
-
-
-	/**
-	 * Create a CachingMapDecorator with strong keys,
-	 * using an underlying synchronized Map.
-	 */
-	public AbstractCachingMapDecorator() {
-		this(false);
-	}
-
-	/**
-	 * Create a CachingMapDecorator,
-	 * using an underlying synchronized Map.
-	 * @param weak whether to use weak references for keys and values
-	 */
-	public AbstractCachingMapDecorator(boolean weak) {
-		Map<K, Object> internalMap = (weak ? new WeakHashMap<>() : new HashMap<>());
-		this.targetMap = Collections.synchronizedMap(internalMap);
-		this.synchronize = true;
-		this.weak = weak;
-	}
-
-	/**
-	 * Create a CachingMapDecorator with initial size,
-	 * using an underlying synchronized Map.
-	 * @param weak whether to use weak references for keys and values
-	 * @param size the initial cache size
-	 */
-	public AbstractCachingMapDecorator(boolean weak, int size) {
-		Map<K, Object> internalMap = weak ? new WeakHashMap<>(size) : new HashMap<>(size);
-		this.targetMap = Collections.synchronizedMap(internalMap);
-		this.synchronize = true;
-		this.weak = weak;
-	}
-
-	/**
-	 * Create a CachingMapDecorator for the given Map.
-	 * <p>The passed-in Map won't get synchronized explicitly,
-	 * so make sure to pass in a properly synchronized Map, if desired.
-	 * @param targetMap the Map to decorate
-	 */
-	public AbstractCachingMapDecorator(Map<K, V> targetMap) {
-		this(targetMap, false, false);
-	}
-
-	/**
-	 * Create a CachingMapDecorator for the given Map.
-	 * <p>The passed-in Map won't get synchronized explicitly unless
-	 * you specify "synchronize" as "true".
-	 * @param targetMap the Map to decorate
-	 * @param synchronize whether to synchronize on the given Map
-	 * @param weak whether to use weak references for values
-	 */
-	@SuppressWarnings("unchecked")
-	public AbstractCachingMapDecorator(Map<K, V> targetMap, boolean synchronize, boolean weak) {
-		Assert.notNull(targetMap, "'targetMap' must not be null");
-		this.targetMap = (Map<K, Object>) (synchronize ? Collections.synchronizedMap(targetMap) : targetMap);
-		this.synchronize = synchronize;
-		this.weak = weak;
-	}
+    private final boolean weak;
 
 
-	public int size() {
-		return this.targetMap.size();
-	}
+    /**
+     * Create a CachingMapDecorator with strong keys,
+     * using an underlying synchronized Map.
+     */
+    public AbstractCachingMapDecorator() {
+        this(false);
+    }
 
-	public boolean isEmpty() {
-		return this.targetMap.isEmpty();
-	}
+    /**
+     * Create a CachingMapDecorator,
+     * using an underlying synchronized Map.
+     *
+     * @param weak whether to use weak references for keys and values
+     */
+    public AbstractCachingMapDecorator(boolean weak) {
+        Map<K, Object> internalMap = (weak ? new WeakHashMap<>() : new HashMap<>());
+        this.targetMap = Collections.synchronizedMap(internalMap);
+        this.synchronize = true;
+        this.weak = weak;
+    }
 
-	public boolean containsKey(Object key) {
-		return this.targetMap.containsKey(key);
-	}
+    /**
+     * Create a CachingMapDecorator with initial size,
+     * using an underlying synchronized Map.
+     *
+     * @param weak whether to use weak references for keys and values
+     * @param size the initial cache size
+     */
+    public AbstractCachingMapDecorator(boolean weak, int size) {
+        Map<K, Object> internalMap = weak ? new WeakHashMap<>(size) : new HashMap<>(size);
+        this.targetMap = Collections.synchronizedMap(internalMap);
+        this.synchronize = true;
+        this.weak = weak;
+    }
 
-	public boolean containsValue(Object value) {
-		Object valueToCheck = (value != null ? value : NULL_VALUE);
-		if (this.synchronize) {
-			synchronized (this.targetMap) {
-				return containsValueOrReference(valueToCheck);
-			}
-		}
-		else {
-			return containsValueOrReference(valueToCheck);
-		}
-	}
+    /**
+     * Create a CachingMapDecorator for the given Map.
+     * <p>The passed-in Map won't get synchronized explicitly,
+     * so make sure to pass in a properly synchronized Map, if desired.
+     *
+     * @param targetMap the Map to decorate
+     */
+    public AbstractCachingMapDecorator(Map<K, V> targetMap) {
+        this(targetMap, false, false);
+    }
 
-	private boolean containsValueOrReference(Object value) {
-		if (this.targetMap.containsValue(value)) {
-			return true;
-		}
-		for (Object mapVal : this.targetMap.values()) {
-			if (mapVal instanceof Reference && value.equals(((Reference) mapVal).get())) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	public V remove(Object key) {
-		return unwrapReturnValue(this.targetMap.remove(key));
-	}
-
-	@SuppressWarnings("unchecked")
-	private V unwrapReturnValue(Object value) {
-		Object returnValue = value;
-		if (returnValue instanceof Reference) {
-			returnValue = ((Reference) returnValue).get();
-		}
-		return (returnValue == NULL_VALUE ? null : (V) returnValue);
-	}
-
-	public void putAll(Map<? extends K, ? extends V> map) {
-		this.targetMap.putAll(map);
-	}
-
-	public void clear() {
-		this.targetMap.clear();
-	}
-
-	public Set<K> keySet() {
-		if (this.synchronize) {
-			synchronized (this.targetMap) {
-				return new LinkedHashSet<>(this.targetMap.keySet());
-			}
-		}
-		else {
-			return new LinkedHashSet<>(this.targetMap.keySet());
-		}
-	}
-
-	public Collection<V> values() {
-		if (this.synchronize) {
-			synchronized (this.targetMap) {
-				return valuesCopy();
-			}
-		}
-		else {
-			return valuesCopy();
-		}
-	}
-
-	@SuppressWarnings("unchecked")
-	private Collection<V> valuesCopy() {
-		LinkedList<V> values = new LinkedList<>();
-		for (Iterator<Object> it = this.targetMap.values().iterator(); it.hasNext();) {
-			Object value = it.next();
-			if (value instanceof Reference) {
-				value = ((Reference) value).get();
-				if (value == null) {
-					it.remove();
-					continue;
-				}
-			}
-			values.add(value == NULL_VALUE ? null : (V) value);
-		}
-		return values;
-	}
-
-	public Set<Map.Entry<K, V>> entrySet() {
-		if (this.synchronize) {
-			synchronized (this.targetMap) {
-				return entryCopy();
-			}
-		}
-		else {
-			return entryCopy();
-		}
-	}
-
-	@SuppressWarnings("unchecked")
-	private Set<Map.Entry<K, V>> entryCopy() {
-		Map<K,V> entries = new LinkedHashMap<>();
-		for (Iterator<Entry<K, Object>> it = this.targetMap.entrySet().iterator(); it.hasNext();) {
-			Entry<K, Object> entry = it.next();
-			Object value = entry.getValue();
-			if (value instanceof Reference) {
-				value = ((Reference) value).get();
-				if (value == null) {
-					it.remove();
-					continue;
-				}
-			}
-			entries.put(entry.getKey(), value == NULL_VALUE ? null : (V) value);
-		}
-		return entries.entrySet();
-	}
+    /**
+     * Create a CachingMapDecorator for the given Map.
+     * <p>The passed-in Map won't get synchronized explicitly unless
+     * you specify "synchronize" as "true".
+     *
+     * @param targetMap   the Map to decorate
+     * @param synchronize whether to synchronize on the given Map
+     * @param weak        whether to use weak references for values
+     */
+    @SuppressWarnings("unchecked")
+    public AbstractCachingMapDecorator(Map<K, V> targetMap, boolean synchronize, boolean weak) {
+        Assert.notNull(targetMap, "'targetMap' must not be null");
+        this.targetMap = (Map<K, Object>) (synchronize ? Collections.synchronizedMap(targetMap) : targetMap);
+        this.synchronize = synchronize;
+        this.weak = weak;
+    }
 
 
-	/**
-	 * Put an object into the cache, possibly wrapping it with a weak
-	 * reference.
-	 * @see #useWeakValue(Object, Object)
-	 */
-	public V put(K key, V value) {
-		Object newValue = value;
-		if (value == null) {
-			newValue = NULL_VALUE;
-		}
-		else if (useWeakValue(key, value)) {
-			newValue = new WeakReference<>(newValue);
-		}
-		return unwrapReturnValue(this.targetMap.put(key, newValue));
-	}
+    public int size() {
+        return this.targetMap.size();
+    }
 
-	/**
-	 * Decide whether to use a weak reference for the value of
-	 * the given key-value pair.
-	 * @param key the candidate key
-	 * @param value the candidate value
-	 * @return <code>true</code> in order to use a weak reference;
-	 * <code>false</code> otherwise.
-	 */
-	protected boolean useWeakValue(K key, V value) {
-		return this.weak;
-	}
+    public boolean isEmpty() {
+        return this.targetMap.isEmpty();
+    }
 
-	/**
-	 * Get value for key.
-	 * Creates and caches value if it doesn't already exist in the cache.
-	 * <p>This implementation is <i>not</i> synchronized: This is highly
-	 * concurrent but does not guarantee unique instances in the cache,
-	 * as multiple values for the same key could get created in parallel.
-	 * Consider overriding this method to synchronize it, if desired.
-	 * @see #create(Object)
-	 */
-	@SuppressWarnings("unchecked")
-	public V get(Object key) {
-		Object value = this.targetMap.get(key);
-		if (value instanceof Reference) {
-			value = ((Reference) value).get();
-		}
-		if (value == null) {
-			V newValue = create((K) key);
-			put((K) key, newValue);
-			return newValue;
-		}
-		return (value == NULL_VALUE ? null : (V) value);
-	}
+    public boolean containsKey(Object key) {
+        return this.targetMap.containsKey(key);
+    }
 
-	/**
-	 * Create a value to cache for the given key.
-	 * Called by <code>get</code> if there is no value cached already.
-	 * @param key the cache key
-	 * @see #get(Object)
-	 */
-	protected abstract V create(K key);
+    public boolean containsValue(Object value) {
+        Object valueToCheck = (value != null ? value : NULL_VALUE);
+        if (this.synchronize) {
+            synchronized (this.targetMap) {
+                return containsValueOrReference(valueToCheck);
+            }
+        } else {
+            return containsValueOrReference(valueToCheck);
+        }
+    }
 
+    public V remove(Object key) {
+        return unwrapReturnValue(this.targetMap.remove(key));
+    }
 
-	@Override
-	public String toString() {
-		return "CachingMapDecorator [" + getClass().getName() + "]:" + this.targetMap;
-	}
+    public void putAll(Map<? extends K, ? extends V> map) {
+        this.targetMap.putAll(map);
+    }
+
+    public void clear() {
+        this.targetMap.clear();
+    }
+
+    public Set<K> keySet() {
+        if (this.synchronize) {
+            synchronized (this.targetMap) {
+                return new LinkedHashSet<>(this.targetMap.keySet());
+            }
+        } else {
+            return new LinkedHashSet<>(this.targetMap.keySet());
+        }
+    }
+
+    public Collection<V> values() {
+        if (this.synchronize) {
+            synchronized (this.targetMap) {
+                return valuesCopy();
+            }
+        } else {
+            return valuesCopy();
+        }
+    }
+
+    public Set<Map.Entry<K, V>> entrySet() {
+        if (this.synchronize) {
+            synchronized (this.targetMap) {
+                return entryCopy();
+            }
+        } else {
+            return entryCopy();
+        }
+    }
+
+    /**
+     * Put an object into the cache, possibly wrapping it with a weak
+     * reference.
+     *
+     * @see #useWeakValue(Object, Object)
+     */
+    public V put(K key, V value) {
+        Object newValue = value;
+        if (value == null) {
+            newValue = NULL_VALUE;
+        } else if (useWeakValue(key, value)) {
+            newValue = new WeakReference<>(newValue);
+        }
+        return unwrapReturnValue(this.targetMap.put(key, newValue));
+    }
+
+    /**
+     * Get value for key.
+     * Creates and caches value if it doesn't already exist in the cache.
+     * <p>This implementation is <i>not</i> synchronized: This is highly
+     * concurrent but does not guarantee unique instances in the cache,
+     * as multiple values for the same key could get created in parallel.
+     * Consider overriding this method to synchronize it, if desired.
+     *
+     * @see #create(Object)
+     */
+    @SuppressWarnings("unchecked")
+    public V get(Object key) {
+        Object value = this.targetMap.get(key);
+        if (value instanceof Reference) {
+            value = ((Reference) value).get();
+        }
+        if (value == null) {
+            V newValue = create((K) key);
+            put((K) key, newValue);
+            return newValue;
+        }
+        return (value == NULL_VALUE ? null : (V) value);
+    }
+
+    @Override
+    public String toString() {
+        return "CachingMapDecorator [" + getClass().getName() + "]:" + this.targetMap;
+    }
+
+    /**
+     * Decide whether to use a weak reference for the value of
+     * the given key-value pair.
+     *
+     * @param key   the candidate key
+     * @param value the candidate value
+     * @return <code>true</code> in order to use a weak reference;
+     * <code>false</code> otherwise.
+     */
+    protected boolean useWeakValue(K key, V value) {
+        return this.weak;
+    }
+
+    /**
+     * Create a value to cache for the given key.
+     * Called by <code>get</code> if there is no value cached already.
+     *
+     * @param key the cache key
+     * @see #get(Object)
+     */
+    protected abstract V create(K key);
+
+    private boolean containsValueOrReference(Object value) {
+        if (this.targetMap.containsValue(value)) {
+            return true;
+        }
+        for (Object mapVal : this.targetMap.values()) {
+            if (mapVal instanceof Reference && value.equals(((Reference) mapVal).get())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @SuppressWarnings("unchecked")
+    private V unwrapReturnValue(Object value) {
+        Object returnValue = value;
+        if (returnValue instanceof Reference) {
+            returnValue = ((Reference) returnValue).get();
+        }
+        return (returnValue == NULL_VALUE ? null : (V) returnValue);
+    }
+
+    @SuppressWarnings("unchecked")
+    private Collection<V> valuesCopy() {
+        LinkedList<V> values = new LinkedList<>();
+        for (Iterator<Object> it = this.targetMap.values().iterator(); it.hasNext(); ) {
+            Object value = it.next();
+            if (value instanceof Reference) {
+                value = ((Reference) value).get();
+                if (value == null) {
+                    it.remove();
+                    continue;
+                }
+            }
+            values.add(value == NULL_VALUE ? null : (V) value);
+        }
+        return values;
+    }
+
+    @SuppressWarnings("unchecked")
+    private Set<Map.Entry<K, V>> entryCopy() {
+        Map<K, V> entries = new LinkedHashMap<>();
+        for (Iterator<Entry<K, Object>> it = this.targetMap.entrySet().iterator(); it.hasNext(); ) {
+            Entry<K, Object> entry = it.next();
+            Object value = entry.getValue();
+            if (value instanceof Reference) {
+                value = ((Reference) value).get();
+                if (value == null) {
+                    it.remove();
+                    continue;
+                }
+            }
+            entries.put(entry.getKey(), value == NULL_VALUE ? null : (V) value);
+        }
+        return entries.entrySet();
+    }
 
 }

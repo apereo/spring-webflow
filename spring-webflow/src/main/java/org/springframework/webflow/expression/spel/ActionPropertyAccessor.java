@@ -28,34 +28,33 @@ import org.springframework.webflow.execution.AnnotatedAction;
  * Spring EL Property Accessor that allows invocation of methods against a resolved Web Flow action, typically a
  * {@link MultiAction} in expressions.
  * </p>
- * 
- * @see org.springframework.webflow.action.EvaluateAction
- * 
+ *
  * @author Rossen Stoyanchev
+ * @see org.springframework.webflow.action.EvaluateAction
  * @since 2.1
  */
 public class ActionPropertyAccessor implements PropertyAccessor {
 
-	public Class<?>[] getSpecificTargetClasses() {
-		return new Class[] { Action.class };
-	}
+    public Class<?>[] getSpecificTargetClasses() {
+        return new Class[]{Action.class};
+    }
 
-	public boolean canRead(EvaluationContext context, Object target, String name) {
-		return true;
-	}
+    public boolean canRead(EvaluationContext context, Object target, String name) {
+        return true;
+    }
 
-	public TypedValue read(EvaluationContext context, Object target, String name) {
-		AnnotatedAction annotated = new AnnotatedAction((Action) target);
-		annotated.setMethod(name);
-		return new TypedValue(annotated);
-	}
+    public TypedValue read(EvaluationContext context, Object target, String name) {
+        AnnotatedAction annotated = new AnnotatedAction((Action) target);
+        annotated.setMethod(name);
+        return new TypedValue(annotated);
+    }
 
-	public boolean canWrite(EvaluationContext context, Object target, String name) {
-		return false;
-	}
+    public boolean canWrite(EvaluationContext context, Object target, String name) {
+        return false;
+    }
 
-	public void write(EvaluationContext context, Object target, String name, Object newValue) throws AccessException {
-		throw new AccessException("The Action cannot be set with an expression.");
-	}
+    public void write(EvaluationContext context, Object target, String name, Object newValue) throws AccessException {
+        throw new AccessException("The Action cannot be set with an expression.");
+    }
 
 }

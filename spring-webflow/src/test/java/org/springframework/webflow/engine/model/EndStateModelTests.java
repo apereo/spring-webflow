@@ -15,51 +15,49 @@
  */
 package org.springframework.webflow.engine.model;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.Test;
 
 import java.util.LinkedList;
 
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit tests for {@link EndStateModel}.
  */
 public class EndStateModelTests {
 
-	@Test
-	public void testMergeable() {
-		EndStateModel child = new EndStateModel("child");
-		assertTrue(child.isMergeableWith(child));
-	}
+    @Test
+    public void testMergeable() {
+        EndStateModel child = new EndStateModel("child");
+        assertTrue(child.isMergeableWith(child));
+    }
 
-	@Test
-	public void testNotMergeable() {
-		EndStateModel child = new EndStateModel("child");
-		EndStateModel parent = new EndStateModel("parent");
-		assertFalse(child.isMergeableWith(parent));
-	}
+    @Test
+    public void testNotMergeable() {
+        EndStateModel child = new EndStateModel("child");
+        EndStateModel parent = new EndStateModel("parent");
+        assertFalse(child.isMergeableWith(parent));
+    }
 
-	@Test
-	public void testNotMergeableWithNull() {
-		EndStateModel child = new EndStateModel("child");
-		assertFalse(child.isMergeableWith(null));
-	}
+    @Test
+    public void testNotMergeableWithNull() {
+        EndStateModel child = new EndStateModel("child");
+        assertFalse(child.isMergeableWith(null));
+    }
 
-	@Test
-	public void testMerge() {
-		EndStateModel child = new EndStateModel("child");
-		EndStateModel parent = new EndStateModel("child");
-		parent.setCommit("true");
-		parent.setView("view");
+    @Test
+    public void testMerge() {
+        EndStateModel child = new EndStateModel("child");
+        EndStateModel parent = new EndStateModel("child");
+        parent.setCommit("true");
+        parent.setView("view");
 
-		LinkedList<OutputModel> outputs = new LinkedList<>();
-		outputs.add(new OutputModel("foo", "bar"));
-		parent.setOutputs(outputs);
+        LinkedList<OutputModel> outputs = new LinkedList<>();
+        outputs.add(new OutputModel("foo", "bar"));
+        parent.setOutputs(outputs);
 
-		child.merge(parent);
-		assertEquals("true", child.getCommit());
-		assertEquals("bar", child.getOutputs().get(0).getValue());
-	}
+        child.merge(parent);
+        assertEquals("true", child.getCommit());
+        assertEquals("bar", child.getOutputs().get(0).getValue());
+    }
 }

@@ -15,48 +15,48 @@
  */
 package org.springframework.webflow.context.servlet;
 
-import java.util.Iterator;
-
 import jakarta.servlet.http.HttpServletRequest;
-
 import org.springframework.binding.collection.StringKeyedMapAdapter;
 import org.springframework.webflow.core.collection.CollectionUtils;
 
+import java.util.Iterator;
+
 /**
  * Map backed by the Servlet HTTP request attribute map for accessing request local attributes.
- * 
+ *
  * @author Keith Donald
  */
 public class HttpServletRequestMap extends StringKeyedMapAdapter<Object> {
 
-	/**
-	 * The wrapped HTTP request.
-	 */
-	private HttpServletRequest request;
+    /**
+     * The wrapped HTTP request.
+     */
+    private HttpServletRequest request;
 
-	/**
-	 * Create a new map wrapping the attributes of given request.
+    /**
+     * Create a new map wrapping the attributes of given request.
+     *
      * @param request
      * @param request
      */
-	public HttpServletRequestMap(HttpServletRequest request) {
-		this.request = request;
-	}
+    public HttpServletRequestMap(HttpServletRequest request) {
+        this.request = request;
+    }
 
-	protected Object getAttribute(String key) {
-		return request.getAttribute(key);
-	}
+    protected Object getAttribute(String key) {
+        return request.getAttribute(key);
+    }
 
-	protected void setAttribute(String key, Object value) {
-		request.setAttribute(key, value);
-	}
+    protected void setAttribute(String key, Object value) {
+        request.setAttribute(key, value);
+    }
 
-	protected void removeAttribute(String key) {
-		request.removeAttribute(key);
-	}
+    protected void removeAttribute(String key) {
+        request.removeAttribute(key);
+    }
 
-	@SuppressWarnings("unchecked")
-	protected Iterator<String> getAttributeNames() {
-		return CollectionUtils.toIterator(request.getAttributeNames());
-	}
+    @SuppressWarnings("unchecked")
+    protected Iterator<String> getAttributeNames() {
+        return CollectionUtils.toIterator(request.getAttributeNames());
+    }
 }

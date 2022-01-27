@@ -31,93 +31,97 @@ import org.springframework.webflow.engine.model.registry.FlowModelRegistryImpl;
  * Base class for flow integration tests that verify an XML flow definition executes as expected.
  * <p>
  * Example usage:
- * 
+ *
  * <pre>
  * public class SearchFlowExecutionTests extends AbstractXmlFlowExecutionTests {
- * 
+ *
  * 	protected FlowDefinitionResource getResource(FlowDefinitionResourceFactory resourceFactory) {
  * 		return resourceFactory.createClassPathResource(&quot;search-flow.xml&quot;, getClass());
- * 	}
- * 
+ *    }
+ *
  * 	public void testStartFlow() {
  * 		ExternalContext context = new MockExternalContext();
  * 		startFlow(context);
  * 		assertCurrentStateEquals(&quot;enterSearchCriteria&quot;);
- * 	}
- * 
+ *    }
+ *
  * 	protected void configureFlowBuilderContext(MockFlowBuilderContext builderContext) {
  * 		builderContext.registerBean(&quot;searchService&quot;, new TestSearchService());
- * 	}
- * 
+ *    }
+ *
  * }
  * </pre>
- * 
+ *
  * @author Keith Donald
  * @author Erwin Vervaet
  * @author Scott Andrews
  */
 public abstract class AbstractXmlFlowExecutionTests extends AbstractExternalizedFlowExecutionTests {
 
-	private FlowModelRegistry flowModelRegistry = new FlowModelRegistryImpl();
+    private FlowModelRegistry flowModelRegistry = new FlowModelRegistryImpl();
 
-	/**
-	 * Constructs a default XML flow execution test.
-	 * @see #setName(String)
-	 */
-	public AbstractXmlFlowExecutionTests() {
-		super();
-	}
+    /**
+     * Constructs a default XML flow execution test.
+     *
+     * @see #setName(String)
+     */
+    public AbstractXmlFlowExecutionTests() {
+        super();
+    }
 
-	/**
-	 * Constructs an XML flow execution test with given name.
-	 * @param name the name of the test
-	 */
-	public AbstractXmlFlowExecutionTests(String name) {
-		super(name);
-	}
+    /**
+     * Constructs an XML flow execution test with given name.
+     *
+     * @param name the name of the test
+     */
+    public AbstractXmlFlowExecutionTests(String name) {
+        super(name);
+    }
 
-	protected final FlowBuilder createFlowBuilder(FlowDefinitionResource resource) {
-		registerDependentFlowModels();
-		FlowModelBuilder modelBuilder = new XmlFlowModelBuilder(resource.getPath(), flowModelRegistry);
-		FlowModelHolder modelHolder = new DefaultFlowModelHolder(modelBuilder);
-		flowModelRegistry.registerFlowModel(resource.getId(), modelHolder);
-		return new FlowModelFlowBuilder(modelHolder) {
-			protected void registerFlowBeans(ConfigurableBeanFactory flowBeanFactory) {
-				registerMockFlowBeans(flowBeanFactory);
-			}
-		};
-	}
+    protected final FlowBuilder createFlowBuilder(FlowDefinitionResource resource) {
+        registerDependentFlowModels();
+        FlowModelBuilder modelBuilder = new XmlFlowModelBuilder(resource.getPath(), flowModelRegistry);
+        FlowModelHolder modelHolder = new DefaultFlowModelHolder(modelBuilder);
+        flowModelRegistry.registerFlowModel(resource.getId(), modelHolder);
+        return new FlowModelFlowBuilder(modelHolder) {
+            protected void registerFlowBeans(ConfigurableBeanFactory flowBeanFactory) {
+                registerMockFlowBeans(flowBeanFactory);
+            }
+        };
+    }
 
-	/**
-	 * Template method subclasses may override to return pointers to "flow model resources" needed to build the
-	 * definition of the flow being tested. Typically overridden when the flow being tested extends from another flow.
-	 * Default returns null, assuming no inheritance.
-	 * @param resourceFactory the resource factory
-	 * @return the flow definition model resources
-	 */
-	protected FlowDefinitionResource[] getModelResources(FlowDefinitionResourceFactory resourceFactory) {
-		return null;
-	}
+    /**
+     * Template method subclasses may override to return pointers to "flow model resources" needed to build the
+     * definition of the flow being tested. Typically overridden when the flow being tested extends from another flow.
+     * Default returns null, assuming no inheritance.
+     *
+     * @param resourceFactory the resource factory
+     * @return the flow definition model resources
+     */
+    protected FlowDefinitionResource[] getModelResources(FlowDefinitionResourceFactory resourceFactory) {
+        return null;
+    }
 
-	/**
-	 * Template method subclasses may override to register mock implementations of services used locally by the flow
-	 * being tested. By default, this method does nothing.
-	 * @param flowBeanFactory the local flow bean factory, you may register mock services with it using
-	 * {@link ConfigurableBeanFactory#registerSingleton(String, Object)}
-	 */
-	protected void registerMockFlowBeans(ConfigurableBeanFactory flowBeanFactory) {
-	}
+    /**
+     * Template method subclasses may override to register mock implementations of services used locally by the flow
+     * being tested. By default, this method does nothing.
+     *
+     * @param flowBeanFactory the local flow bean factory, you may register mock services with it using
+     *                        {@link ConfigurableBeanFactory#registerSingleton(String, Object)}
+     */
+    protected void registerMockFlowBeans(ConfigurableBeanFactory flowBeanFactory) {
+    }
 
-	// internal helpers
+    // internal helpers
 
-	private void registerDependentFlowModels() {
-		FlowDefinitionResource[] modelResources = getModelResources(getResourceFactory());
-		if (modelResources != null) {
-			for (FlowDefinitionResource modelResource : modelResources) {
-				FlowModelBuilder modelBuilder = new XmlFlowModelBuilder(modelResource.getPath(), flowModelRegistry);
-				flowModelRegistry.registerFlowModel(modelResource.getId(), new DefaultFlowModelHolder(modelBuilder));
-			}
-		}
-	}
+    private void registerDependentFlowModels() {
+        FlowDefinitionResource[] modelResources = getModelResources(getResourceFactory());
+        if (modelResources != null) {
+            for (FlowDefinitionResource modelResource : modelResources) {
+                FlowModelBuilder modelBuilder = new XmlFlowModelBuilder(modelResource.getPath(), flowModelRegistry);
+                flowModelRegistry.registerFlowModel(modelResource.getId(), new DefaultFlowModelHolder(modelBuilder));
+            }
+        }
+    }
 
 }

@@ -20,10 +20,11 @@ import org.springframework.webflow.core.collection.MutableAttributeMap;
 
 /**
  * Request {@link Scope scope} implementation.
+ *
  * @author Ben Hale
  */
 public class RequestScope extends AbstractWebFlowScope {
-	protected MutableAttributeMap<Object> getScope() {
-		return getRequiredRequestContext().getRequestScope();
-	}
+    protected MutableAttributeMap<Object> getScope() {
+        return getRequiredRequestContext().getRequestScope();
+    }
 }

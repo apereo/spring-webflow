@@ -21,51 +21,52 @@ import org.springframework.util.Assert;
 
 public class LiteralExpression implements Expression {
 
-	/**
-	 * The string literal.
-	 */
-	private String literal;
+    /**
+     * The string literal.
+     */
+    private String literal;
 
-	/**
-	 * Create a literal expression for the given literal.
-	 * @param literal the literal
-	 */
-	public LiteralExpression(String literal) {
-		Assert.notNull(literal, "The literal is required");
-		this.literal = literal;
-	}
+    /**
+     * Create a literal expression for the given literal.
+     *
+     * @param literal the literal
+     */
+    public LiteralExpression(String literal) {
+        Assert.notNull(literal, "The literal is required");
+        this.literal = literal;
+    }
 
-	public int hashCode() {
-		return literal.hashCode();
-	}
+    public int hashCode() {
+        return literal.hashCode();
+    }
 
-	public boolean equals(Object o) {
-		if (!(o instanceof LiteralExpression)) {
-			return false;
-		}
-		LiteralExpression other = (LiteralExpression) o;
-		return literal.equals(other.literal);
-	}
+    public boolean equals(Object o) {
+        if (!(o instanceof LiteralExpression)) {
+            return false;
+        }
+        LiteralExpression other = (LiteralExpression) o;
+        return literal.equals(other.literal);
+    }
 
-	public Object getValue(Object context) throws EvaluationException {
-		return literal;
-	}
+    public Object getValue(Object context) throws EvaluationException {
+        return literal;
+    }
 
-	public void setValue(Object context, Object value) throws EvaluationException {
-		throw new UnsupportedOperationException(
-				"Cannot set a literal expression value.  Are you attempting to set a property expression?  "
-						+ "If so, should the expression string be enclosed in eval delimiters?");
-	}
+    public void setValue(Object context, Object value) throws EvaluationException {
+        throw new UnsupportedOperationException(
+            "Cannot set a literal expression value.  Are you attempting to set a property expression?  "
+            + "If so, should the expression string be enclosed in eval delimiters?");
+    }
 
-	public Class<?> getValueType(Object context) {
-		return String.class;
-	}
+    public Class<?> getValueType(Object context) {
+        return String.class;
+    }
 
-	public String getExpressionString() {
-		return null;
-	}
+    public String getExpressionString() {
+        return null;
+    }
 
-	public String toString() {
-		return literal;
-	}
+    public String toString() {
+        return literal;
+    }
 }

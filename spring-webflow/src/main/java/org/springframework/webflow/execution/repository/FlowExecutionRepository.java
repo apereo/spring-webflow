@@ -27,72 +27,75 @@ import org.springframework.webflow.execution.FlowExecutionKey;
  * <p>
  * When placed in a repository a {@link FlowExecution} object representing the state of a flow at a point in time is
  * indexed under a unique {@link FlowExecutionKey}.
- * 
- * @see FlowExecution
- * @see FlowExecutionKey
- * 
+ *
  * @author Erwin Vervaet
  * @author Keith Donald
+ * @see FlowExecution
+ * @see FlowExecutionKey
  */
 public interface FlowExecutionRepository {
 
-	/**
-	 * Parse the string-encoded flow execution key into its object form. Essentially, the reverse of
-	 * {@link FlowExecutionKey#toString()}.
-	 * @param encodedKey the string encoded key
-	 * @return the parsed flow execution key, the persistent identifier for exactly one flow execution
+    /**
+     * Parse the string-encoded flow execution key into its object form. Essentially, the reverse of
+     * {@link FlowExecutionKey#toString()}.
+     *
+     * @param encodedKey the string encoded key
+     * @return the parsed flow execution key, the persistent identifier for exactly one flow execution
      * @throws FlowExecutionRepositoryException
      * @throws FlowExecutionRepositoryException
-	 */
-	FlowExecutionKey parseFlowExecutionKey(String encodedKey) throws FlowExecutionRepositoryException;
+     */
+    FlowExecutionKey parseFlowExecutionKey(String encodedKey) throws FlowExecutionRepositoryException;
 
-	/**
-	 * Return the lock for the flow execution, allowing for the lock to be acquired or released. Caution: care should be
-	 * made not to allow for a deadlock situation. If you acquire a lock make sure you release it when you are done. The
-	 * general pattern for safely doing work against a locked conversation follows:
-	 * 
-	 * <pre>
-	 * FlowExecutionLock lock = repository.getLock(key);
-	 * lock.lock();
-	 * try {
-	 * 	FlowExecution execution = repository.getFlowExecution(key);
-	 * 	// do work
-	 * } finally {
-	 * 	lock.unlock();
-	 * }
-	 * </pre>
-	 * 
-	 * @param key the identifier of the flow execution to lock
-	 * @return the lock
-	 * @throws FlowExecutionRepositoryException a problem occurred accessing the lock object
-	 */
-	FlowExecutionLock getLock(FlowExecutionKey key) throws FlowExecutionRepositoryException;
+    /**
+     * Return the lock for the flow execution, allowing for the lock to be acquired or released. Caution: care should be
+     * made not to allow for a deadlock situation. If you acquire a lock make sure you release it when you are done. The
+     * general pattern for safely doing work against a locked conversation follows:
+     *
+     * <pre>
+     * FlowExecutionLock lock = repository.getLock(key);
+     * lock.lock();
+     * try {
+     * 	FlowExecution execution = repository.getFlowExecution(key);
+     * 	// do work
+     * } finally {
+     * 	lock.unlock();
+     * }
+     * </pre>
+     *
+     * @param key the identifier of the flow execution to lock
+     * @return the lock
+     * @throws FlowExecutionRepositoryException a problem occurred accessing the lock object
+     */
+    FlowExecutionLock getLock(FlowExecutionKey key) throws FlowExecutionRepositoryException;
 
-	/**
-	 * Return the <code>FlowExecution</code> indexed by the provided key. The returned flow execution represents the
-	 * restored state of an executing flow from a point in time. This should be called to resume a persistent flow
-	 * execution. Before calling this method, you should acquire the lock for the keyed flow execution.
-	 * @param key the flow execution key
-	 * @return the flow execution, fully hydrated and ready to resume
-	 * @throws FlowExecutionRepositoryException if no flow execution was indexed with the key provided
-	 */
-	FlowExecution getFlowExecution(FlowExecutionKey key) throws FlowExecutionRepositoryException;
+    /**
+     * Return the <code>FlowExecution</code> indexed by the provided key. The returned flow execution represents the
+     * restored state of an executing flow from a point in time. This should be called to resume a persistent flow
+     * execution. Before calling this method, you should acquire the lock for the keyed flow execution.
+     *
+     * @param key the flow execution key
+     * @return the flow execution, fully hydrated and ready to resume
+     * @throws FlowExecutionRepositoryException if no flow execution was indexed with the key provided
+     */
+    FlowExecution getFlowExecution(FlowExecutionKey key) throws FlowExecutionRepositoryException;
 
-	/**
-	 * Place the <code>FlowExecution</code> in this repository under the provided key. This should be called to save or
-	 * update the persistent state of an active (but paused) flow execution. Before calling this method, you should
-	 * acquire the lock for the keyed flow execution.
-	 * @param flowExecution the flow execution
-	 * @throws FlowExecutionRepositoryException the flow execution could not be stored
-	 */
-	void putFlowExecution(FlowExecution flowExecution) throws FlowExecutionRepositoryException;
+    /**
+     * Place the <code>FlowExecution</code> in this repository under the provided key. This should be called to save or
+     * update the persistent state of an active (but paused) flow execution. Before calling this method, you should
+     * acquire the lock for the keyed flow execution.
+     *
+     * @param flowExecution the flow execution
+     * @throws FlowExecutionRepositoryException the flow execution could not be stored
+     */
+    void putFlowExecution(FlowExecution flowExecution) throws FlowExecutionRepositoryException;
 
-	/**
-	 * Remove the flow execution from the repository. This should be called when the flow execution ends (is no longer
-	 * active). Before calling this method, you should acquire the lock for the keyed flow execution.
-	 * @param flowExecution the flow execution
-	 * @throws FlowExecutionRepositoryException the flow execution could not be removed.
-	 */
-	void removeFlowExecution(FlowExecution flowExecution) throws FlowExecutionRepositoryException;
+    /**
+     * Remove the flow execution from the repository. This should be called when the flow execution ends (is no longer
+     * active). Before calling this method, you should acquire the lock for the keyed flow execution.
+     *
+     * @param flowExecution the flow execution
+     * @throws FlowExecutionRepositoryException the flow execution could not be removed.
+     */
+    void removeFlowExecution(FlowExecution flowExecution) throws FlowExecutionRepositoryException;
 
 }

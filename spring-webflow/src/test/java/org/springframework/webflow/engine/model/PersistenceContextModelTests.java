@@ -15,19 +15,19 @@
  */
 package org.springframework.webflow.engine.model;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit tests for {@link PersistenceContextModel}.
  */
 public class PersistenceContextModelTests {
 
-	@Test
-	public void testNotMergeable() {
-		PersistenceContextModel child = new PersistenceContextModel();
-		assertFalse(child.isMergeableWith(child));
-	}
+    @Test
+    public void testNotMergeable() {
+        PersistenceContextModel child = new PersistenceContextModel();
+        assertFalse(child.isMergeableWith(child));
+    }
 
 }

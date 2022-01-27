@@ -51,162 +51,180 @@ import org.springframework.webflow.definition.TransitionDefinition;
  * <p>
  * Note: this request context is in no way linked to an HTTP request. It uses the familiar "request" naming
  * convention to indicate a single call to manipulate a runtime execution of a flow definition.
- * 
+ *
  * @author Keith Donald
  * @author Erwin Vervaet
  */
 public interface RequestContext {
 
-	/**
-	 * Returns the definition of the flow that is currently executing.
-	 * @return the flow definition for the active session
-	 * @throws IllegalStateException if the flow execution is not active
-	 * @see FlowExecutionContext#isActive()
-	 */
-	FlowDefinition getActiveFlow() throws IllegalStateException;
+    /**
+     * Returns the definition of the flow that is currently executing.
+     *
+     * @return the flow definition for the active session
+     * @throws IllegalStateException if the flow execution is not active
+     * @see FlowExecutionContext#isActive()
+     */
+    FlowDefinition getActiveFlow() throws IllegalStateException;
 
-	/**
-	 * Returns the current state of the executing flow. Returns <code>null</code> if the active flow's start state has
-	 * not yet been entered.
-	 * @return the current state, or <code>null</code> if in the process of starting
-	 * @throws IllegalStateException if this flow execution is not active
-	 * @see FlowExecutionContext#isActive()
-	 */
-	StateDefinition getCurrentState() throws IllegalStateException;
+    /**
+     * Returns the current state of the executing flow. Returns <code>null</code> if the active flow's start state has
+     * not yet been entered.
+     *
+     * @return the current state, or <code>null</code> if in the process of starting
+     * @throws IllegalStateException if this flow execution is not active
+     * @see FlowExecutionContext#isActive()
+     */
+    StateDefinition getCurrentState() throws IllegalStateException;
 
-	/**
-	 * Returns the transition that would execute on the occurrence of the given event.
-	 * @param eventId the id of the user event
-	 * @return the transition that would trigger, or <code>null</code> if no transition matches
-	 * @throws IllegalStateException if this flow execution is not active
-	 * @see FlowExecutionContext#isActive()
-	 */
-	TransitionDefinition getMatchingTransition(String eventId) throws IllegalStateException;
+    /**
+     * Returns the transition that would execute on the occurrence of the given event.
+     *
+     * @param eventId the id of the user event
+     * @return the transition that would trigger, or <code>null</code> if no transition matches
+     * @throws IllegalStateException if this flow execution is not active
+     * @see FlowExecutionContext#isActive()
+     */
+    TransitionDefinition getMatchingTransition(String eventId) throws IllegalStateException;
 
-	/**
-	 * Returns true if the flow is currently active and in a view state. When in a view state {@link #getViewScope()},
-	 * can be safely called.
-	 * @see #getViewScope()
-	 * @return true if in a view state, false if not
-	 */
-	boolean inViewState();
+    /**
+     * Returns true if the flow is currently active and in a view state. When in a view state {@link #getViewScope()},
+     * can be safely called.
+     *
+     * @return true if in a view state, false if not
+     * @see #getViewScope()
+     */
+    boolean inViewState();
 
-	/**
-	 * Returns a mutable map for accessing and/or setting attributes in request scope. <b>Request scoped attributes
-	 * exist for the duration of this request only.</b>
-	 * @return the request scope
-	 */
-	MutableAttributeMap<Object> getRequestScope();
+    /**
+     * Returns a mutable map for accessing and/or setting attributes in request scope. <b>Request scoped attributes
+     * exist for the duration of this request only.</b>
+     *
+     * @return the request scope
+     */
+    MutableAttributeMap<Object> getRequestScope();
 
-	/**
-	 * Returns a mutable map for accessing and/or setting attributes in flash scope. <b>Flash scoped attributes exist
-	 * until the next event is signaled in the flow execution.</b>
-	 * @return the flash scope
-	 */
-	MutableAttributeMap<Object> getFlashScope();
+    /**
+     * Returns a mutable map for accessing and/or setting attributes in flash scope. <b>Flash scoped attributes exist
+     * until the next event is signaled in the flow execution.</b>
+     *
+     * @return the flash scope
+     */
+    MutableAttributeMap<Object> getFlashScope();
 
-	/**
-	 * Returns a mutable map for accessing and/or setting attributes in view scope. <b>View scoped attributes exist for
-	 * the life of the current view state.</b>
-	 * @return the view scope
-	 * @see #inViewState()
-	 * @throws IllegalStateException if this flow is not in a view-state or the flow execution is not active
-	 * @see FlowExecutionContext#isActive()
-	 */
-	MutableAttributeMap<Object> getViewScope() throws IllegalStateException;
+    /**
+     * Returns a mutable map for accessing and/or setting attributes in view scope. <b>View scoped attributes exist for
+     * the life of the current view state.</b>
+     *
+     * @return the view scope
+     * @throws IllegalStateException if this flow is not in a view-state or the flow execution is not active
+     * @see #inViewState()
+     * @see FlowExecutionContext#isActive()
+     */
+    MutableAttributeMap<Object> getViewScope() throws IllegalStateException;
 
-	/**
-	 * Returns a mutable map for accessing and/or setting attributes in flow scope. <b>Flow scoped attributes exist for
-	 * the life of the active flow session.</b>
-	 * @return the flow scope
-	 * @see FlowSession
-	 * @throws IllegalStateException if the flow execution is not active
-	 * @see FlowExecutionContext#isActive()
-	 */
-	MutableAttributeMap<Object> getFlowScope() throws IllegalStateException;
+    /**
+     * Returns a mutable map for accessing and/or setting attributes in flow scope. <b>Flow scoped attributes exist for
+     * the life of the active flow session.</b>
+     *
+     * @return the flow scope
+     * @throws IllegalStateException if the flow execution is not active
+     * @see FlowSession
+     * @see FlowExecutionContext#isActive()
+     */
+    MutableAttributeMap<Object> getFlowScope() throws IllegalStateException;
 
-	/**
-	 * Returns a mutable accessor for accessing and/or setting attributes in conversation scope. <b>Conversation scoped
-	 * attributes exist for the life of the executing flow and are shared across all flow sessions.</b>
-	 * @return the conversation scope
-	 * @see FlowExecutionContext
-	 */
-	MutableAttributeMap<Object> getConversationScope();
+    /**
+     * Returns a mutable accessor for accessing and/or setting attributes in conversation scope. <b>Conversation scoped
+     * attributes exist for the life of the executing flow and are shared across all flow sessions.</b>
+     *
+     * @return the conversation scope
+     * @see FlowExecutionContext
+     */
+    MutableAttributeMap<Object> getConversationScope();
 
-	/**
-	 * Returns the immutable input parameters associated with this request into Spring Web Flow. The map returned is
-	 * immutable and cannot be changed.
-	 * <p>
-	 * This is typically a convenient shortcut for accessing the {@link ExternalContext#getRequestParameterMap()}
-	 * directly.
-	 * @see #getExternalContext()
+    /**
+     * Returns the immutable input parameters associated with this request into Spring Web Flow. The map returned is
+     * immutable and cannot be changed.
+     * <p>
+     * This is typically a convenient shortcut for accessing the {@link ExternalContext#getRequestParameterMap()}
+     * directly.
+     *
      * @return
-	 */
-	ParameterMap getRequestParameters();
+     * @see #getExternalContext()
+     */
+    ParameterMap getRequestParameters();
 
-	/**
-	 * Returns the external client context that originated (or triggered) this request.
-	 * <p>
-	 * Acting as a facade, the returned context object provides a single point of access to the calling client's
-	 * environment. It provides normalized access to attributes of the client environment without tying you to specific
-	 * constructs within that environment.
-	 * <p>
-	 * In addition, this context may be downcastable to a specific context type for a specific client environment, such
-	 * as Servlets. Such downcasting will give you full access to a native HttpServletRequest, for example.
-	 * With that said, for portability reasons you should avoid coupling your flow artifacts to a specific deployment
-	 * environment when possible.
-	 * @return the originating external context, the one that triggered the current execution request
-	 */
-	ExternalContext getExternalContext();
+    /**
+     * Returns the external client context that originated (or triggered) this request.
+     * <p>
+     * Acting as a facade, the returned context object provides a single point of access to the calling client's
+     * environment. It provides normalized access to attributes of the client environment without tying you to specific
+     * constructs within that environment.
+     * <p>
+     * In addition, this context may be downcastable to a specific context type for a specific client environment, such
+     * as Servlets. Such downcasting will give you full access to a native HttpServletRequest, for example.
+     * With that said, for portability reasons you should avoid coupling your flow artifacts to a specific deployment
+     * environment when possible.
+     *
+     * @return the originating external context, the one that triggered the current execution request
+     */
+    ExternalContext getExternalContext();
 
-	/**
-	 * Returns the message context of this request. Useful for recording messages during the course of flow execution
-	 * for display to the client.
-	 * @return the message context
-	 */
-	MessageContext getMessageContext();
+    /**
+     * Returns the message context of this request. Useful for recording messages during the course of flow execution
+     * for display to the client.
+     *
+     * @return the message context
+     */
+    MessageContext getMessageContext();
 
-	/**
-	 * Returns contextual information about the flow execution itself. Information in this context typically spans more
-	 * than one request.
-	 * @return the flow execution context
-	 */
-	FlowExecutionContext getFlowExecutionContext();
+    /**
+     * Returns contextual information about the flow execution itself. Information in this context typically spans more
+     * than one request.
+     *
+     * @return the flow execution context
+     */
+    FlowExecutionContext getFlowExecutionContext();
 
-	/**
-	 * Returns the current event being processed by this flow. The event may or may not have caused a state transition
-	 * to happen.
-	 * @return the current event, or null if no event has been signaled yet
-	 */
-	Event getCurrentEvent();
+    /**
+     * Returns the current event being processed by this flow. The event may or may not have caused a state transition
+     * to happen.
+     *
+     * @return the current event, or null if no event has been signaled yet
+     */
+    Event getCurrentEvent();
 
-	/**
-	 * Returns the current transition executing in this request.
-	 * @return the current transition, or <code>null</code> if no transition has occurred yet
-	 */
-	TransitionDefinition getCurrentTransition();
+    /**
+     * Returns the current transition executing in this request.
+     *
+     * @return the current transition, or <code>null</code> if no transition has occurred yet
+     */
+    TransitionDefinition getCurrentTransition();
 
-	/**
-	 * Returns the current view in use; if not null, the view returned is about to be rendered, is rendering, is
-	 * processing a user event, or has finished user event processing and the current ViewState is exiting due to a
-	 * state transition. Returns <code>null</code> if the flow is not in a view state.
-	 * @return the current view, or <code>null</code> if the flow is not in a view state
-	 */
-	View getCurrentView();
+    /**
+     * Returns the current view in use; if not null, the view returned is about to be rendered, is rendering, is
+     * processing a user event, or has finished user event processing and the current ViewState is exiting due to a
+     * state transition. Returns <code>null</code> if the flow is not in a view state.
+     *
+     * @return the current view, or <code>null</code> if the flow is not in a view state
+     */
+    View getCurrentView();
 
-	/**
-	 * Returns a context map for accessing attributes about the state of the current request. These attributes may be
-	 * used to influence flow execution behavior.
-	 * @return the current attributes of this request, or empty if none are set
-	 */
-	MutableAttributeMap<Object> getAttributes();
+    /**
+     * Returns a context map for accessing attributes about the state of the current request. These attributes may be
+     * used to influence flow execution behavior.
+     *
+     * @return the current attributes of this request, or empty if none are set
+     */
+    MutableAttributeMap<Object> getAttributes();
 
-	/**
-	 * Returns the URL of this flow execution. Needed by response writers that write out the URL of this flow execution
-	 * to allow calling back this execution in a subsequent request.
-	 * @throws IllegalStateException if the flow execution has not yet had its key assigned
-	 * @return the flow execution URL
-	 */
-	String getFlowExecutionUrl() throws IllegalStateException;
+    /**
+     * Returns the URL of this flow execution. Needed by response writers that write out the URL of this flow execution
+     * to allow calling back this execution in a subsequent request.
+     *
+     * @return the flow execution URL
+     * @throws IllegalStateException if the flow execution has not yet had its key assigned
+     */
+    String getFlowExecutionUrl() throws IllegalStateException;
 
 }

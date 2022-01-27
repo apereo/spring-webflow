@@ -28,75 +28,75 @@ import org.springframework.webflow.engine.model.registry.FlowModelHolder;
  * This class is thread-safe.
  * <p>
  * Note that this {@link FlowModel} holder uses a {@link FlowModelBuilder}.
- * 
- * @see FlowModel
- * 
+ *
  * @author Keith Donald
  * @author Scott Andrews
+ * @see FlowModel
  */
 public class DefaultFlowModelHolder implements FlowModelHolder {
 
-	private FlowModel flowModel;
+    private FlowModel flowModel;
 
-	private FlowModelBuilder flowModelBuilder;
+    private FlowModelBuilder flowModelBuilder;
 
-	private boolean assembling;
+    private boolean assembling;
 
-	/**
-	 * Creates a new refreshable flow model holder that uses the configured assembler (GOF director) to drive flow
-	 * assembly, on initial use and on any resource change or refresh.
-	 * @param flowModelBuilder the flow model builder to use
-	 */
-	public DefaultFlowModelHolder(FlowModelBuilder flowModelBuilder) {
-		Assert.notNull(flowModelBuilder, "The flow model builder is required");
-		this.flowModelBuilder = flowModelBuilder;
-	}
+    /**
+     * Creates a new refreshable flow model holder that uses the configured assembler (GOF director) to drive flow
+     * assembly, on initial use and on any resource change or refresh.
+     *
+     * @param flowModelBuilder the flow model builder to use
+     */
+    public DefaultFlowModelHolder(FlowModelBuilder flowModelBuilder) {
+        Assert.notNull(flowModelBuilder, "The flow model builder is required");
+        this.flowModelBuilder = flowModelBuilder;
+    }
 
-	public synchronized FlowModel getFlowModel() {
-		if (assembling) {
-			// must return early assembly result for when a flow calls itself recursively
-			return flowModelBuilder.getFlowModel();
-		}
-		if (flowModel == null) {
-			assembleFlowModel();
-		} else {
-			if (flowModelBuilder.hasFlowModelResourceChanged()) {
-				assembleFlowModel();
-			}
-		}
-		return flowModel;
-	}
+    public synchronized FlowModel getFlowModel() {
+        if (assembling) {
+            // must return early assembly result for when a flow calls itself recursively
+            return flowModelBuilder.getFlowModel();
+        }
+        if (flowModel == null) {
+            assembleFlowModel();
+        } else {
+            if (flowModelBuilder.hasFlowModelResourceChanged()) {
+                assembleFlowModel();
+            }
+        }
+        return flowModel;
+    }
 
-	public Resource getFlowModelResource() {
-		return flowModelBuilder.getFlowModelResource();
-	}
+    public Resource getFlowModelResource() {
+        return flowModelBuilder.getFlowModelResource();
+    }
 
-	public boolean hasFlowModelChanged() {
-		return flowModelBuilder.hasFlowModelResourceChanged();
-	}
+    public boolean hasFlowModelChanged() {
+        return flowModelBuilder.hasFlowModelResourceChanged();
+    }
 
-	public synchronized void refresh() {
-		assembleFlowModel();
-	}
+    public synchronized void refresh() {
+        assembleFlowModel();
+    }
 
-	// internal helpers
+    // internal helpers
 
-	private void assembleFlowModel() throws FlowModelBuilderException {
-		try {
-			assembling = true;
-			flowModelBuilder.init();
-			flowModelBuilder.build();
-			flowModel = flowModelBuilder.getFlowModel();
-		} finally {
-			try {
-				flowModelBuilder.dispose();
-			} finally {
-				assembling = false;
-			}
-		}
-	}
+    public String toString() {
+        return new ToStringCreator(this).append("flowModelBuilder", flowModelBuilder).toString();
+    }
 
-	public String toString() {
-		return new ToStringCreator(this).append("flowModelBuilder", flowModelBuilder).toString();
-	}
+    private void assembleFlowModel() throws FlowModelBuilderException {
+        try {
+            assembling = true;
+            flowModelBuilder.init();
+            flowModelBuilder.build();
+            flowModel = flowModelBuilder.getFlowModel();
+        } finally {
+            try {
+                flowModelBuilder.dispose();
+            } finally {
+                assembling = false;
+            }
+        }
+    }
 }

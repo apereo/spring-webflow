@@ -1,40 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:webflow="http://www.springframework.org/schema/webflow-config"
+       xmlns="http://www.springframework.org/schema/beans"
        xsi:schemaLocation="
            http://www.springframework.org/schema/beans
            https://www.springframework.org/schema/beans/spring-beans.xsd
            http://www.springframework.org/schema/webflow-config
            https://www.springframework.org/schema/webflow-config/spring-webflow-config.xsd">
-	
-	<webflow:flow-builder-services id="flowBuilderServicesDefault"/>
-	
-	<webflow:flow-builder-services id="flowBuilderServicesAllCustom" 
-		expression-parser="customExpressionParser"
-		view-factory-creator="customViewFactoryCreator"
-		conversion-service="customConversionService" 
-		validator="customValidator"
-		validation-hint-resolver="customValidationHintResolver"
-		development="true" />
 
-	<webflow:flow-builder-services id="flowBuilderServicesConversionServiceCustom" 
-		conversion-service="customConversionService" />
-	
-	<bean id="customExpressionParser" class="org.springframework.webflow.expression.spel.WebFlowSpringELExpressionParser">
-		<constructor-arg>
-			<bean class="org.springframework.expression.spel.standard.SpelExpressionParser"/>
-		</constructor-arg>
-	</bean>
-	
-	<bean id="customViewFactoryCreator"
-		class="org.springframework.webflow.config.AbstractFlowBuilderServicesConfigurationTests$TestViewFactoryCreator"/>
-	
-	<bean id="customConversionService"
-		class="org.springframework.webflow.config.AbstractFlowBuilderServicesConfigurationTests$TestConversionService"/>
-	
-	<bean id="customValidator" class="org.springframework.webflow.config.EmptySpringValidator" />
+    <webflow:flow-builder-services id="flowBuilderServicesDefault"/>
 
-	<bean id="customValidationHintResolver" class="org.springframework.webflow.config.MyBeanValidationHintResolver" />
-	
+    <webflow:flow-builder-services id="flowBuilderServicesAllCustom"
+                                   expression-parser="customExpressionParser"
+                                   view-factory-creator="customViewFactoryCreator"
+                                   conversion-service="customConversionService"
+                                   validator="customValidator"
+                                   validation-hint-resolver="customValidationHintResolver"
+                                   development="true"/>
+
+    <webflow:flow-builder-services id="flowBuilderServicesConversionServiceCustom"
+                                   conversion-service="customConversionService"/>
+
+    <bean id="customExpressionParser" class="org.springframework.webflow.expression.spel.WebFlowSpringELExpressionParser">
+        <constructor-arg>
+            <bean class="org.springframework.expression.spel.standard.SpelExpressionParser"/>
+        </constructor-arg>
+    </bean>
+
+    <bean id="customViewFactoryCreator"
+          class="org.springframework.webflow.config.AbstractFlowBuilderServicesConfigurationTests$TestViewFactoryCreator"/>
+
+    <bean id="customConversionService"
+          class="org.springframework.webflow.config.AbstractFlowBuilderServicesConfigurationTests$TestConversionService"/>
+
+    <bean id="customValidator" class="org.springframework.webflow.config.EmptySpringValidator"/>
+
+    <bean id="customValidationHintResolver" class="org.springframework.webflow.config.MyBeanValidationHintResolver"/>
+
 </beans>

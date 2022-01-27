@@ -20,18 +20,19 @@ import org.springframework.webflow.execution.RequestContext;
 /**
  * A strategy for calculating the target state of a transition. This facilitates dynamic transition target state
  * resolution that takes into account runtime contextual information.
- * 
+ *
  * @author Keith Donald
  */
 public interface TargetStateResolver {
 
-	/**
-	 * Resolve the target state of the transition from the source state in the current request context. Should never
-	 * return null.
-	 * @param transition the transition
-	 * @param sourceState the source state of the transition, could be null
-	 * @param context the current request context
-	 * @return the transition's target state - may be null if no state change should occur
-	 */
-	State resolveTargetState(Transition transition, State sourceState, RequestContext context);
+    /**
+     * Resolve the target state of the transition from the source state in the current request context. Should never
+     * return null.
+     *
+     * @param transition  the transition
+     * @param sourceState the source state of the transition, could be null
+     * @param context     the current request context
+     * @return the transition's target state - may be null if no state change should occur
+     */
+    State resolveTargetState(Transition transition, State sourceState, RequestContext context);
 }

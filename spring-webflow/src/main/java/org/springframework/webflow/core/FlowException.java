@@ -18,27 +18,29 @@ package org.springframework.webflow.core;
 /**
  * Root class for exceptions thrown by the Spring Web Flow system. All other exceptions within the system should be
  * assignable to this class.
- * 
+ *
  * @author Keith Donald
  * @author Erwin Vervaet
  */
 public abstract class FlowException extends RuntimeException {
 
-	/**
-	 * Creates a new flow exception.
-	 * @param msg the message
-	 * @param cause the cause
-	 */
-	public FlowException(String msg, Throwable cause) {
-		super(msg, cause);
-	}
+    /**
+     * Creates a new flow exception.
+     *
+     * @param msg   the message
+     * @param cause the cause
+     */
+    public FlowException(String msg, Throwable cause) {
+        super(msg, cause);
+    }
 
-	/**
-	 * Creates a new flow exception.
-	 * @param msg the message
-	 */
-	public FlowException(String msg) {
-		super(msg);
-	}
+    /**
+     * Creates a new flow exception.
+     *
+     * @param msg the message
+     */
+    public FlowException(String msg) {
+        super(msg);
+    }
 
 }

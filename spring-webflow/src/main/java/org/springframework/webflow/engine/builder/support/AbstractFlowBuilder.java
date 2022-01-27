@@ -25,99 +25,101 @@ import org.springframework.webflow.engine.builder.FlowBuilderException;
  * Abstract base implementation of a flow builder defining common functionality needed by most concrete flow builder
  * implementations. This class implements all optional parts of the FlowBuilder process as no-op methods. Subclasses are
  * only required to implement {@link #buildStates()}.
- * 
+ *
  * @author Keith Donald
  * @author Erwin Vervaet
  */
 public abstract class AbstractFlowBuilder implements FlowBuilder {
 
-	/**
-	 * The <code>Flow</code> built by this builder.
-	 */
-	private Flow flow;
+    /**
+     * The <code>Flow</code> built by this builder.
+     */
+    private Flow flow;
 
-	/**
-	 * The flow builder context providing access to services needed to build the flow.
-	 */
-	private FlowBuilderContext context;
+    /**
+     * The flow builder context providing access to services needed to build the flow.
+     */
+    private FlowBuilderContext context;
 
-	public void init(FlowBuilderContext context) throws FlowBuilderException {
-		this.context = context;
-		doInit();
-		flow = createFlow();
-	}
+    public void init(FlowBuilderContext context) throws FlowBuilderException {
+        this.context = context;
+        doInit();
+        flow = createFlow();
+    }
 
-	/**
-	 * Flow builder initialization hook. Does nothing by default. May be overridden by subclasses.
-	 */
-	protected void doInit() {
+    public void buildVariables() throws FlowBuilderException {
+    }
 
-	}
+    public void buildInputMapper() throws FlowBuilderException {
+    }
 
-	/**
-	 * Factory method that initially creates the flow implementation during flow builder initialization. Simply
-	 * delegates to the configured flow artifact factory by default.
-	 * @return the flow instance, initially created but not yet built
-	 */
-	protected Flow createFlow() {
-		String id = getContext().getFlowId();
-		AttributeMap<Object> attributes = getContext().getFlowAttributes();
-		return getContext().getFlowArtifactFactory().createFlow(id, attributes);
-	}
+    public void buildStartActions() throws FlowBuilderException {
+    }
 
-	/**
-	 * Returns this flow builder's context.
-	 * @return the flow builder context
-	 */
-	protected FlowBuilderContext getContext() {
-		return context;
-	}
+    public abstract void buildStates() throws FlowBuilderException;
 
-	public void buildVariables() throws FlowBuilderException {
-	}
+    public void buildGlobalTransitions() throws FlowBuilderException {
+    }
 
-	public void buildInputMapper() throws FlowBuilderException {
-	}
+    public void buildEndActions() throws FlowBuilderException {
+    }
 
-	public void buildStartActions() throws FlowBuilderException {
-	}
+    public void buildOutputMapper() throws FlowBuilderException {
+    }
 
-	public abstract void buildStates() throws FlowBuilderException;
+    public void buildExceptionHandlers() throws FlowBuilderException {
+    }
 
-	public void buildGlobalTransitions() throws FlowBuilderException {
-	}
+    public Flow getFlow() throws FlowBuilderException {
+        return flow;
+    }
 
-	public void buildEndActions() throws FlowBuilderException {
-	}
+    public void dispose() throws FlowBuilderException {
+        flow = null;
+        doDispose();
+    }
 
-	public void buildOutputMapper() throws FlowBuilderException {
-	}
+    public boolean hasFlowChanged() {
+        return false;
+    }
 
-	public void buildExceptionHandlers() throws FlowBuilderException {
-	}
+    public String getFlowResourceString() {
+        return getClass().getName();
+    }
 
-	public Flow getFlow() throws FlowBuilderException {
-		return flow;
-	}
+    /**
+     * Flow builder initialization hook. Does nothing by default. May be overridden by subclasses.
+     */
+    protected void doInit() {
 
-	public void dispose() throws FlowBuilderException {
-		flow = null;
-		doDispose();
-	}
+    }
 
-	public boolean hasFlowChanged() {
-		return false;
-	}
+    /**
+     * Factory method that initially creates the flow implementation during flow builder initialization. Simply
+     * delegates to the configured flow artifact factory by default.
+     *
+     * @return the flow instance, initially created but not yet built
+     */
+    protected Flow createFlow() {
+        String id = getContext().getFlowId();
+        AttributeMap<Object> attributes = getContext().getFlowAttributes();
+        return getContext().getFlowArtifactFactory().createFlow(id, attributes);
+    }
 
-	public String getFlowResourceString() {
-		return getClass().getName();
-	}
+    /**
+     * Returns this flow builder's context.
+     *
+     * @return the flow builder context
+     */
+    protected FlowBuilderContext getContext() {
+        return context;
+    }
 
-	/**
-	 * Flow builder destruction hook. Does nothing by default. May be overridden by subclasses.
-	 */
-	protected void doDispose() {
+    /**
+     * Flow builder destruction hook. Does nothing by default. May be overridden by subclasses.
+     */
+    protected void doDispose() {
 
-	}
+    }
 
 }

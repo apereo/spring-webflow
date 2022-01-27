@@ -20,30 +20,32 @@ import org.springframework.webflow.execution.FlowExecutionException;
 
 /**
  * Base class for attribute mapping failures.
- * 
+ *
  * @author Keith Donald
  */
 public class FlowAttributeMappingException extends FlowExecutionException {
 
-	private MappingResults results;
+    private MappingResults results;
 
-	/**
-	 * Creates a new attrbute mapping exception
-	 * @param flowId the flow id
-	 * @param stateId the state id
-	 * @param results the mapping results with errors
-	 * @param message the messge
-	 */
-	public FlowAttributeMappingException(String flowId, String stateId, MappingResults results, String message) {
-		super(flowId, stateId, message);
-		this.results = results;
-	}
+    /**
+     * Creates a new attrbute mapping exception
+     *
+     * @param flowId  the flow id
+     * @param stateId the state id
+     * @param results the mapping results with errors
+     * @param message the messge
+     */
+    public FlowAttributeMappingException(String flowId, String stateId, MappingResults results, String message) {
+        super(flowId, stateId, message);
+        this.results = results;
+    }
 
-	/**
-	 * Returns the maping results containing errors that triggred this exception.
-	 * @return the results
-	 */
-	public MappingResults getMappingResults() {
-		return results;
-	}
+    /**
+     * Returns the maping results containing errors that triggred this exception.
+     *
+     * @return the results
+     */
+    public MappingResults getMappingResults() {
+        return results;
+    }
 }

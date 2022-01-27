@@ -15,9 +15,6 @@
  */
 package org.springframework.webflow.action;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
@@ -25,6 +22,9 @@ import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * An action that will execute an ordered chain of other actions when executed.
@@ -37,83 +37,87 @@ import org.springframework.webflow.execution.RequestContext;
  * in the list.
  * <p>
  * This is the classic GoF composite design pattern.
- * 
+ *
  * @author Keith Donald
  */
 public class CompositeAction extends AbstractAction {
 
-	/**
-	 * The resulting event whill have an attribute of this name which holds a list of all events returned by the
-	 * executed actions. ("actionResults")
-	 */
-	public static final String ACTION_RESULTS_ATTRIBUTE_NAME = "actionResults";
+    /**
+     * The resulting event whill have an attribute of this name which holds a list of all events returned by the
+     * executed actions. ("actionResults")
+     */
+    public static final String ACTION_RESULTS_ATTRIBUTE_NAME = "actionResults";
 
-	/**
-	 * The actions to execute.
-	 */
-	private Action[] actions;
+    /**
+     * The actions to execute.
+     */
+    private Action[] actions;
 
-	/**
-	 * Should execution stop if one action returns an error event?
-	 */
-	private boolean stopOnError;
+    /**
+     * Should execution stop if one action returns an error event?
+     */
+    private boolean stopOnError;
 
-	/**
-	 * Create a composite action composed of given actions.
-	 * @param actions the actions
-	 */
-	public CompositeAction(Action... actions) {
-		Assert.notEmpty(actions, "At least one action is required");
-		this.actions = actions;
-	}
+    /**
+     * Create a composite action composed of given actions.
+     *
+     * @param actions the actions
+     */
+    public CompositeAction(Action... actions) {
+        Assert.notEmpty(actions, "At least one action is required");
+        this.actions = actions;
+    }
 
-	/**
-	 * Returns the actions contained by this composite action.
-	 * @return the actions
-	 */
-	protected Action[] getActions() {
-		return actions;
-	}
-
-	/**
-	 * Returns the stop on error flag.
+    /**
+     * Returns the stop on error flag.
+     *
      * @return
      */
-	public boolean isStopOnError() {
-		return stopOnError;
-	}
+    public boolean isStopOnError() {
+        return stopOnError;
+    }
 
-	/**
-	 * Sets the stop on error flag. This determines whether or not execution should stop with the first action that
-	 * returns an error event. In the error case, the composite action will also return the "error" event.
+    /**
+     * Sets the stop on error flag. This determines whether or not execution should stop with the first action that
+     * returns an error event. In the error case, the composite action will also return the "error" event.
+     *
      * @param stopOnError
      * @param stopOnError
      */
-	public void setStopOnError(boolean stopOnError) {
-		this.stopOnError = stopOnError;
-	}
+    public void setStopOnError(boolean stopOnError) {
+        this.stopOnError = stopOnError;
+    }
 
-	public Event doExecute(RequestContext context) throws Exception {
-		Action[] actions = getActions();
-		String eventId = getEventFactorySupport().getSuccessEventId();
-		MutableAttributeMap<Object> eventAttributes = new LocalAttributeMap<>();
-		List<Event> actionResults = new ArrayList<>(actions.length);
-		for (Action action : actions) {
-			Event result = action.execute(context);
-			actionResults.add(result);
-			if (result != null) {
-				eventId = result.getId();
-				if (isStopOnError() && result.getId().equals(getEventFactorySupport().getErrorEventId())) {
-					break;
-				}
-			}
-		}
-		eventAttributes.put(ACTION_RESULTS_ATTRIBUTE_NAME, actionResults);
-		return new Event(this, eventId, eventAttributes);
-	}
+    public Event doExecute(RequestContext context) throws Exception {
+        Action[] actions = getActions();
+        String eventId = getEventFactorySupport().getSuccessEventId();
+        MutableAttributeMap<Object> eventAttributes = new LocalAttributeMap<>();
+        List<Event> actionResults = new ArrayList<>(actions.length);
+        for (Action action : actions) {
+            Event result = action.execute(context);
+            actionResults.add(result);
+            if (result != null) {
+                eventId = result.getId();
+                if (isStopOnError() && result.getId().equals(getEventFactorySupport().getErrorEventId())) {
+                    break;
+                }
+            }
+        }
+        eventAttributes.put(ACTION_RESULTS_ATTRIBUTE_NAME, actionResults);
+        return new Event(this, eventId, eventAttributes);
+    }
 
-	public String toString() {
-		return new ToStringCreator(this).append("actions", getActions()).append("stopOnError", isStopOnError())
-				.toString();
-	}
+    public String toString() {
+        return new ToStringCreator(this).append("actions", getActions()).append("stopOnError", isStopOnError())
+            .toString();
+    }
+
+    /**
+     * Returns the actions contained by this composite action.
+     *
+     * @return the actions
+     */
+    protected Action[] getActions() {
+        return actions;
+    }
 }

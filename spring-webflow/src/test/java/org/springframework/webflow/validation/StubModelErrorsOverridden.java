@@ -22,8 +22,8 @@ import org.springframework.validation.Errors;
  */
 public class StubModelErrorsOverridden extends StubModelValidationContext {
 
-	public void validateMockState(Object model, Errors errors) {
-		errors.rejectValue("errors-context", "", "");
-	}
+    public void validateMockState(Object model, Errors errors) {
+        errors.rejectValue("errors-context", "", "");
+    }
 
 }

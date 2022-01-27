@@ -17,22 +17,24 @@ package org.springframework.webflow.definition;
 
 /**
  * A state that can transition to another state.
- * 
+ *
  * @author Keith Donald
  * @author Erwin Vervaet
  */
 public interface TransitionableStateDefinition extends StateDefinition {
 
-	/**
-	 * Returns the available transitions out of this state.
-	 * @return the available state transitions
-	 */
-	TransitionDefinition[] getTransitions();
+    /**
+     * Returns the available transitions out of this state.
+     *
+     * @return the available state transitions
+     */
+    TransitionDefinition[] getTransitions();
 
-	/**
-	 * Returns the transition that matches the event with the provided id.
-	 * @param eventId the event id
-	 * @return the transition that matches, or null if no match is found.
-	 */
-	TransitionDefinition getTransition(String eventId);
+    /**
+     * Returns the transition that matches the event with the provided id.
+     *
+     * @param eventId the event id
+     * @return the transition that matches, or null if no match is found.
+     */
+    TransitionDefinition getTransition(String eventId);
 }

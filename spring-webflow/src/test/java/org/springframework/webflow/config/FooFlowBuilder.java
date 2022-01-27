@@ -6,8 +6,8 @@ import org.springframework.webflow.engine.builder.support.AbstractFlowBuilder;
 
 public class FooFlowBuilder extends AbstractFlowBuilder {
 
-	public void buildStates() throws FlowBuilderException {
-		new EndState(getFlow(), "finish");
-	}
+    public void buildStates() throws FlowBuilderException {
+        new EndState(getFlow(), "finish");
+    }
 
 }

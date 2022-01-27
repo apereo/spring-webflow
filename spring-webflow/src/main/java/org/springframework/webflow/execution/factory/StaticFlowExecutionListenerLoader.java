@@ -22,49 +22,50 @@ import org.springframework.webflow.execution.FlowExecutionListener;
 /**
  * A simple flow execution listener loader that simply returns a static listener array on each invocation. For more
  * elaborate needs see the {@link ConditionalFlowExecutionListenerLoader}.
- * 
- * @see ConditionalFlowExecutionListenerLoader
- * 
+ *
  * @author Keith Donald
+ * @see ConditionalFlowExecutionListenerLoader
  */
 public final class StaticFlowExecutionListenerLoader implements FlowExecutionListenerLoader {
 
-	/**
-	 * A shared listener loader instance that returns am empty listener array on each invocation.
-	 */
-	public static final FlowExecutionListenerLoader EMPTY_INSTANCE = new StaticFlowExecutionListenerLoader();
+    /**
+     * A shared listener loader instance that returns am empty listener array on each invocation.
+     */
+    public static final FlowExecutionListenerLoader EMPTY_INSTANCE = new StaticFlowExecutionListenerLoader();
 
-	/**
-	 * The listener array to return when {@link #getListeners(FlowDefinition)} is invoked.
-	 */
-	private final FlowExecutionListener[] listeners;
+    /**
+     * The listener array to return when {@link #getListeners(FlowDefinition)} is invoked.
+     */
+    private final FlowExecutionListener[] listeners;
 
-	/**
-	 * Creates a new flow execution listener loader that returns the provided listener on each invocation.
-	 * @param listener the listener
-	 */
-	public StaticFlowExecutionListenerLoader(FlowExecutionListener listener) {
-		this(new FlowExecutionListener[] { listener });
-	}
+    /**
+     * Creates a new flow execution listener loader that returns the provided listener on each invocation.
+     *
+     * @param listener the listener
+     */
+    public StaticFlowExecutionListenerLoader(FlowExecutionListener listener) {
+        this(new FlowExecutionListener[]{listener});
+    }
 
-	/**
-	 * Creates a new flow execution listener loader that returns the provided listener array on each invocation. Clients
-	 * should not attempt to modify the passed in array as no deep copy is made.
-	 * @param listeners the listener array.
-	 */
-	public StaticFlowExecutionListenerLoader(FlowExecutionListener... listeners) {
-		Assert.notNull(listeners, "The flow execution listener array is required");
-		this.listeners = listeners;
-	}
+    /**
+     * Creates a new flow execution listener loader that returns the provided listener array on each invocation. Clients
+     * should not attempt to modify the passed in array as no deep copy is made.
+     *
+     * @param listeners the listener array.
+     */
+    public StaticFlowExecutionListenerLoader(FlowExecutionListener... listeners) {
+        Assert.notNull(listeners, "The flow execution listener array is required");
+        this.listeners = listeners;
+    }
 
-	/**
-	 * Creates a new flow execution listener loader that returns an empty listener array on each invocation.
-	 */
-	private StaticFlowExecutionListenerLoader() {
-		this(new FlowExecutionListener[0]);
-	}
+    /**
+     * Creates a new flow execution listener loader that returns an empty listener array on each invocation.
+     */
+    private StaticFlowExecutionListenerLoader() {
+        this(new FlowExecutionListener[0]);
+    }
 
-	public FlowExecutionListener[] getListeners(FlowDefinition flowDefinition) {
-		return listeners;
-	}
+    public FlowExecutionListener[] getListeners(FlowDefinition flowDefinition) {
+        return listeners;
+    }
 }

@@ -43,194 +43,201 @@ import org.springframework.webflow.executor.FlowExecutorImpl;
  */
 public class FlowExecutorBuilder {
 
-	private final FlowDefinitionLocator flowRegistry;
+    private final FlowDefinitionLocator flowRegistry;
 
-	private Integer maxFlowExecutions;
+    private Integer maxFlowExecutions;
 
-	private Integer maxFlowExecutionSnapshots;
+    private Integer maxFlowExecutionSnapshots;
 
-	private LocalAttributeMap<Object> executionAttributes = new LocalAttributeMap<>();
+    private LocalAttributeMap<Object> executionAttributes = new LocalAttributeMap<>();
 
-	private ConditionalFlowExecutionListenerLoader listenerLoader;
+    private ConditionalFlowExecutionListenerLoader listenerLoader;
 
-	private FlowExecutionListenerCriteriaFactory listenerCriteriaFactory = new FlowExecutionListenerCriteriaFactory();
+    private FlowExecutionListenerCriteriaFactory listenerCriteriaFactory = new FlowExecutionListenerCriteriaFactory();
 
-	private ConversationManager conversationManager;
-
-
-	public FlowExecutorBuilder(FlowDefinitionLocator flowRegistry) {
-		Assert.notNull(flowRegistry, "FlowDefinitionLocator is required");
-		this.flowRegistry = flowRegistry;
-	}
-
-	/**
-	 * Create a new instance with the given flow registry and ApplicationContext.
-	 *
-	 * @param flowRegistry the flow registry that will locate flow definitions
-	 * @param applicationContext the Spring ApplicationContext
-	 * @deprecated as of 2.5 an ApplicationContext is no longer required
-	 */
-	public FlowExecutorBuilder(FlowDefinitionLocator flowRegistry, ApplicationContext applicationContext) {
-		Assert.notNull(flowRegistry, "FlowDefinitionLocator is required");
-		this.flowRegistry = flowRegistry;
-	}
+    private ConversationManager conversationManager;
 
 
-	/**
-	 * Set the maximum number of allowed flow executions per user.
-	 * @param maxFlowExecutions the max flow executions
-     * @return
-	 */
-	public FlowExecutorBuilder setMaxFlowExecutions(int maxFlowExecutions) {
-		this.maxFlowExecutions = maxFlowExecutions;
-		return this;
-	}
+    public FlowExecutorBuilder(FlowDefinitionLocator flowRegistry) {
+        Assert.notNull(flowRegistry, "FlowDefinitionLocator is required");
+        this.flowRegistry = flowRegistry;
+    }
 
-	/**
-	 * Set the maximum number of history snapshots allowed per flow execution.
-	 * @param maxFlowExecutionSnapshots the max flow execution snapshots
-     * @return
-	 */
-	public FlowExecutorBuilder setMaxFlowExecutionSnapshots(int maxFlowExecutionSnapshots) {
-		this.maxFlowExecutionSnapshots = maxFlowExecutionSnapshots;
-		return this;
-	}
+    /**
+     * Create a new instance with the given flow registry and ApplicationContext.
+     *
+     * @param flowRegistry       the flow registry that will locate flow definitions
+     * @param applicationContext the Spring ApplicationContext
+     * @deprecated as of 2.5 an ApplicationContext is no longer required
+     */
+    public FlowExecutorBuilder(FlowDefinitionLocator flowRegistry, ApplicationContext applicationContext) {
+        Assert.notNull(flowRegistry, "FlowDefinitionLocator is required");
+        this.flowRegistry = flowRegistry;
+    }
 
-	/**
-	 * Whether flow executions should redirect after they pause before rendering.
-	 * @param redirectOnPause whether to redirect or not
-     * @return
-	 */
-	public FlowExecutorBuilder setAlwaysRedirectOnPause(boolean redirectOnPause) {
-		this.executionAttributes.put("alwaysRedirectOnPause", redirectOnPause);
-		return this;
-	}
 
-	/**
-	 * Whether flow executions redirect after they pause for transitions that remain
-	 * in the same view state. This attribute effectively overrides the value of the
-	 * "always-redirect-on-pause" attribute in same state transitions.
-	 * @param redirectInSameState whether to redirect or not
-     * @return
-	 */
-	public FlowExecutorBuilder setRedirectInSameState(boolean redirectInSameState) {
-		this.executionAttributes.put("redirectInSameState", redirectInSameState);
-		return this;
-	}
-
-	/**
-	 * Add a single flow execution meta attribute.
-	 * @param name the attribute name
-	 * @param value the attribute value
-     * @return
-	 */
-	public FlowExecutorBuilder addFlowExecutionAttribute(String name, Object value) {
-		this.executionAttributes.put(name, value);
-		return this;
-	}
-
-	/**
-	 * Register a {@link FlowExecutionListener} that observes the lifecycle of all flow
-	 * executions launched by this executor.
-	 * @param listener the listener to be registered
-     * @return
-	 */
-	public FlowExecutorBuilder addFlowExecutionListener(FlowExecutionListener listener) {
-		return addFlowExecutionListener(listener, "*");
-	}
-
-	/**
-	 * Register a {@link FlowExecutionListener} that observes the lifecycle of flow
-	 * executions launched by this executor.
-	 * @param listener the listener to be registered
-	 * @param criteria the criteria that determines the flow definitions a listener
-	 * 	should observe, delimited by commas or '*' for "all".
-	 * 	Example: 'flow1,flow2,flow3'.
-     * @return
-	 */
-	public FlowExecutorBuilder addFlowExecutionListener(FlowExecutionListener listener, String criteria) {
-		if (this.listenerLoader == null) {
-			this.listenerLoader = new ConditionalFlowExecutionListenerLoader();
-		}
-		this.listenerLoader.addListener(listener, this.listenerCriteriaFactory.getListenerCriteria(criteria));
-		return this;
-	}
-
-	/**
-	 * Set the ConversationManager implementation to use for storing conversations
-	 * in the session effectively controlling how state is stored physically when
-	 * a flow execution is paused.. Note that when this attribute is provided, the
-	 * "max-execution-snapshots" attribute is meaningless.
-	 * @param conversationManager the ConversationManager instance to use
-     * @return
-	 */
-	public FlowExecutorBuilder setConversationManager(ConversationManager conversationManager) {
-		this.conversationManager = conversationManager;
-		return this;
-	}
-
-	/**
-	 * Create and return a {@link FlowExecutor} instance.
+    /**
+     * Set the maximum number of allowed flow executions per user.
+     *
+     * @param maxFlowExecutions the max flow executions
      * @return
      */
-	public FlowExecutor build() {
-		FlowExecutionImplFactory executionFactory = getExecutionFactory();
-		DefaultFlowExecutionRepository executionRepository = getFlowExecutionRepository(executionFactory);
-		executionFactory.setExecutionKeyFactory(executionRepository);
-		return new FlowExecutorImpl(this.flowRegistry, executionFactory, executionRepository);
-	}
+    public FlowExecutorBuilder setMaxFlowExecutions(int maxFlowExecutions) {
+        this.maxFlowExecutions = maxFlowExecutions;
+        return this;
+    }
 
+    /**
+     * Set the maximum number of history snapshots allowed per flow execution.
+     *
+     * @param maxFlowExecutionSnapshots the max flow execution snapshots
+     * @return
+     */
+    public FlowExecutorBuilder setMaxFlowExecutionSnapshots(int maxFlowExecutionSnapshots) {
+        this.maxFlowExecutionSnapshots = maxFlowExecutionSnapshots;
+        return this;
+    }
 
-	private FlowExecutionImplFactory getExecutionFactory() {
-		FlowExecutionImplFactory executionFactory = new FlowExecutionImplFactory();
-		executionFactory.setExecutionAttributes(getExecutionAttributes());
-		if (this.listenerLoader != null) {
-			executionFactory.setExecutionListenerLoader(this.listenerLoader);
-		}
-		return executionFactory;
-	}
+    /**
+     * Whether flow executions should redirect after they pause before rendering.
+     *
+     * @param redirectOnPause whether to redirect or not
+     * @return
+     */
+    public FlowExecutorBuilder setAlwaysRedirectOnPause(boolean redirectOnPause) {
+        this.executionAttributes.put("alwaysRedirectOnPause", redirectOnPause);
+        return this;
+    }
 
-	private DefaultFlowExecutionRepository getFlowExecutionRepository(FlowExecutionFactory executionFactory) {
-		ConversationManager manager = getConversationManager();
-		FlowExecutionSnapshotFactory snapshotFactory = getSnapshotFactory(executionFactory);
-		DefaultFlowExecutionRepository repository = new DefaultFlowExecutionRepository(manager, snapshotFactory);
-		if (this.maxFlowExecutionSnapshots != null) {
-			repository.setMaxSnapshots((this.maxFlowExecutionSnapshots == 0) ? 1 : this.maxFlowExecutionSnapshots);
-		}
-		return repository;
-	}
+    /**
+     * Whether flow executions redirect after they pause for transitions that remain
+     * in the same view state. This attribute effectively overrides the value of the
+     * "always-redirect-on-pause" attribute in same state transitions.
+     *
+     * @param redirectInSameState whether to redirect or not
+     * @return
+     */
+    public FlowExecutorBuilder setRedirectInSameState(boolean redirectInSameState) {
+        this.executionAttributes.put("redirectInSameState", redirectInSameState);
+        return this;
+    }
 
-	private ConversationManager getConversationManager() {
-		ConversationManager manager = this.conversationManager;
-		if (manager == null) {
-			manager = new SessionBindingConversationManager();
-		}
-		if (this.maxFlowExecutions != null && manager instanceof SessionBindingConversationManager) {
-			((SessionBindingConversationManager) manager).setMaxConversations(this.maxFlowExecutions);
-		}
-		return manager;
-	}
+    /**
+     * Add a single flow execution meta attribute.
+     *
+     * @param name  the attribute name
+     * @param value the attribute value
+     * @return
+     */
+    public FlowExecutorBuilder addFlowExecutionAttribute(String name, Object value) {
+        this.executionAttributes.put(name, value);
+        return this;
+    }
 
-	private FlowExecutionSnapshotFactory getSnapshotFactory(FlowExecutionFactory executionFactory) {
-		FlowExecutionSnapshotFactory factory = null;
-		if (this.maxFlowExecutionSnapshots != null && this.maxFlowExecutionSnapshots == 0) {
-			factory = new SimpleFlowExecutionSnapshotFactory(executionFactory, this.flowRegistry);
-		}
-		else {
-			factory = new SerializedFlowExecutionSnapshotFactory(executionFactory, this.flowRegistry);
-		}
-		return factory;
-	}
+    /**
+     * Register a {@link FlowExecutionListener} that observes the lifecycle of all flow
+     * executions launched by this executor.
+     *
+     * @param listener the listener to be registered
+     * @return
+     */
+    public FlowExecutorBuilder addFlowExecutionListener(FlowExecutionListener listener) {
+        return addFlowExecutionListener(listener, "*");
+    }
 
-	private LocalAttributeMap<Object> getExecutionAttributes() {
-		LocalAttributeMap<Object> attributes = new LocalAttributeMap<>(this.executionAttributes.asMap());
-		if (!attributes.contains("alwaysRedirectOnPause")) {
-			attributes.put("alwaysRedirectOnPause", true);
-		}
-		if (!attributes.contains("redirectInSameState")) {
-			attributes.put("redirectInSameState", true);
-		}
-		return attributes;
-	}
+    /**
+     * Register a {@link FlowExecutionListener} that observes the lifecycle of flow
+     * executions launched by this executor.
+     *
+     * @param listener the listener to be registered
+     * @param criteria the criteria that determines the flow definitions a listener
+     *                 should observe, delimited by commas or '*' for "all".
+     *                 Example: 'flow1,flow2,flow3'.
+     * @return
+     */
+    public FlowExecutorBuilder addFlowExecutionListener(FlowExecutionListener listener, String criteria) {
+        if (this.listenerLoader == null) {
+            this.listenerLoader = new ConditionalFlowExecutionListenerLoader();
+        }
+        this.listenerLoader.addListener(listener, this.listenerCriteriaFactory.getListenerCriteria(criteria));
+        return this;
+    }
+
+    /**
+     * Create and return a {@link FlowExecutor} instance.
+     *
+     * @return
+     */
+    public FlowExecutor build() {
+        FlowExecutionImplFactory executionFactory = getExecutionFactory();
+        DefaultFlowExecutionRepository executionRepository = getFlowExecutionRepository(executionFactory);
+        executionFactory.setExecutionKeyFactory(executionRepository);
+        return new FlowExecutorImpl(this.flowRegistry, executionFactory, executionRepository);
+    }
+
+    private FlowExecutionImplFactory getExecutionFactory() {
+        FlowExecutionImplFactory executionFactory = new FlowExecutionImplFactory();
+        executionFactory.setExecutionAttributes(getExecutionAttributes());
+        if (this.listenerLoader != null) {
+            executionFactory.setExecutionListenerLoader(this.listenerLoader);
+        }
+        return executionFactory;
+    }
+
+    private DefaultFlowExecutionRepository getFlowExecutionRepository(FlowExecutionFactory executionFactory) {
+        ConversationManager manager = getConversationManager();
+        FlowExecutionSnapshotFactory snapshotFactory = getSnapshotFactory(executionFactory);
+        DefaultFlowExecutionRepository repository = new DefaultFlowExecutionRepository(manager, snapshotFactory);
+        if (this.maxFlowExecutionSnapshots != null) {
+            repository.setMaxSnapshots((this.maxFlowExecutionSnapshots == 0) ? 1 : this.maxFlowExecutionSnapshots);
+        }
+        return repository;
+    }
+
+    private ConversationManager getConversationManager() {
+        ConversationManager manager = this.conversationManager;
+        if (manager == null) {
+            manager = new SessionBindingConversationManager();
+        }
+        if (this.maxFlowExecutions != null && manager instanceof SessionBindingConversationManager) {
+            ((SessionBindingConversationManager) manager).setMaxConversations(this.maxFlowExecutions);
+        }
+        return manager;
+    }
+
+    /**
+     * Set the ConversationManager implementation to use for storing conversations
+     * in the session effectively controlling how state is stored physically when
+     * a flow execution is paused.. Note that when this attribute is provided, the
+     * "max-execution-snapshots" attribute is meaningless.
+     *
+     * @param conversationManager the ConversationManager instance to use
+     * @return
+     */
+    public FlowExecutorBuilder setConversationManager(ConversationManager conversationManager) {
+        this.conversationManager = conversationManager;
+        return this;
+    }
+
+    private FlowExecutionSnapshotFactory getSnapshotFactory(FlowExecutionFactory executionFactory) {
+        FlowExecutionSnapshotFactory factory = null;
+        if (this.maxFlowExecutionSnapshots != null && this.maxFlowExecutionSnapshots == 0) {
+            factory = new SimpleFlowExecutionSnapshotFactory(executionFactory, this.flowRegistry);
+        } else {
+            factory = new SerializedFlowExecutionSnapshotFactory(executionFactory, this.flowRegistry);
+        }
+        return factory;
+    }
+
+    private LocalAttributeMap<Object> getExecutionAttributes() {
+        LocalAttributeMap<Object> attributes = new LocalAttributeMap<>(this.executionAttributes.asMap());
+        if (!attributes.contains("alwaysRedirectOnPause")) {
+            attributes.put("alwaysRedirectOnPause", true);
+        }
+        if (!attributes.contains("redirectInSameState")) {
+            attributes.put("redirectInSameState", true);
+        }
+        return attributes;
+    }
 
 }

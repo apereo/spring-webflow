@@ -19,43 +19,45 @@ import java.util.EventObject;
 
 /**
  * Holder for information about the binding or unbinding event in an {@link AttributeMap}.
- * 
- * @see AttributeMapBindingListener
- * 
+ *
  * @author Ben Hale
+ * @see AttributeMapBindingListener
  */
 public class AttributeMapBindingEvent extends EventObject {
 
-	private String attributeName;
+    private String attributeName;
 
-	private Object attributeValue;
+    private Object attributeValue;
 
-	/**
-	 * Creates an event for map binding that contains information about the event.
-	 * @param source the source map that this attribute was bound in
-	 * @param attributeName the name that this attribute was bound with
-	 * @param attributeValue the attribute
-	 */
-	public AttributeMapBindingEvent(AttributeMap<?> source, String attributeName, Object attributeValue) {
-		super(source);
-		this.source = source;
-		this.attributeName = attributeName;
-		this.attributeValue = attributeValue;
-	}
+    /**
+     * Creates an event for map binding that contains information about the event.
+     *
+     * @param source         the source map that this attribute was bound in
+     * @param attributeName  the name that this attribute was bound with
+     * @param attributeValue the attribute
+     */
+    public AttributeMapBindingEvent(AttributeMap<?> source, String attributeName, Object attributeValue) {
+        super(source);
+        this.source = source;
+        this.attributeName = attributeName;
+        this.attributeValue = attributeValue;
+    }
 
-	/**
-	 * Returns the name the attribute was bound with.
+    /**
+     * Returns the name the attribute was bound with.
+     *
      * @return
      */
-	public String getAttributeName() {
-		return attributeName;
-	}
+    public String getAttributeName() {
+        return attributeName;
+    }
 
-	/**
-	 * Returns the value of the attribute.
+    /**
+     * Returns the value of the attribute.
+     *
      * @return
      */
-	public Object getAttributeValue() {
-		return attributeValue;
-	}
+    public Object getAttributeValue() {
+        return attributeValue;
+    }
 }

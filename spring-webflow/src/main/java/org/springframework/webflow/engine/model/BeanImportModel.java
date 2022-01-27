@@ -22,48 +22,49 @@ import org.springframework.util.StringUtils;
  * <p>
  * Imports user-defined beans defined at a resource location. These beans become part of the flow's bean factory and are
  * resolvable using flow expressions.
- * 
+ *
  * @author Scott Andrews
  */
 public class BeanImportModel extends AbstractModel {
 
-	private String resource;
+    private String resource;
 
-	/**
-	 * Create a bean import model
-	 * @param resource the resource containing beans to import
-	 */
-	public BeanImportModel(String resource) {
-		setResource(resource);
-	}
+    /**
+     * Create a bean import model
+     *
+     * @param resource the resource containing beans to import
+     */
+    public BeanImportModel(String resource) {
+        setResource(resource);
+    }
 
-	public boolean isMergeableWith(Model model) {
-		return false;
-	}
+    public boolean isMergeableWith(Model model) {
+        return false;
+    }
 
-	public void merge(Model model) {
+    public void merge(Model model) {
 
-	}
+    }
 
-	public Model createCopy() {
-		return new BeanImportModel(resource);
-	}
+    public Model createCopy() {
+        return new BeanImportModel(resource);
+    }
 
-	/**
-	 * @return the resource
-	 */
-	public String getResource() {
-		return resource;
-	}
+    /**
+     * @return the resource
+     */
+    public String getResource() {
+        return resource;
+    }
 
-	/**
-	 * @param resource the resource to set
-	 */
-	public void setResource(String resource) {
-		if (StringUtils.hasText(resource)) {
-			this.resource = resource;
-		} else {
-			this.resource = null;
-		}
-	}
+    /**
+     * @param resource the resource to set
+     */
+    public void setResource(String resource) {
+        if (StringUtils.hasText(resource)) {
+            this.resource = resource;
+        } else {
+            this.resource = null;
+        }
+    }
 }

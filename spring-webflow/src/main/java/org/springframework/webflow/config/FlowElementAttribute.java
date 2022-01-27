@@ -19,47 +19,47 @@ import org.springframework.util.Assert;
 
 /**
  * A low-level definition of a attribute describing a flow artifact.
- * 
+ *
  * @author Keith Donald
  */
 class FlowElementAttribute {
 
-	/**
-	 * The name of the attribute.
-	 */
-	private String name;
+    /**
+     * The name of the attribute.
+     */
+    private String name;
 
-	/**
-	 * The value of the attribute before type-conversion.
-	 */
-	private String value;
+    /**
+     * The value of the attribute before type-conversion.
+     */
+    private String value;
 
-	/**
-	 * The attribute type, optional, but necessary for type conversion.
-	 */
-	private String type;
+    /**
+     * The attribute type, optional, but necessary for type conversion.
+     */
+    private String type;
 
-	public FlowElementAttribute(String name, String value, String type) {
-		Assert.hasText(name, "The name is required");
-		Assert.hasText(value, "The value is required");
-		this.name = name;
-		this.value = value;
-		this.type = type;
-	}
+    public FlowElementAttribute(String name, String value, String type) {
+        Assert.hasText(name, "The name is required");
+        Assert.hasText(value, "The value is required");
+        this.name = name;
+        this.value = value;
+        this.type = type;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public String getValue() {
-		return value;
-	}
+    public String getValue() {
+        return value;
+    }
 
-	public String getType() {
-		return type;
-	}
+    public String getType() {
+        return type;
+    }
 
-	public boolean needsTypeConversion() {
-		return type != null && type.length() > 0;
-	}
+    public boolean needsTypeConversion() {
+        return type != null && type.length() > 0;
+    }
 }

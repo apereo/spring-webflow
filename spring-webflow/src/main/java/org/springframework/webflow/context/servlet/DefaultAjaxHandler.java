@@ -17,7 +17,6 @@ package org.springframework.webflow.context.servlet;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
 import org.springframework.http.HttpHeaders;
 import org.springframework.util.StringUtils;
 
@@ -37,48 +36,57 @@ import org.springframework.util.StringUtils;
  */
 public class DefaultAjaxHandler extends AbstractAjaxHandler {
 
-	/** "Accept" header value that indicates an Ajax request. */
-	public static final String AJAX_ACCEPT_CONTENT_TYPE = "text/html;type=ajax";
+    /**
+     * "Accept" header value that indicates an Ajax request.
+     */
+    public static final String AJAX_ACCEPT_CONTENT_TYPE = "text/html;type=ajax";
 
-	/** Request parameter alternative that indicate an Ajax request. */
-	public static final String AJAX_SOURCE_PARAM = "ajaxSource";
+    /**
+     * Request parameter alternative that indicate an Ajax request.
+     */
+    public static final String AJAX_SOURCE_PARAM = "ajaxSource";
 
-	/** Response header to be set on an Ajax redirect with the redirect location */
-	public static final String REDIRECT_URL_HEADER = "Spring-Redirect-URL";
+    /**
+     * Response header to be set on an Ajax redirect with the redirect location
+     */
+    public static final String REDIRECT_URL_HEADER = "Spring-Redirect-URL";
 
-	/** Response header to be set on a redirect that should be issued from a popup window. */
-	public static final String POPUP_VIEW_HEADER = "Spring-Modal-View";
+    /**
+     * Response header to be set on a redirect that should be issued from a popup window.
+     */
+    public static final String POPUP_VIEW_HEADER = "Spring-Modal-View";
 
 
-	/**
-	 * Create a DefaultAjaxHandler that is not part of a chain of AjaxHandler's.
-	 */
-	public DefaultAjaxHandler() {
-		this(null);
-	}
+    /**
+     * Create a DefaultAjaxHandler that is not part of a chain of AjaxHandler's.
+     */
+    public DefaultAjaxHandler() {
+        this(null);
+    }
 
-	/**
-	 * Create a DefaultAjaxHandler as part of a chain of AjaxHandler's.
+    /**
+     * Create a DefaultAjaxHandler as part of a chain of AjaxHandler's.
+     *
      * @param delegate
      * @param delegate
      */
-	public DefaultAjaxHandler(AbstractAjaxHandler delegate) {
-		super(delegate);
-	}
+    public DefaultAjaxHandler(AbstractAjaxHandler delegate) {
+        super(delegate);
+    }
 
-	protected boolean isAjaxRequestInternal(HttpServletRequest request, HttpServletResponse response) {
-		String header = request.getHeader(HttpHeaders.ACCEPT);
-		String param = request.getParameter(AJAX_SOURCE_PARAM);
-		return AJAX_ACCEPT_CONTENT_TYPE.equals(header) || StringUtils.hasText(param);
-	}
+    protected boolean isAjaxRequestInternal(HttpServletRequest request, HttpServletResponse response) {
+        String header = request.getHeader(HttpHeaders.ACCEPT);
+        String param = request.getParameter(AJAX_SOURCE_PARAM);
+        return AJAX_ACCEPT_CONTENT_TYPE.equals(header) || StringUtils.hasText(param);
+    }
 
-	protected void sendAjaxRedirectInternal(String targetUrl, HttpServletRequest request,
-			HttpServletResponse response, boolean popup) {
+    protected void sendAjaxRedirectInternal(String targetUrl, HttpServletRequest request,
+                                            HttpServletResponse response, boolean popup) {
 
-		if (popup) {
-			response.setHeader(POPUP_VIEW_HEADER, "true");
-		}
-		response.setHeader(REDIRECT_URL_HEADER, response.encodeRedirectURL(targetUrl));
-	}
+        if (popup) {
+            response.setHeader(POPUP_VIEW_HEADER, "true");
+        }
+        response.setHeader(REDIRECT_URL_HEADER, response.encodeRedirectURL(targetUrl));
+    }
 
 }

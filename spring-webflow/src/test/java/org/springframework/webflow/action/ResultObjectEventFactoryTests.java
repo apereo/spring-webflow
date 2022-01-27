@@ -15,68 +15,65 @@
  */
 package org.springframework.webflow.action;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import org.junit.jupiter.api.Test;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.test.MockRequestContext;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit tests for {@link ResultObjectBasedEventFactory}.
  */
 public class ResultObjectEventFactoryTests {
 
-	private MockRequestContext context = new MockRequestContext();
+    private MockRequestContext context = new MockRequestContext();
 
-	private ResultObjectBasedEventFactory factory = new ResultObjectBasedEventFactory();
+    private ResultObjectBasedEventFactory factory = new ResultObjectBasedEventFactory();
 
-	@Test
-	public void testAlreadyAnEvent() {
-		Event event = new Event(this, "event");
-		Event result = factory.createResultEvent(this, event, context);
-		assertSame(event, result);
-	}
+    @Test
+    public void testAlreadyAnEvent() {
+        Event event = new Event(this, "event");
+        Event result = factory.createResultEvent(this, event, context);
+        assertSame(event, result);
+    }
 
-	@Test
-	public void testMappedTypes() {
-		assertTrue(factory.isMappedValueType(MyEnum.class));
-		assertTrue(factory.isMappedValueType(boolean.class));
-		assertTrue(factory.isMappedValueType(Boolean.class));
-		assertTrue(factory.isMappedValueType(String.class));
-		assertFalse(factory.isMappedValueType(Integer.class));
-	}
+    @Test
+    public void testMappedTypes() {
+        assertTrue(factory.isMappedValueType(MyEnum.class));
+        assertTrue(factory.isMappedValueType(boolean.class));
+        assertTrue(factory.isMappedValueType(Boolean.class));
+        assertTrue(factory.isMappedValueType(String.class));
+        assertFalse(factory.isMappedValueType(Integer.class));
+    }
 
-	@Test
-	public void testNullResult() {
-		Event result = factory.createResultEvent(this, null, context);
-		assertEquals("null", result.getId());
-	}
+    @Test
+    public void testNullResult() {
+        Event result = factory.createResultEvent(this, null, context);
+        assertEquals("null", result.getId());
+    }
 
-	@Test
-	public void testBooleanResult() {
-		Event result = factory.createResultEvent(this, true, context);
-		assertEquals("yes", result.getId());
-		result = factory.createResultEvent(this, false, context);
-		assertEquals("no", result.getId());
-	}
+    @Test
+    public void testBooleanResult() {
+        Event result = factory.createResultEvent(this, true, context);
+        assertEquals("yes", result.getId());
+        result = factory.createResultEvent(this, false, context);
+        assertEquals("no", result.getId());
+    }
 
-	@Test
-	public void testLabeledEnumResult() {
-		Event result = factory.createResultEvent(this, MyEnum.FOO, context);
-		assertEquals("FOO", result.getId());
-	}
+    @Test
+    public void testLabeledEnumResult() {
+        Event result = factory.createResultEvent(this, MyEnum.FOO, context);
+        assertEquals("FOO", result.getId());
+    }
 
-	@Test
-	public void testOtherResult() {
-		Event result = factory.createResultEvent(this, "hello", context);
-		assertEquals("hello", result.getId());
-	}
+    @Test
+    public void testOtherResult() {
+        Event result = factory.createResultEvent(this, "hello", context);
+        assertEquals("hello", result.getId());
+    }
 
-	private enum MyEnum {
-		FOO
-	}
+    private enum MyEnum {
+        FOO
+    }
 
 }

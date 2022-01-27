@@ -15,9 +15,6 @@
  */
 package org.springframework.webflow.test;
 
-import java.io.IOException;
-import java.io.Serializable;
-
 import org.springframework.binding.convert.ConversionService;
 import org.springframework.binding.expression.Expression;
 import org.springframework.binding.expression.ExpressionParser;
@@ -31,6 +28,9 @@ import org.springframework.webflow.execution.View;
 import org.springframework.webflow.execution.ViewFactory;
 import org.springframework.webflow.validation.ValidationHintResolver;
 
+import java.io.IOException;
+import java.io.Serializable;
+
 /**
  * A view factory creator that returns view factories that produce Mock View implementations that can be used to assert
  * that the correct view id was selected as part of a flow execution test.
@@ -39,96 +39,99 @@ import org.springframework.webflow.validation.ValidationHintResolver;
  */
 class MockViewFactoryCreator implements ViewFactoryCreator {
 
-	public ViewFactory createViewFactory(Expression viewId, ExpressionParser expressionParser,
-			ConversionService conversionService, BinderConfiguration binderConfiguration,
-			Validator validator, ValidationHintResolver resolver) {
-		return new MockViewFactory(viewId);
-	}
+    public ViewFactory createViewFactory(Expression viewId, ExpressionParser expressionParser,
+                                         ConversionService conversionService, BinderConfiguration binderConfiguration,
+                                         Validator validator, ValidationHintResolver resolver) {
+        return new MockViewFactory(viewId);
+    }
 
-	public String getViewIdByConvention(String viewStateId) {
-		return viewStateId;
-	}
+    public String getViewIdByConvention(String viewStateId) {
+        return viewStateId;
+    }
 
-	/**
-	 * Returns a Mock View implementation that simply holds the evaluated view identifier.
-	 * @author Keith Donald
-	 */
-	static class MockViewFactory implements ViewFactory {
-		private Expression viewId;
+    /**
+     * Returns a Mock View implementation that simply holds the evaluated view identifier.
+     *
+     * @author Keith Donald
+     */
+    static class MockViewFactory implements ViewFactory {
+        private Expression viewId;
 
-		/**
-		 * Creates a new mock view factory
-		 * @param viewId the view id expression
-		 */
-		public MockViewFactory(Expression viewId) {
-			this.viewId = viewId;
-		}
+        /**
+         * Creates a new mock view factory
+         *
+         * @param viewId the view id expression
+         */
+        public MockViewFactory(Expression viewId) {
+            this.viewId = viewId;
+        }
 
-		public View getView(RequestContext context) {
-			String viewId = (String) this.viewId.getValue(context);
-			return new MockView(viewId, context);
-		}
-	}
+        public View getView(RequestContext context) {
+            String viewId = (String) this.viewId.getValue(context);
+            return new MockView(viewId, context);
+        }
+    }
 
-	/**
-	 * A Mock view implementation that simply holds a reference to a identifier for a view that should be rendered.
-	 * Useful to assert that the right view was selected as part of a flow execution test, without actually exercising
-	 * any real rendering logic.
-	 *
-	 * @author Keith Donald
-	 */
-	static class MockView implements View {
+    /**
+     * A Mock view implementation that simply holds a reference to a identifier for a view that should be rendered.
+     * Useful to assert that the right view was selected as part of a flow execution test, without actually exercising
+     * any real rendering logic.
+     *
+     * @author Keith Donald
+     */
+    static class MockView implements View {
 
-		/**
-		 * The id of the view that would have been rendered.
-		 */
-		private String viewId;
+        /**
+         * The id of the view that would have been rendered.
+         */
+        private String viewId;
 
-		private RequestContext context;
+        private RequestContext context;
 
-		public MockView(String viewId, RequestContext context) {
-			this.viewId = viewId;
-			this.context = context;
-		}
+        public MockView(String viewId, RequestContext context) {
+            this.viewId = viewId;
+            this.context = context;
+        }
 
-		/**
-		 * Returns the id of the view that would have been rendered.
-		 * @return the view id
-		 */
-		public String getViewId() {
-			return viewId;
-		}
+        /**
+         * Returns the id of the view that would have been rendered.
+         *
+         * @return the view id
+         */
+        public String getViewId() {
+            return viewId;
+        }
 
-		public void render() throws IOException {
-			context.getExternalContext().getResponseWriter().write(viewId);
-		}
+        public void render() throws IOException {
+            context.getExternalContext().getResponseWriter().write(viewId);
+        }
 
-		public boolean userEventQueued() {
-			return hasFlowEvent();
-		}
+        public boolean userEventQueued() {
+            return hasFlowEvent();
+        }
 
-		public void processUserEvent() {
-			// TODO - implement me as appropriate for a test environment
-		}
+        public void processUserEvent() {
+            // TODO - implement me as appropriate for a test environment
+        }
 
-		public Serializable getUserEventState() {
-			return null;
-		}
+        public Serializable getUserEventState() {
+            return null;
+        }
 
-		public boolean hasFlowEvent() {
-			return context.getRequestParameters().contains("_eventId");
-		}
+        public boolean hasFlowEvent() {
+            return context.getRequestParameters().contains("_eventId");
+        }
 
-		public Event getFlowEvent() {
-			return new Event(this, context.getRequestParameters().get("_eventId"));
-		}
+        public Event getFlowEvent() {
+            return new Event(this, context.getRequestParameters().get("_eventId"));
+        }
 
-		public void saveState() {
+        public void saveState() {
 
-		}
+        }
 
-		public String toString() {
-			return new ToStringCreator(this).append("viewId", viewId).toString();
-		}
-	}
+        public String toString() {
+            return new ToStringCreator(this).append("viewId", viewId).toString();
+        }
+    }
 }

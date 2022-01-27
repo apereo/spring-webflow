@@ -15,51 +15,50 @@
  */
 package org.springframework.webflow.engine.support;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.webflow.test.MockAction;
 import org.springframework.webflow.test.MockRequestContext;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 public class ActionTransitionCriteriaTests {
 
-	private MockAction action;
+    private MockAction action;
 
-	private ActionTransitionCriteria criteria;
+    private ActionTransitionCriteria criteria;
 
-	@BeforeEach
-	public void setUp() throws Exception {
-		action = new MockAction();
-		criteria = new ActionTransitionCriteria(action);
-	}
+    @BeforeEach
+    public void setUp() throws Exception {
+        action = new MockAction();
+        criteria = new ActionTransitionCriteria(action);
+    }
 
-	@Test
-	public void testExecuteSuccessResult() {
-		MockRequestContext context = new MockRequestContext();
-		assertTrue(criteria.test(context));
-	}
+    @Test
+    public void testExecuteSuccessResult() {
+        MockRequestContext context = new MockRequestContext();
+        assertTrue(criteria.test(context));
+    }
 
-	@Test
-	public void testExecuteTrueResult() {
-		action.setResultEventId("true");
-		MockRequestContext context = new MockRequestContext();
-		assertTrue(criteria.test(context));
-	}
+    @Test
+    public void testExecuteTrueResult() {
+        action.setResultEventId("true");
+        MockRequestContext context = new MockRequestContext();
+        assertTrue(criteria.test(context));
+    }
 
-	@Test
-	public void testExecuteYesResult() {
-		action.setResultEventId("yes");
-		MockRequestContext context = new MockRequestContext();
-		assertTrue(criteria.test(context));
-	}
+    @Test
+    public void testExecuteYesResult() {
+        action.setResultEventId("yes");
+        MockRequestContext context = new MockRequestContext();
+        assertTrue(criteria.test(context));
+    }
 
-	@Test
-	public void testExecuteErrorResult() {
-		action.setResultEventId("whatever");
-		MockRequestContext context = new MockRequestContext();
-		assertFalse(criteria.test(context));
-	}
+    @Test
+    public void testExecuteErrorResult() {
+        action.setResultEventId("whatever");
+        MockRequestContext context = new MockRequestContext();
+        assertFalse(criteria.test(context));
+    }
 
 }

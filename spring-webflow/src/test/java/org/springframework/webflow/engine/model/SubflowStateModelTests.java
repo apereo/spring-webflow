@@ -15,45 +15,42 @@
  */
 package org.springframework.webflow.engine.model;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit tests for {@link SubflowStateModel}.
  */
 public class SubflowStateModelTests {
 
-	@Test
-	public void testMergeable() {
-		SubflowStateModel child = new SubflowStateModel("child", "flow");
-		assertTrue(child.isMergeableWith(child));
-	}
+    @Test
+    public void testMergeable() {
+        SubflowStateModel child = new SubflowStateModel("child", "flow");
+        assertTrue(child.isMergeableWith(child));
+    }
 
-	@Test
-	public void testNotMergeable() {
-		SubflowStateModel child = new SubflowStateModel("child", "flow");
-		SubflowStateModel parent = new SubflowStateModel("parent", "flow");
-		assertFalse(child.isMergeableWith(parent));
-	}
+    @Test
+    public void testNotMergeable() {
+        SubflowStateModel child = new SubflowStateModel("child", "flow");
+        SubflowStateModel parent = new SubflowStateModel("parent", "flow");
+        assertFalse(child.isMergeableWith(parent));
+    }
 
-	@Test
-	public void testNotMergeableWithNull() {
-		SubflowStateModel child = new SubflowStateModel("child", "flow");
-		assertFalse(child.isMergeableWith(null));
-	}
+    @Test
+    public void testNotMergeableWithNull() {
+        SubflowStateModel child = new SubflowStateModel("child", "flow");
+        assertFalse(child.isMergeableWith(null));
+    }
 
-	@Test
-	public void testMerge() {
-		SubflowStateModel child = new SubflowStateModel("child", null);
-		SubflowStateModel parent = new SubflowStateModel("child", "flow");
-		parent.setSecured(new SecuredModel("secured"));
-		child.merge(parent);
-		assertEquals("flow", child.getSubflow());
-		assertNotNull(child.getSecured());
-	}
+    @Test
+    public void testMerge() {
+        SubflowStateModel child = new SubflowStateModel("child", null);
+        SubflowStateModel parent = new SubflowStateModel("child", "flow");
+        parent.setSecured(new SecuredModel("secured"));
+        child.merge(parent);
+        assertEquals("flow", child.getSubflow());
+        assertNotNull(child.getSecured());
+    }
 
 }

@@ -18,31 +18,33 @@ package org.springframework.webflow.conversation;
 /**
  * Thrown when no logical conversation exists with the specified <code>conversationId</code>. This might occur if the
  * conversation ended, expired, or was otherwise invalidated, but a client view still references it.
- * 
+ *
  * @author Keith Donald
  */
 public class NoSuchConversationException extends ConversationException {
 
-	/**
-	 * The unique conversation identifier that was invalid.
-	 */
-	private ConversationId conversationId;
+    /**
+     * The unique conversation identifier that was invalid.
+     */
+    private ConversationId conversationId;
 
-	/**
-	 * Create a new conversation lookup exception.
-	 * @param conversationId the conversation id
-	 */
-	public NoSuchConversationException(ConversationId conversationId) {
-		super("No conversation could be found with id '" + conversationId
-				+ "' -- perhaps this conversation has ended? ");
-		this.conversationId = conversationId;
-	}
+    /**
+     * Create a new conversation lookup exception.
+     *
+     * @param conversationId the conversation id
+     */
+    public NoSuchConversationException(ConversationId conversationId) {
+        super("No conversation could be found with id '" + conversationId
+              + "' -- perhaps this conversation has ended? ");
+        this.conversationId = conversationId;
+    }
 
-	/**
-	 * Returns the conversation id that was not found.
+    /**
+     * Returns the conversation id that was not found.
+     *
      * @return
      */
-	public ConversationId getConversationId() {
-		return conversationId;
-	}
+    public ConversationId getConversationId() {
+        return conversationId;
+    }
 }

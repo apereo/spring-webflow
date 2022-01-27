@@ -38,55 +38,58 @@ import org.springframework.webflow.executor.FlowExecutor;
  * <p>
  * Sub-classes are expected to declare {@code @Bean} methods themselves and use the
  * appropriate builder from these methods.
-
+ *
  * @author Rossen Stoyanchev
  * @since 2.4
  */
 public class AbstractFlowConfiguration implements ApplicationContextAware {
 
-	private ApplicationContext applicationContext;
+    private ApplicationContext applicationContext;
 
+    public ApplicationContext getApplicationContext() {
+        return this.applicationContext;
+    }
 
-	public void setApplicationContext(ApplicationContext applicationContext) {
-		this.applicationContext = applicationContext;
-	}
+    public void setApplicationContext(ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
+    }
 
-	public ApplicationContext getApplicationContext() {
-		return this.applicationContext;
-	}
+    /**
+     * Return a builder for creating a {@link FlowExecutor} instance.
+     *
+     * @param flowRegistry the {@link FlowDefinitionRegistry} to configure on the flow executor
+     * @return the created builder
+     */
+    protected FlowExecutorBuilder getFlowExecutorBuilder(FlowDefinitionLocator flowRegistry) {
+        return new FlowExecutorBuilder(flowRegistry);
+    }
 
-	/**
-	 * Return a builder for creating a {@link FlowExecutor} instance.
-	 * @param flowRegistry the {@link FlowDefinitionRegistry} to configure on the flow executor
-	 * @return the created builder
-	 */
-	protected FlowExecutorBuilder getFlowExecutorBuilder(FlowDefinitionLocator flowRegistry) {
-		return new FlowExecutorBuilder(flowRegistry);
-	}
+    /**
+     * Return a builder for creating a {@link FlowDefinitionRegistry} instance.
+     *
+     * @return the created builder
+     */
+    protected FlowDefinitionRegistryBuilder getFlowDefinitionRegistryBuilder() {
+        return new FlowDefinitionRegistryBuilder(this.applicationContext);
+    }
 
-	/**
-	 * Return a builder for creating a {@link FlowDefinitionRegistry} instance.
-	 * @return the created builder
-	 */
-	protected FlowDefinitionRegistryBuilder getFlowDefinitionRegistryBuilder() {
-		return new FlowDefinitionRegistryBuilder(this.applicationContext);
-	}
+    /**
+     * Return a builder for creating a {@link FlowDefinitionRegistry} instance.
+     *
+     * @param flowBuilderServices the {@link FlowBuilderServices} to configure on the flow registry with
+     * @return the created builder
+     */
+    protected FlowDefinitionRegistryBuilder getFlowDefinitionRegistryBuilder(FlowBuilderServices flowBuilderServices) {
+        return new FlowDefinitionRegistryBuilder(this.applicationContext, flowBuilderServices);
+    }
 
-	/**
-	 * Return a builder for creating a {@link FlowDefinitionRegistry} instance.
-	 * @param flowBuilderServices the {@link FlowBuilderServices} to configure on the flow registry with
-	 * @return the created builder
-	 */
-	protected FlowDefinitionRegistryBuilder getFlowDefinitionRegistryBuilder(FlowBuilderServices flowBuilderServices) {
-		return new FlowDefinitionRegistryBuilder(this.applicationContext, flowBuilderServices);
-	}
-
-	/**
-	 * Return a builder for creating a {@link FlowBuilderServices} instance.
-	 * @return the created builder
-	 */
-	protected FlowBuilderServicesBuilder getFlowBuilderServicesBuilder() {
-		return new FlowBuilderServicesBuilder();
-	}
+    /**
+     * Return a builder for creating a {@link FlowBuilderServices} instance.
+     *
+     * @return the created builder
+     */
+    protected FlowBuilderServicesBuilder getFlowBuilderServicesBuilder() {
+        return new FlowBuilderServicesBuilder();
+    }
 
 }

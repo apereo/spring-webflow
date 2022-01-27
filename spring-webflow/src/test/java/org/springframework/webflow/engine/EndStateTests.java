@@ -15,10 +15,6 @@
  */
 package org.springframework.webflow.engine;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import org.junit.jupiter.api.Test;
 import org.springframework.binding.expression.EvaluationException;
 import org.springframework.binding.expression.Expression;
@@ -40,104 +36,107 @@ import org.springframework.webflow.test.MockFlowExecutionContext;
 import org.springframework.webflow.test.MockFlowSession;
 import org.springframework.webflow.test.MockRequestControlContext;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 /**
  * Tests EndState behavior.
+ *
  * @author Keith Donald
  */
 public class EndStateTests {
 
-	@Test
-	public void testEnterEndStateTerminateFlowExecution() {
-		Flow flow = new Flow("myFlow");
-		EndState state = new EndState(flow, "end");
-		MockRequestControlContext context = new MockRequestControlContext(flow);
-		state.enter(context);
-		assertFalse(context.getFlowExecutionContext().isActive(), "Active");
-	}
+    protected static TransitionCriteria on(String event) {
+        return new MockTransitionCriteria(event);
+    }
 
-	@Test
-	public void testEnterEndStateWithFinalResponseRenderer() {
-		Flow flow = new Flow("myFlow");
-		EndState state = new EndState(flow, "end");
-		StubFinalResponseAction action = new StubFinalResponseAction();
-		state.setFinalResponseAction(action);
-		MockRequestControlContext context = new MockRequestControlContext(flow);
-		state.enter(context);
-		assertTrue(action.executeCalled);
-	}
+    protected static TargetStateResolver to(String stateId) {
+        return new DefaultTargetStateResolver(stateId);
+    }
 
-	@Test
-	public void testEnterEndStateWithFinalResponseRendererResponseAlreadyComplete() {
-		Flow flow = new Flow("myFlow");
-		EndState state = new EndState(flow, "end");
-		StubFinalResponseAction action = new StubFinalResponseAction();
-		state.setFinalResponseAction(action);
-		MockRequestControlContext context = new MockRequestControlContext(flow);
-		context.getExternalContext().recordResponseComplete();
-		state.enter(context);
-		assertFalse(action.executeCalled);
-	}
+    @Test
+    public void testEnterEndStateTerminateFlowExecution() {
+        Flow flow = new Flow("myFlow");
+        EndState state = new EndState(flow, "end");
+        MockRequestControlContext context = new MockRequestControlContext(flow);
+        state.enter(context);
+        assertFalse(context.getFlowExecutionContext().isActive(), "Active");
+    }
 
-	@Test
-	public void testEnterEndStateWithOutputMapper() {
-		Flow flow = new Flow("myFlow") {
-			@SuppressWarnings("unused")
-			public void end(RequestControlContext context, MutableAttributeMap<Object> output)
-					throws FlowExecutionException {
-				assertEquals("foo", output.get("y"));
-			}
-		};
-		EndState state = new EndState(flow, "end");
-		DefaultMapper mapper = new DefaultMapper();
-		ExpressionParser parser = new WebFlowSpringELExpressionParser(new SpelExpressionParser());
-		Expression x = parser.parseExpression("flowScope.x", new FluentParserContext().evaluate(RequestContext.class));
-		Expression y = parser.parseExpression("y", new FluentParserContext().evaluate(MutableAttributeMap.class));
-		mapper.addMapping(new DefaultMapping(x, y));
-		state.setOutputMapper(mapper);
-		MockRequestControlContext context = new MockRequestControlContext(flow);
-		context.getFlowScope().put("x", "foo");
-		state.enter(context);
-	}
+    @Test
+    public void testEnterEndStateWithFinalResponseRenderer() {
+        Flow flow = new Flow("myFlow");
+        EndState state = new EndState(flow, "end");
+        StubFinalResponseAction action = new StubFinalResponseAction();
+        state.setFinalResponseAction(action);
+        MockRequestControlContext context = new MockRequestControlContext(flow);
+        state.enter(context);
+        assertTrue(action.executeCalled);
+    }
 
-	@Test
-	public void testEnterEndStateTerminateFlowSession() {
-		final Flow subflow = new Flow("mySubflow");
-		EndState state = new EndState(subflow, "end");
-		MockFlowSession session = new MockFlowSession(subflow);
+    @Test
+    public void testEnterEndStateWithFinalResponseRendererResponseAlreadyComplete() {
+        Flow flow = new Flow("myFlow");
+        EndState state = new EndState(flow, "end");
+        StubFinalResponseAction action = new StubFinalResponseAction();
+        state.setFinalResponseAction(action);
+        MockRequestControlContext context = new MockRequestControlContext(flow);
+        context.getExternalContext().recordResponseComplete();
+        state.enter(context);
+        assertFalse(action.executeCalled);
+    }
 
-		Flow parent = new Flow("parent");
-		SubflowState subflowState = new SubflowState(parent, "subflow", new AbstractGetValueExpression() {
-			public Object getValue(Object context) throws EvaluationException {
-				return subflow;
-			}
-		});
-		subflowState.getTransitionSet().add(new Transition(on("end"), to("end")));
-		new EndState(parent, "end");
+    @Test
+    public void testEnterEndStateWithOutputMapper() {
+        Flow flow = new Flow("myFlow") {
+            @SuppressWarnings("unused")
+            public void end(RequestControlContext context, MutableAttributeMap<Object> output)
+                throws FlowExecutionException {
+                assertEquals("foo", output.get("y"));
+            }
+        };
+        EndState state = new EndState(flow, "end");
+        DefaultMapper mapper = new DefaultMapper();
+        ExpressionParser parser = new WebFlowSpringELExpressionParser(new SpelExpressionParser());
+        Expression x = parser.parseExpression("flowScope.x", new FluentParserContext().evaluate(RequestContext.class));
+        Expression y = parser.parseExpression("y", new FluentParserContext().evaluate(MutableAttributeMap.class));
+        mapper.addMapping(new DefaultMapping(x, y));
+        state.setOutputMapper(mapper);
+        MockRequestControlContext context = new MockRequestControlContext(flow);
+        context.getFlowScope().put("x", "foo");
+        state.enter(context);
+    }
 
-		MockFlowSession parentSession = new MockFlowSession(parent);
-		parentSession.setState(subflowState);
+    @Test
+    public void testEnterEndStateTerminateFlowSession() {
+        final Flow subflow = new Flow("mySubflow");
+        EndState state = new EndState(subflow, "end");
+        MockFlowSession session = new MockFlowSession(subflow);
 
-		session.setParent(parentSession);
-		MockRequestControlContext context = new MockRequestControlContext(new MockFlowExecutionContext(session));
-		state.enter(context);
+        Flow parent = new Flow("parent");
+        SubflowState subflowState = new SubflowState(parent, "subflow", new AbstractGetValueExpression() {
+            public Object getValue(Object context) throws EvaluationException {
+                return subflow;
+            }
+        });
+        subflowState.getTransitionSet().add(new Transition(on("end"), to("end")));
+        new EndState(parent, "end");
 
-		assertFalse(context.getFlowExecutionContext().isActive(), "Active");
-	}
+        MockFlowSession parentSession = new MockFlowSession(parent);
+        parentSession.setState(subflowState);
 
-	protected static TransitionCriteria on(String event) {
-		return new MockTransitionCriteria(event);
-	}
+        session.setParent(parentSession);
+        MockRequestControlContext context = new MockRequestControlContext(new MockFlowExecutionContext(session));
+        state.enter(context);
 
-	protected static TargetStateResolver to(String stateId) {
-		return new DefaultTargetStateResolver(stateId);
-	}
+        assertFalse(context.getFlowExecutionContext().isActive(), "Active");
+    }
 
-	private class StubFinalResponseAction implements Action {
-		private boolean executeCalled;
+    private class StubFinalResponseAction implements Action {
+        private boolean executeCalled;
 
-		public Event execute(RequestContext context) {
-			executeCalled = true;
-			return new Event(this, "success");
-		}
-	}
+        public Event execute(RequestContext context) {
+            executeCalled = true;
+            return new Event(this, "success");
+        }
+    }
 }

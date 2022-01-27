@@ -24,22 +24,22 @@ import org.springframework.webflow.execution.ScopeType;
 
 /**
  * Registers the Spring Web Flow bean scopes with a {@link ConfigurableListableBeanFactory}.
- * 
+ *
  * @author Ben Hale
  * @see Scope
  */
 public class ScopeRegistrar implements BeanFactoryPostProcessor, Ordered {
 
-	public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
-		beanFactory.registerScope(ScopeType.REQUEST.name().toLowerCase(), new RequestScope());
-		beanFactory.registerScope(ScopeType.FLASH.name().toLowerCase(), new FlashScope());
-		beanFactory.registerScope(ScopeType.VIEW.name().toLowerCase(), new ViewScope());
-		beanFactory.registerScope(ScopeType.FLOW.name().toLowerCase(), new FlowScope());
-		beanFactory.registerScope(ScopeType.CONVERSATION.name().toLowerCase(), new ConversationScope());
-	}
+    public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
+        beanFactory.registerScope(ScopeType.REQUEST.name().toLowerCase(), new RequestScope());
+        beanFactory.registerScope(ScopeType.FLASH.name().toLowerCase(), new FlashScope());
+        beanFactory.registerScope(ScopeType.VIEW.name().toLowerCase(), new ViewScope());
+        beanFactory.registerScope(ScopeType.FLOW.name().toLowerCase(), new FlowScope());
+        beanFactory.registerScope(ScopeType.CONVERSATION.name().toLowerCase(), new ConversationScope());
+    }
 
-	public int getOrder() {
-		return Ordered.LOWEST_PRECEDENCE;
-	}
+    public int getOrder() {
+        return Ordered.LOWEST_PRECEDENCE;
+    }
 
 }

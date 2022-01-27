@@ -26,17 +26,16 @@ import org.springframework.webflow.execution.FlowExecutionException;
  */
 public interface ValidationHintResolver {
 
-	/**
-	 * Resolve the given String hints. Implementations may raise a
-	 * {@link FlowExecutionException} if a hint cannot be resolved.
-	 *
-	 * @param model the model object that will be validated using the hints
-	 * @param flowId the current flow id
-	 * @param stateId the current state id
-	 * @param hints the hints to resolve
-	 *
-	 * @return an array of resolved hints
-	 */
-	Object[] resolveValidationHints(Object model, String flowId, String stateId, String[] hints);
+    /**
+     * Resolve the given String hints. Implementations may raise a
+     * {@link FlowExecutionException} if a hint cannot be resolved.
+     *
+     * @param model   the model object that will be validated using the hints
+     * @param flowId  the current flow id
+     * @param stateId the current state id
+     * @param hints   the hints to resolve
+     * @return an array of resolved hints
+     */
+    Object[] resolveValidationHints(Object model, String flowId, String stateId, String[] hints);
 
 }

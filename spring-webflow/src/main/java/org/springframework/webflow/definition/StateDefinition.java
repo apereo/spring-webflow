@@ -22,27 +22,30 @@ import org.springframework.webflow.core.Annotated;
  * <p>
  * States have identifiers that are local to their containing flow definitions. They may also be annotated with
  * attributes.
- * 
+ *
  * @author Keith Donald
  * @author Erwin Vervaet
  */
 public interface StateDefinition extends Annotated {
 
-	/**
-	 * Returns the flow definition this state belongs to.
-	 * @return the owning flow definition
-	 */
-	FlowDefinition getOwner();
+    /**
+     * Returns the flow definition this state belongs to.
+     *
+     * @return the owning flow definition
+     */
+    FlowDefinition getOwner();
 
-	/**
-	 * Returns this state's identifier, locally unique to is containing flow definition.
-	 * @return the state identifier
-	 */
-	String getId();
+    /**
+     * Returns this state's identifier, locally unique to is containing flow definition.
+     *
+     * @return the state identifier
+     */
+    String getId();
 
-	/**
-	 * Returns true if this state is a view state.
-	 * @return true if a view state, false otherwise
-	 */
-	boolean isViewState();
+    /**
+     * Returns true if this state is a view state.
+     *
+     * @return true if a view state, false otherwise
+     */
+    boolean isViewState();
 }

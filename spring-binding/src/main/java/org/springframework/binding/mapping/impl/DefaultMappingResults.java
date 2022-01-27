@@ -15,80 +15,82 @@
  */
 package org.springframework.binding.mapping.impl;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import org.springframework.binding.mapping.MappingResult;
 import org.springframework.binding.mapping.MappingResults;
 import org.springframework.binding.mapping.MappingResultsCriteria;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 /**
  * Default mapping results implementation.
+ *
  * @author Keith Donald
  */
 public class DefaultMappingResults implements MappingResults {
 
-	private transient Object source;
+    private transient Object source;
 
-	private transient Object target;
+    private transient Object target;
 
-	private List<MappingResult> mappingResults;
+    private List<MappingResult> mappingResults;
 
-	/**
-	 * Creates a new mapping results object.
-	 * @param source the source
-	 * @param target the target
-	 * @param mappingResults the actual results produced by {@link DefaultMapper}
-	 */
-	public DefaultMappingResults(Object source, Object target, List<MappingResult> mappingResults) {
-		this.source = source;
-		this.target = target;
-		this.mappingResults = mappingResults;
-	}
+    /**
+     * Creates a new mapping results object.
+     *
+     * @param source         the source
+     * @param target         the target
+     * @param mappingResults the actual results produced by {@link DefaultMapper}
+     */
+    public DefaultMappingResults(Object source, Object target, List<MappingResult> mappingResults) {
+        this.source = source;
+        this.target = target;
+        this.mappingResults = mappingResults;
+    }
 
-	public Object getSource() {
-		return source;
-	}
+    public Object getSource() {
+        return source;
+    }
 
-	public Object getTarget() {
-		return target;
-	}
+    public Object getTarget() {
+        return target;
+    }
 
-	public List<MappingResult> getAllResults() {
-		return Collections.unmodifiableList(mappingResults);
-	}
+    public List<MappingResult> getAllResults() {
+        return Collections.unmodifiableList(mappingResults);
+    }
 
-	public boolean hasErrorResults() {
-		for (MappingResult result : mappingResults) {
-			if (result.isError()) {
-				return true;
-			}
-		}
-		return false;
-	}
+    public boolean hasErrorResults() {
+        for (MappingResult result : mappingResults) {
+            if (result.isError()) {
+                return true;
+            }
+        }
+        return false;
+    }
 
-	public List<MappingResult> getErrorResults() {
-		List<MappingResult> errorResults = new ArrayList<>();
-		for (MappingResult result : mappingResults) {
-			if (result.isError()) {
-				errorResults.add(result);
-			}
-		}
-		return Collections.unmodifiableList(errorResults);
-	}
+    public List<MappingResult> getErrorResults() {
+        List<MappingResult> errorResults = new ArrayList<>();
+        for (MappingResult result : mappingResults) {
+            if (result.isError()) {
+                errorResults.add(result);
+            }
+        }
+        return Collections.unmodifiableList(errorResults);
+    }
 
-	public List<MappingResult> getResults(MappingResultsCriteria criteria) {
-		List<MappingResult> results = new ArrayList<>();
-		for (MappingResult result : mappingResults) {
-			if (criteria.test(result)) {
-				results.add(result);
-			}
-		}
-		return Collections.unmodifiableList(results);
-	}
+    public List<MappingResult> getResults(MappingResultsCriteria criteria) {
+        List<MappingResult> results = new ArrayList<>();
+        for (MappingResult result : mappingResults) {
+            if (criteria.test(result)) {
+                results.add(result);
+            }
+        }
+        return Collections.unmodifiableList(results);
+    }
 
-	public String toString() {
-		return "Mapping Results = " + mappingResults.toString();
-	}
+    public String toString() {
+        return "Mapping Results = " + mappingResults.toString();
+    }
 }

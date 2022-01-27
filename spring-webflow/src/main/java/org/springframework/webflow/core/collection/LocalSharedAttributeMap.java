@@ -22,27 +22,28 @@ import org.springframework.binding.collection.SharedMap;
  * in an attribute map.
  * <p>
  * The mutex can be used to serialize concurrent access to the shared map's contents by multiple threads.
- * 
+ *
  * @author Keith Donald
  */
 public class LocalSharedAttributeMap<V> extends LocalAttributeMap<V> implements SharedAttributeMap<V> {
 
-	/**
-	 * Creates a new shared attribute map.
-	 * @param sharedMap the shared map
-	 */
-	public LocalSharedAttributeMap(SharedMap<String, V> sharedMap) {
-		super(sharedMap);
-	}
+    /**
+     * Creates a new shared attribute map.
+     *
+     * @param sharedMap the shared map
+     */
+    public LocalSharedAttributeMap(SharedMap<String, V> sharedMap) {
+        super(sharedMap);
+    }
 
-	public Object getMutex() {
-		return getSharedMap().getMutex();
-	}
+    public Object getMutex() {
+        return getSharedMap().getMutex();
+    }
 
-	/**
-	 * Returns the wrapped shared map.
-	 */
-	protected SharedMap<String, V> getSharedMap() {
-		return (SharedMap<String, V>) getMapInternal();
-	}
+    /**
+     * Returns the wrapped shared map.
+     */
+    protected SharedMap<String, V> getSharedMap() {
+        return (SharedMap<String, V>) getMapInternal();
+    }
 }

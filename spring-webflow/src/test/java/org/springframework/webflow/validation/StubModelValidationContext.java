@@ -23,14 +23,14 @@ import org.springframework.binding.validation.ValidationContext;
  */
 public class StubModelValidationContext {
 
-	public void validateMockState(ValidationContext context) {
-		context.getMessageContext()
-				.addMessage(new MessageBuilder().source("validationcontext").defaultText("").build());
-	}
+    public void validateMockState(ValidationContext context) {
+        context.getMessageContext()
+            .addMessage(new MessageBuilder().source("validationcontext").defaultText("").build());
+    }
 
-	public void validateMockState(Object model, ValidationContext context) {
-		context.getMessageContext().addMessage(
-				new MessageBuilder().source("validationcontext-external").defaultText("").build());
-	}
+    public void validateMockState(Object model, ValidationContext context) {
+        context.getMessageContext().addMessage(
+            new MessageBuilder().source("validationcontext-external").defaultText("").build());
+    }
 
 }

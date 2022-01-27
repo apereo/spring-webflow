@@ -16,41 +16,45 @@
 
 package org.springframework.binding.validation;
 
-import java.security.Principal;
-
 import org.springframework.binding.message.MessageContext;
+
+import java.security.Principal;
 
 /**
  * A context for a validator to use to access user data and report validation failures.
- * 
+ *
  * @author Keith Donald
  * @author Scott Andrews
  */
 public interface ValidationContext {
 
-	/**
-	 * A context for adding failure messages to display to the user directly.
+    /**
+     * A context for adding failure messages to display to the user directly.
+     *
      * @return
      */
-	MessageContext getMessageContext();
+    MessageContext getMessageContext();
 
-	/**
-	 * The current user.
+    /**
+     * The current user.
+     *
      * @return
      */
-	Principal getUserPrincipal();
+    Principal getUserPrincipal();
 
-	/**
-	 * The current user event that triggered validation.
+    /**
+     * The current user event that triggered validation.
+     *
      * @return
      */
-	String getUserEvent();
+    String getUserEvent();
 
-	/**
-	 * Obtain the value entered by the current user in the UI field bound to the property provided.
-	 * @param property the name of a bound property
-	 * @return the value the user entered in the field bound to the property
-	 */
-	Object getUserValue(String property);
+    /**
+     * Obtain the value entered by the current user in the UI field bound to the property provided.
+     *
+     * @param property the name of a bound property
+     * @return the value the user entered in the field bound to the property
+     */
+    Object getUserValue(String property);
 
 }

@@ -15,81 +15,83 @@
  */
 package org.springframework.webflow.engine.model;
 
-import java.util.LinkedList;
-
 import org.springframework.util.ObjectUtils;
+
+import java.util.LinkedList;
 
 /**
  * Model support for decision states.
+ *
  * @author Scott Andrews
  */
 public class DecisionStateModel extends AbstractStateModel {
 
-	private LinkedList<IfModel> ifs;
+    private LinkedList<IfModel> ifs;
 
-	private LinkedList<AbstractActionModel> onExitActions;
+    private LinkedList<AbstractActionModel> onExitActions;
 
-	/**
-	 * Create a decision state model
-	 * @param id the state identifier
-	 */
-	public DecisionStateModel(String id) {
-		super(id);
-	}
+    /**
+     * Create a decision state model
+     *
+     * @param id the state identifier
+     */
+    public DecisionStateModel(String id) {
+        super(id);
+    }
 
-	public boolean isMergeableWith(Model model) {
-		if (!(model instanceof DecisionStateModel)) {
-			return false;
-		}
-		DecisionStateModel state = (DecisionStateModel) model;
-		return ObjectUtils.nullSafeEquals(getId(), state.getId());
-	}
+    public boolean isMergeableWith(Model model) {
+        if (!(model instanceof DecisionStateModel)) {
+            return false;
+        }
+        DecisionStateModel state = (DecisionStateModel) model;
+        return ObjectUtils.nullSafeEquals(getId(), state.getId());
+    }
 
-	public void merge(Model model) {
-		DecisionStateModel state = (DecisionStateModel) model;
-		setParent(null);
-		setAttributes(merge(getAttributes(), state.getAttributes()));
-		setSecured((SecuredModel) merge(getSecured(), state.getSecured()));
-		setOnEntryActions(merge(getOnEntryActions(), state.getOnEntryActions(), false));
-		setExceptionHandlers(merge(getExceptionHandlers(), state.getExceptionHandlers()));
-		setIfs(merge(getIfs(), state.getIfs()));
-		setOnExitActions(merge(getOnExitActions(), state.getOnExitActions(), false));
-	}
+    public void merge(Model model) {
+        DecisionStateModel state = (DecisionStateModel) model;
+        setParent(null);
+        setAttributes(merge(getAttributes(), state.getAttributes()));
+        setSecured((SecuredModel) merge(getSecured(), state.getSecured()));
+        setOnEntryActions(merge(getOnEntryActions(), state.getOnEntryActions(), false));
+        setExceptionHandlers(merge(getExceptionHandlers(), state.getExceptionHandlers()));
+        setIfs(merge(getIfs(), state.getIfs()));
+        setOnExitActions(merge(getOnExitActions(), state.getOnExitActions(), false));
+    }
 
-	public Model createCopy() {
-		DecisionStateModel copy = new DecisionStateModel(getId());
-		super.fillCopy(copy);
-		copy.setIfs(copyList(ifs));
-		copy.setOnExitActions(copyList(onExitActions));
-		return copy;
-	}
+    public Model createCopy() {
+        DecisionStateModel copy = new DecisionStateModel(getId());
+        super.fillCopy(copy);
+        copy.setIfs(copyList(ifs));
+        copy.setOnExitActions(copyList(onExitActions));
+        return copy;
+    }
 
-	/**
-	 * @return the ifs
-	 */
-	public LinkedList<IfModel> getIfs() {
-		return ifs;
-	}
+    /**
+     * @return the ifs
+     */
+    public LinkedList<IfModel> getIfs() {
+        return ifs;
+    }
 
-	/**
-	 * @param ifs the ifs to set
-	 */
-	public void setIfs(LinkedList<IfModel> ifs) {
-		this.ifs = ifs;
-	}
+    /**
+     * @param ifs the ifs to set
+     */
+    public void setIfs(LinkedList<IfModel> ifs) {
+        this.ifs = ifs;
+    }
 
-	/**
-	 * @return the on exit actions
-	 */
-	public LinkedList<AbstractActionModel> getOnExitActions() {
-		return onExitActions;
-	}
+    /**
+     * @return the on exit actions
+     */
+    public LinkedList<AbstractActionModel> getOnExitActions() {
+        return onExitActions;
+    }
 
-	/**
-	 * @param onExitActions the on exit actions to set
-	 */
-	public void setOnExitActions(LinkedList<AbstractActionModel> onExitActions) {
-		this.onExitActions = onExitActions;
-	}
+    /**
+     * @param onExitActions the on exit actions to set
+     */
+    public void setOnExitActions(LinkedList<AbstractActionModel> onExitActions) {
+        this.onExitActions = onExitActions;
+    }
 
 }

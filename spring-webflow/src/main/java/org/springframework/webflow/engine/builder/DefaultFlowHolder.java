@@ -31,95 +31,95 @@ import org.springframework.webflow.definition.registry.FlowDefinitionHolder;
  * <p>
  * Note that this {@link FlowDefinition} holder uses a {@link FlowAssembler}. This class bridges the <i>abstract</i>
  * world of {@link FlowDefinition flow definitions} with the <i>concrete</i> world of flow implementations.
- * 
+ *
+ * @author Keith Donald
  * @see FlowAssembler
  * @see FlowDefinition
- * 
- * @author Keith Donald
  */
 public class DefaultFlowHolder implements FlowDefinitionHolder {
 
-	private static final Log logger = LogFactory.getLog(DefaultFlowHolder.class);
+    private static final Log logger = LogFactory.getLog(DefaultFlowHolder.class);
 
-	/**
-	 * The flow definition assembled by this assembler, initially null.
-	 */
-	private FlowDefinition flowDefinition;
+    /**
+     * The flow definition assembled by this assembler, initially null.
+     */
+    private FlowDefinition flowDefinition;
 
-	/**
-	 * The flow assembler.
-	 */
-	private FlowAssembler assembler;
+    /**
+     * The flow assembler.
+     */
+    private FlowAssembler assembler;
 
-	/**
-	 * A flag indicating whether or not this holder is in the middle of the assembly process.
-	 */
-	private boolean assembling;
+    /**
+     * A flag indicating whether or not this holder is in the middle of the assembly process.
+     */
+    private boolean assembling;
 
-	/**
-	 * Creates a new refreshable flow definition holder that uses the configured assembler (GOF director) to drive flow
-	 * assembly, on initial use and on any resource change or refresh.
-	 * @param assembler the flow assembler to use
-	 */
-	public DefaultFlowHolder(FlowAssembler assembler) {
-		Assert.notNull(assembler, "The FlowAssembler is required");
-		this.assembler = assembler;
-	}
+    /**
+     * Creates a new refreshable flow definition holder that uses the configured assembler (GOF director) to drive flow
+     * assembly, on initial use and on any resource change or refresh.
+     *
+     * @param assembler the flow assembler to use
+     */
+    public DefaultFlowHolder(FlowAssembler assembler) {
+        Assert.notNull(assembler, "The FlowAssembler is required");
+        this.assembler = assembler;
+    }
 
-	public String getFlowDefinitionId() {
-		return assembler.getFlowBuilderContext().getFlowId();
-	}
+    public String getFlowDefinitionId() {
+        return assembler.getFlowBuilderContext().getFlowId();
+    }
 
-	public String getFlowDefinitionResourceString() {
-		return assembler.getFlowBuilder().getFlowResourceString();
-	}
+    public String getFlowDefinitionResourceString() {
+        return assembler.getFlowBuilder().getFlowResourceString();
+    }
 
-	public synchronized FlowDefinition getFlowDefinition() throws FlowDefinitionConstructionException {
-		if (assembling) {
-			// must return early assembly result for when a flow calls itself recursively
-			return getFlowBuilder().getFlow();
-		}
-		if (flowDefinition == null) {
-			logger.debug("Assembling the flow for the first time");
-			assembleFlow();
-		} else {
-			if (flowDefinition.inDevelopment() && getFlowBuilder().hasFlowChanged()) {
-				logger.debug("The flow under development has changed; reassembling...");
-				assembleFlow();
-			}
-		}
-		return flowDefinition;
-	}
+    public synchronized FlowDefinition getFlowDefinition() throws FlowDefinitionConstructionException {
+        if (assembling) {
+            // must return early assembly result for when a flow calls itself recursively
+            return getFlowBuilder().getFlow();
+        }
+        if (flowDefinition == null) {
+            logger.debug("Assembling the flow for the first time");
+            assembleFlow();
+        } else {
+            if (flowDefinition.inDevelopment() && getFlowBuilder().hasFlowChanged()) {
+                logger.debug("The flow under development has changed; reassembling...");
+                assembleFlow();
+            }
+        }
+        return flowDefinition;
+    }
 
-	public synchronized void refresh() throws FlowDefinitionConstructionException {
-		assembleFlow();
-	}
+    public synchronized void refresh() throws FlowDefinitionConstructionException {
+        assembleFlow();
+    }
 
-	public void destroy() {
-		if (flowDefinition != null) {
-			flowDefinition.destroy();
-		}
-	}
+    public void destroy() {
+        if (flowDefinition != null) {
+            flowDefinition.destroy();
+        }
+    }
 
-	// internal helpers
+    // internal helpers
 
-	private void assembleFlow() throws FlowDefinitionConstructionException {
-		try {
-			assembling = true;
-			flowDefinition = assembler.assembleFlow();
-		} catch (FlowBuilderException e) {
-			throw new FlowDefinitionConstructionException(assembler.getFlowBuilderContext().getFlowId(), e);
-		} finally {
-			assembling = false;
-		}
-	}
+    public String toString() {
+        return new ToStringCreator(this).append("flowBuilder", assembler.getFlowBuilder()).toString();
+    }
 
-	private FlowBuilder getFlowBuilder() {
-		return assembler.getFlowBuilder();
-	}
+    private void assembleFlow() throws FlowDefinitionConstructionException {
+        try {
+            assembling = true;
+            flowDefinition = assembler.assembleFlow();
+        } catch (FlowBuilderException e) {
+            throw new FlowDefinitionConstructionException(assembler.getFlowBuilderContext().getFlowId(), e);
+        } finally {
+            assembling = false;
+        }
+    }
 
-	public String toString() {
-		return new ToStringCreator(this).append("flowBuilder", assembler.getFlowBuilder()).toString();
-	}
+    private FlowBuilder getFlowBuilder() {
+        return assembler.getFlowBuilder();
+    }
 
 }

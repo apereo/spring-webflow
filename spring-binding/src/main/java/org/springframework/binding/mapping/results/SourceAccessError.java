@@ -22,45 +22,47 @@ import org.springframework.binding.mapping.Mapping;
 /**
  * Indicates an exception occurred accessing the source object to be mapped. Used to report source
  * {@link PropertyNotFoundException} errors and general {@link EvaluationException} errors.
+ *
  * @author Keith Donald
  */
 public class SourceAccessError extends AbstractMappingResult {
 
-	private EvaluationException cause;
+    private EvaluationException cause;
 
-	/**
-	 * Creates a new source access error.
-	 * @param mapping
+    /**
+     * Creates a new source access error.
+     *
      * @param mapping
-     * @param error the underlying evaluation exception that occurred
-	 */
-	public SourceAccessError(Mapping mapping, EvaluationException error) {
-		super(mapping);
-		this.cause = error;
-	}
+     * @param mapping
+     * @param error   the underlying evaluation exception that occurred
+     */
+    public SourceAccessError(Mapping mapping, EvaluationException error) {
+        super(mapping);
+        this.cause = error;
+    }
 
-	public String getCode() {
-		if (cause instanceof PropertyNotFoundException) {
-			return "propertyNotFound";
-		} else {
-			return "evaluationException";
-		}
-	}
+    public String getCode() {
+        if (cause instanceof PropertyNotFoundException) {
+            return "propertyNotFound";
+        } else {
+            return "evaluationException";
+        }
+    }
 
-	public boolean isError() {
-		return true;
-	}
+    public boolean isError() {
+        return true;
+    }
 
-	public Throwable getErrorCause() {
-		return cause;
-	}
+    public Throwable getErrorCause() {
+        return cause;
+    }
 
-	public Object getOriginalValue() {
-		return null;
-	}
+    public Object getOriginalValue() {
+        return null;
+    }
 
-	public Object getMappedValue() {
-		return null;
-	}
+    public Object getMappedValue() {
+        return null;
+    }
 
 }

@@ -27,72 +27,73 @@ import org.springframework.webflow.mvc.view.FlowViewResolver;
 
 /**
  * Creates Spring-MVC Internal Resource view to render a flow-relative view resource such as a JSP template.
- * 
+ *
+ * @author Keith Donald
  * @see JstlView
  * @see InternalResourceView
- * 
- * @author Keith Donald
  */
 public class FlowResourceFlowViewResolver implements FlowViewResolver {
 
-	private static final boolean JSTL_PRESENT = ClassUtils.isPresent("jakarta.servlet.jsp.jstl.fmt.LocalizationContext", FlowResourceFlowViewResolver.class.getClassLoader());
+    private static final boolean JSTL_PRESENT = ClassUtils.isPresent("jakarta.servlet.jsp.jstl.fmt.LocalizationContext", FlowResourceFlowViewResolver.class.getClassLoader());
 
-	private String defaultViewSuffix = ".jsp";
+    private String defaultViewSuffix = ".jsp";
 
-	/**
-	 * Returns the default view suffix when selecting views by convention. Default is .jsp.
-	 * @return the default view suffix
-	 */
-	public String getDefaultViewSuffix() {
-		return defaultViewSuffix;
-	}
+    /**
+     * Returns the default view suffix when selecting views by convention. Default is .jsp.
+     *
+     * @return the default view suffix
+     */
+    public String getDefaultViewSuffix() {
+        return defaultViewSuffix;
+    }
 
-	/**
-	 * Sets the default suffix for view templates when selecting views by convention. Default is .jsp. Respected when a
-	 * {@link FlowResourceFlowViewResolver} is configured.
-	 * @param defaultViewSuffix the default view suffix
-	 */
-	public void setDefaultViewSuffix(String defaultViewSuffix) {
-		this.defaultViewSuffix = defaultViewSuffix;
-	}
+    /**
+     * Sets the default suffix for view templates when selecting views by convention. Default is .jsp. Respected when a
+     * {@link FlowResourceFlowViewResolver} is configured.
+     *
+     * @param defaultViewSuffix the default view suffix
+     */
+    public void setDefaultViewSuffix(String defaultViewSuffix) {
+        this.defaultViewSuffix = defaultViewSuffix;
+    }
 
-	public View resolveView(String viewId, RequestContext context) {
-		if (viewId.startsWith("/")) {
-			return getViewInternal(viewId, context, context.getActiveFlow().getApplicationContext());
-		} else {
-			ApplicationContext flowContext = context.getActiveFlow().getApplicationContext();
-			if (flowContext == null) {
-				throw new IllegalStateException("A Flow ApplicationContext is required to resolve Flow View Resources");
-			}
-			Resource viewResource = flowContext.getResource(viewId);
-			if (!(viewResource instanceof ContextResource)) {
-				throw new IllegalStateException(
-						"A ContextResource is required to get relative view paths within this context");
-			}
-			return getViewInternal(((ContextResource) viewResource).getPathWithinContext(), context, flowContext);
-		}
-	}
+    public View resolveView(String viewId, RequestContext context) {
+        if (viewId.startsWith("/")) {
+            return getViewInternal(viewId, context, context.getActiveFlow().getApplicationContext());
+        } else {
+            ApplicationContext flowContext = context.getActiveFlow().getApplicationContext();
+            if (flowContext == null) {
+                throw new IllegalStateException("A Flow ApplicationContext is required to resolve Flow View Resources");
+            }
+            Resource viewResource = flowContext.getResource(viewId);
+            if (!(viewResource instanceof ContextResource)) {
+                throw new IllegalStateException(
+                    "A ContextResource is required to get relative view paths within this context");
+            }
+            return getViewInternal(((ContextResource) viewResource).getPathWithinContext(), context, flowContext);
+        }
+    }
 
-	public String getViewIdByConvention(String viewStateId) {
-		return viewStateId + defaultViewSuffix;
-	}
+    public String getViewIdByConvention(String viewStateId) {
+        return viewStateId + defaultViewSuffix;
+    }
 
-	// internal helpers
+    // internal helpers
 
-	private View getViewInternal(String viewPath, RequestContext context, ApplicationContext flowContext) {
-		if (viewPath.endsWith(".jsp") || viewPath.endsWith(".jspx")) {
-			if (JSTL_PRESENT) {
-				JstlView view = new JstlView(viewPath);
-				view.setApplicationContext(flowContext);
-				return view;
-			} else {
-				InternalResourceView view = new InternalResourceView(viewPath);
-				view.setApplicationContext(flowContext);
-				return view;
-			}
-		} else {
-			throw new IllegalArgumentException("Unsupported view type " + viewPath
-					+ " only types supported by this FlowViewResolver implementation are [.jsp] and [.jspx]");
-		}
-	}
+    private View getViewInternal(String viewPath, RequestContext context, ApplicationContext flowContext) {
+        if (viewPath.endsWith(".jsp") || viewPath.endsWith(".jspx")) {
+            if (JSTL_PRESENT) {
+                JstlView view = new JstlView(viewPath);
+                view.setApplicationContext(flowContext);
+                return view;
+            } else {
+                InternalResourceView view = new InternalResourceView(viewPath);
+                view.setApplicationContext(flowContext);
+                return view;
+            }
+        } else {
+            throw new IllegalArgumentException("Unsupported view type " + viewPath
+                                               + " only types supported by this FlowViewResolver implementation are [.jsp] and [.jspx]");
+        }
+    }
 }

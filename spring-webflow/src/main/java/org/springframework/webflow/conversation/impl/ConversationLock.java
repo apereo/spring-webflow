@@ -15,25 +15,26 @@
  */
 package org.springframework.webflow.conversation.impl;
 
-import java.io.Serializable;
-
 import org.springframework.webflow.conversation.ConversationLockException;
+
+import java.io.Serializable;
 
 /**
  * A normalized interface for conversation locks, used to obtain exclusive access to a conversation.
- * 
+ *
  * @author Keith Donald
  */
 public interface ConversationLock extends Serializable {
 
-	/**
-	 * Acquire the conversation lock.
-	 * @throws ConversationLockException if an exception is thrown attempting to acquire this lock
-	 */
-	void lock() throws ConversationLockException;
+    /**
+     * Acquire the conversation lock.
+     *
+     * @throws ConversationLockException if an exception is thrown attempting to acquire this lock
+     */
+    void lock() throws ConversationLockException;
 
-	/**
-	 * Release the conversation lock.
-	 */
-	void unlock();
+    /**
+     * Release the conversation lock.
+     */
+    void unlock();
 }

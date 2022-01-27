@@ -15,37 +15,40 @@
  */
 package org.springframework.binding.message;
 
-import java.io.Serializable;
-
 import org.springframework.context.MessageSource;
+
+import java.io.Serializable;
 
 /**
  * A message context whose internal state can be managed by an external care-taker. State management employs the GOF
  * Memento pattern. This context can produce a serializable memento representing its internal state at any time. A
  * care-taker can then use that memento at a later time to restore any context instance to a previous state.
- * 
+ *
  * @author Keith Donald
  */
 public interface StateManageableMessageContext extends MessageContext {
 
-	/**
-	 * Create a serializable memento, or token representing a snapshot of the internal state of this message context.
-	 * @return the messages memento
-	 */
-	Serializable createMessagesMemento();
+    /**
+     * Create a serializable memento, or token representing a snapshot of the internal state of this message context.
+     *
+     * @return the messages memento
+     */
+    Serializable createMessagesMemento();
 
-	/**
-	 * Set the state of this context from the memento provided. After this call, the messages in this context will match
-	 * what is encapsulated inside the memento. Any previous state will be overridden.
-	 * @param messagesMemento the messages memento
-	 */
-	void restoreMessages(Serializable messagesMemento);
+    /**
+     * Set the state of this context from the memento provided. After this call, the messages in this context will match
+     * what is encapsulated inside the memento. Any previous state will be overridden.
+     *
+     * @param messagesMemento the messages memento
+     */
+    void restoreMessages(Serializable messagesMemento);
 
-	/**
-	 * Configure the message source used to resolve messages added to this context. May be set at any time to change how
-	 * coded messages are resolved.
-	 * @param messageSource the message source
-	 * @see MessageContext#addMessage(MessageResolver)
-	 */
-	void setMessageSource(MessageSource messageSource);
+    /**
+     * Configure the message source used to resolve messages added to this context. May be set at any time to change how
+     * coded messages are resolved.
+     *
+     * @param messageSource the message source
+     * @see MessageContext#addMessage(MessageResolver)
+     */
+    void setMessageSource(MessageSource messageSource);
 }

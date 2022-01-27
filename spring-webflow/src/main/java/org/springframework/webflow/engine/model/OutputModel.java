@@ -21,40 +21,41 @@ import org.springframework.util.ObjectUtils;
  * Model support for output mappings.
  * <p>
  * Maps a single output attribute out of this flow or subflow.
- * 
+ *
  * @author Scott Andrews
  */
 public class OutputModel extends AbstractMappingModel {
 
-	/**
-	 * Create an output mapping model
-	 * @param name the name of the mapping variable
-	 * @param value the value to map
-	 */
-	public OutputModel(String name, String value) {
-		setName(name);
-		setValue(value);
-	}
+    /**
+     * Create an output mapping model
+     *
+     * @param name  the name of the mapping variable
+     * @param value the value to map
+     */
+    public OutputModel(String name, String value) {
+        setName(name);
+        setValue(value);
+    }
 
-	public boolean isMergeableWith(Model model) {
-		if (!(model instanceof OutputModel)) {
-			return false;
-		}
-		OutputModel output = (OutputModel) model;
-		return ObjectUtils.nullSafeEquals(getName(), output.getName());
-	}
+    public boolean isMergeableWith(Model model) {
+        if (!(model instanceof OutputModel)) {
+            return false;
+        }
+        OutputModel output = (OutputModel) model;
+        return ObjectUtils.nullSafeEquals(getName(), output.getName());
+    }
 
-	public void merge(Model model) {
-		OutputModel output = (OutputModel) model;
-		setValue(merge(getValue(), output.getValue()));
-		setType(merge(getType(), output.getType()));
-		setRequired(merge(getRequired(), output.getRequired()));
-	}
+    public void merge(Model model) {
+        OutputModel output = (OutputModel) model;
+        setValue(merge(getValue(), output.getValue()));
+        setType(merge(getType(), output.getType()));
+        setRequired(merge(getRequired(), output.getRequired()));
+    }
 
-	public Model createCopy() {
-		OutputModel copy = new OutputModel(getName(), getValue());
-		super.fillCopy(copy);
-		return copy;
-	}
+    public Model createCopy() {
+        OutputModel copy = new OutputModel(getName(), getValue());
+        super.fillCopy(copy);
+        return copy;
+    }
 
 }

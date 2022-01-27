@@ -15,43 +15,41 @@
  */
 package org.springframework.webflow.engine.model;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit tests for {@link InputModel}.
  */
 public class InputModelTests {
 
-	@Test
-	public void testMergeable() {
-		InputModel child = new InputModel("child", "childvalue");
-		assertTrue(child.isMergeableWith(child));
-	}
+    @Test
+    public void testMergeable() {
+        InputModel child = new InputModel("child", "childvalue");
+        assertTrue(child.isMergeableWith(child));
+    }
 
-	@Test
-	public void testNotMergeable() {
-		InputModel child = new InputModel("child", "childvalue");
-		InputModel parent = new InputModel("parent", "parentvalue");
-		assertFalse(child.isMergeableWith(parent));
-	}
+    @Test
+    public void testNotMergeable() {
+        InputModel child = new InputModel("child", "childvalue");
+        InputModel parent = new InputModel("parent", "parentvalue");
+        assertFalse(child.isMergeableWith(parent));
+    }
 
-	@Test
-	public void testNotMergeableWithNull() {
-		InputModel child = new InputModel("child", "childvalue");
-		assertFalse(child.isMergeableWith(null));
-	}
+    @Test
+    public void testNotMergeableWithNull() {
+        InputModel child = new InputModel("child", "childvalue");
+        assertFalse(child.isMergeableWith(null));
+    }
 
-	@Test
-	public void testMerge() {
-		InputModel child = new InputModel("child", "childvalue");
-		InputModel parent = new InputModel("child", "parentvalue");
-		parent.setType("parenttype");
-		child.merge(parent);
-		assertEquals("parenttype", child.getType());
-	}
+    @Test
+    public void testMerge() {
+        InputModel child = new InputModel("child", "childvalue");
+        InputModel parent = new InputModel("child", "parentvalue");
+        parent.setType("parenttype");
+        child.merge(parent);
+        assertEquals("parenttype", child.getType());
+    }
 
 }

@@ -37,59 +37,66 @@ import org.springframework.webflow.core.Annotated;
  * introspection by tools as well as user-code at flow execution time.
  * <p>
  * Flow definitions may be annotated with attributes.
- * 
+ *
  * @author Keith Donald
  * @author Erwin Vervaet
  */
 public interface FlowDefinition extends Annotated {
 
-	/**
-	 * Returns the unique id of this flow.
-	 * @return the flow id
-	 */
-	String getId();
+    /**
+     * Returns the unique id of this flow.
+     *
+     * @return the flow id
+     */
+    String getId();
 
-	/**
-	 * Return this flow's starting point.
-	 * @return the start state
-	 */
-	StateDefinition getStartState();
+    /**
+     * Return this flow's starting point.
+     *
+     * @return the start state
+     */
+    StateDefinition getStartState();
 
-	/**
-	 * Returns the state definition with the specified id.
-	 * @param id the state id
-	 * @return the state definition
-	 * @throws IllegalArgumentException if a state with this id does not exist
-	 */
-	StateDefinition getState(String id) throws IllegalArgumentException;
+    /**
+     * Returns the state definition with the specified id.
+     *
+     * @param id the state id
+     * @return the state definition
+     * @throws IllegalArgumentException if a state with this id does not exist
+     */
+    StateDefinition getState(String id) throws IllegalArgumentException;
 
-	/**
-	 * Returns the outcomes that are possible for this flow to reach.
-	 * @return the possible outcomes
-	 */
-	String[] getPossibleOutcomes();
+    /**
+     * Returns the outcomes that are possible for this flow to reach.
+     *
+     * @return the possible outcomes
+     */
+    String[] getPossibleOutcomes();
 
-	/**
-	 * Returns the class loader used by this flow definition to load classes.
-	 * @return the class loader
-	 */
-	ClassLoader getClassLoader();
+    /**
+     * Returns the class loader used by this flow definition to load classes.
+     *
+     * @return the class loader
+     */
+    ClassLoader getClassLoader();
 
-	/**
-	 * Returns a reference to application context hosting application objects and services used by this flow definition.
-	 * @return the application context
-	 */
-	ApplicationContext getApplicationContext();
+    /**
+     * Returns a reference to application context hosting application objects and services used by this flow definition.
+     *
+     * @return the application context
+     */
+    ApplicationContext getApplicationContext();
 
-	/**
-	 * Returns true if this flow definition is currently in development (running in development mode).
-	 * @return the development flag
-	 */
-	boolean inDevelopment();
+    /**
+     * Returns true if this flow definition is currently in development (running in development mode).
+     *
+     * @return the development flag
+     */
+    boolean inDevelopment();
 
-	/**
-	 * Destroy this flow definition, releasing any resources. After the flow is destroyed it cannot be started again.
-	 */
-	void destroy();
+    /**
+     * Destroy this flow definition, releasing any resources. After the flow is destroyed it cannot be started again.
+     */
+    void destroy();
 
 }

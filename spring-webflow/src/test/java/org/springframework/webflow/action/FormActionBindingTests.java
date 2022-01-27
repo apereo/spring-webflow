@@ -15,10 +15,6 @@
  */
 package org.springframework.webflow.action;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -30,90 +26,93 @@ import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.ScopeType;
 import org.springframework.webflow.test.MockRequestContext;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 /**
  * Unit test for the {@link FormAction} class, dealing with binding related issues.
- * 
+ *
  * @author Erwin Vervaet
  */
 public class FormActionBindingTests {
 
-	public static class TestBean {
+    @Test
+    public void testMessageCodesOnBindFailure() throws Exception {
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setPathInfo("/fooFlow");
+        request.setMethod("POST");
+        request.addParameter("prop", "A");
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        MockRequestContext context = new MockRequestContext();
+        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
+        context.setAttribute("method", "bindAndValidate");
 
-		private Long prop;
-		public String otherProp;
+        // use a FormAction to do the binding
+        FormAction formAction = new FormAction();
+        formAction.setFormObjectClass(TestBean.class);
+        formAction.setFormObjectName("formObject");
+        formAction.execute(context);
+        Errors formActionErrors = new FormObjectAccessor(context).getCurrentFormErrors(formAction.getFormErrorsScope());
+        assertNotNull(formActionErrors);
+        assertTrue(formActionErrors.hasErrors());
 
-		public Long getProp() {
-			return prop;
-		}
+        assertEquals(1, formActionErrors.getErrorCount());
+        assertEquals(0, formActionErrors.getGlobalErrorCount());
+        assertEquals(1, formActionErrors.getFieldErrorCount("prop"));
+    }
 
-		public void setProp(Long prop) {
-			this.prop = prop;
-		}
-	}
+    @Test
+    public void testFieldBinding() throws Exception {
+        FormAction formAction = new FormAction() {
+            protected Object createFormObject(RequestContext context) {
+                TestBean res = new TestBean();
+                res.setProp(-1L);
+                res.otherProp = "initialValue";
+                return res;
+            }
 
-	@Test
-	public void testMessageCodesOnBindFailure() throws Exception {
-		MockHttpServletRequest request = new MockHttpServletRequest();
-		request.setPathInfo("/fooFlow");
-		request.setMethod("POST");
-		request.addParameter("prop", "A");
-		MockHttpServletResponse response = new MockHttpServletResponse();
-		MockRequestContext context = new MockRequestContext();
-		context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
-		context.setAttribute("method", "bindAndValidate");
+            protected void initBinder(RequestContext context, DataBinder binder) {
+                binder.initDirectFieldAccess();
+            }
+        };
+        formAction.setFormObjectName("formObject");
 
-		// use a FormAction to do the binding
-		FormAction formAction = new FormAction();
-		formAction.setFormObjectClass(TestBean.class);
-		formAction.setFormObjectName("formObject");
-		formAction.execute(context);
-		Errors formActionErrors = new FormObjectAccessor(context).getCurrentFormErrors(formAction.getFormErrorsScope());
-		assertNotNull(formActionErrors);
-		assertTrue(formActionErrors.hasErrors());
+        MockRequestContext context = new MockRequestContext();
 
-		assertEquals(1, formActionErrors.getErrorCount());
-		assertEquals(0, formActionErrors.getGlobalErrorCount());
-		assertEquals(1, formActionErrors.getFieldErrorCount("prop"));
-	}
+        context.setAttribute("method", "setupForm");
+        formAction.execute(context);
+        Errors errors = new FormObjectAccessor(context).getFormErrors("formObject", ScopeType.FLASH);
+        assertNotNull(errors);
+        assertEquals((long) -1, errors.getFieldValue("prop"));
 
-	@Test
-	public void testFieldBinding() throws Exception {
-		FormAction formAction = new FormAction() {
-			protected Object createFormObject(RequestContext context) {
-				TestBean res = new TestBean();
-				res.setProp(-1L);
-				res.otherProp = "initialValue";
-				return res;
-			}
+        // this fails because of SWF-193
+        assertEquals("initialValue", errors.getFieldValue("otherProp"));
 
-			protected void initBinder(RequestContext context, DataBinder binder) {
-				binder.initDirectFieldAccess();
-			}
-		};
-		formAction.setFormObjectName("formObject");
+        context.putRequestParameter("prop", "1");
+        context.putRequestParameter("otherProp", "value");
+        context.setAttribute("method", "bind");
+        formAction.execute(context);
 
-		MockRequestContext context = new MockRequestContext();
+        TestBean formObject = (TestBean) new FormObjectAccessor(context).getFormObject("formObject", ScopeType.FLOW);
+        errors = new FormObjectAccessor(context).getFormErrors("formObject", ScopeType.FLASH);
+        assertNotNull(formObject);
+        assertEquals(new Long(1), formObject.getProp());
+        assertEquals(1L, errors.getFieldValue("prop"));
+        assertEquals("value", formObject.otherProp);
+        assertEquals("value", errors.getFieldValue("otherProp"));
+    }
 
-		context.setAttribute("method", "setupForm");
-		formAction.execute(context);
-		Errors errors = new FormObjectAccessor(context).getFormErrors("formObject", ScopeType.FLASH);
-		assertNotNull(errors);
-		assertEquals((long) -1, errors.getFieldValue("prop"));
+    public static class TestBean {
 
-		// this fails because of SWF-193
-		assertEquals("initialValue", errors.getFieldValue("otherProp"));
+        public String otherProp;
 
-		context.putRequestParameter("prop", "1");
-		context.putRequestParameter("otherProp", "value");
-		context.setAttribute("method", "bind");
-		formAction.execute(context);
+        private Long prop;
 
-		TestBean formObject = (TestBean) new FormObjectAccessor(context).getFormObject("formObject", ScopeType.FLOW);
-		errors = new FormObjectAccessor(context).getFormErrors("formObject", ScopeType.FLASH);
-		assertNotNull(formObject);
-		assertEquals(new Long(1), formObject.getProp());
-		assertEquals(1L, errors.getFieldValue("prop"));
-		assertEquals("value", formObject.otherProp);
-		assertEquals("value", errors.getFieldValue("otherProp"));
-	}
+        public Long getProp() {
+            return prop;
+        }
+
+        public void setProp(Long prop) {
+            this.prop = prop;
+        }
+    }
 }

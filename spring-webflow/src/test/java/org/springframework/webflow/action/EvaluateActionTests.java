@@ -15,50 +15,51 @@
  */
 package org.springframework.webflow.action;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import org.junit.jupiter.api.Test;
 import org.springframework.binding.expression.support.StaticExpression;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.test.MockRequestContext;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 /**
  * Unit tests for {@link EvaluateAction}.
+ *
  * @author Jeremy Grelle
  */
 public class EvaluateActionTests {
 
-	@Test
-	public void testEvaluateExpressionNoResultExposer() throws Exception {
-		EvaluateAction action = new EvaluateAction(new StaticExpression("bar"), null);
-		MockRequestContext context = new MockRequestContext();
-		Event result = action.execute(context);
-		assertEquals("bar", result.getId());
-	}
+    @Test
+    public void testEvaluateExpressionNoResultExposer() throws Exception {
+        EvaluateAction action = new EvaluateAction(new StaticExpression("bar"), null);
+        MockRequestContext context = new MockRequestContext();
+        Event result = action.execute(context);
+        assertEquals("bar", result.getId());
+    }
 
-	@Test
-	public void testEvaluateExpressionEmptyStringResult() throws Exception {
-		EvaluateAction action = new EvaluateAction(new StaticExpression(""), null);
-		MockRequestContext context = new MockRequestContext();
-		Event result = action.execute(context);
-		assertEquals("null", result.getId());
-	}
+    @Test
+    public void testEvaluateExpressionEmptyStringResult() throws Exception {
+        EvaluateAction action = new EvaluateAction(new StaticExpression(""), null);
+        MockRequestContext context = new MockRequestContext();
+        Event result = action.execute(context);
+        assertEquals("null", result.getId());
+    }
 
-	@Test
-	public void testEvaluateExpressionNullResult() throws Exception {
-		EvaluateAction action = new EvaluateAction(new StaticExpression(null), null);
-		MockRequestContext context = new MockRequestContext();
-		Event result = action.execute(context);
-		assertEquals("success", result.getId());
-	}
+    @Test
+    public void testEvaluateExpressionNullResult() throws Exception {
+        EvaluateAction action = new EvaluateAction(new StaticExpression(null), null);
+        MockRequestContext context = new MockRequestContext();
+        Event result = action.execute(context);
+        assertEquals("success", result.getId());
+    }
 
-	@Test
-	public void testEvaluateExpressionResultExposer() throws Exception {
-		StaticExpression resultExpression = new StaticExpression("");
-		EvaluateAction action = new EvaluateAction(new StaticExpression("bar"), resultExpression);
-		MockRequestContext context = new MockRequestContext();
-		Event result = action.execute(context);
-		assertEquals("bar", result.getId());
-		assertEquals("bar", resultExpression.getValue(null));
-	}
+    @Test
+    public void testEvaluateExpressionResultExposer() throws Exception {
+        StaticExpression resultExpression = new StaticExpression("");
+        EvaluateAction action = new EvaluateAction(new StaticExpression("bar"), resultExpression);
+        MockRequestContext context = new MockRequestContext();
+        Event result = action.execute(context);
+        assertEquals("bar", result.getId());
+        assertEquals("bar", resultExpression.getValue(null));
+    }
 }

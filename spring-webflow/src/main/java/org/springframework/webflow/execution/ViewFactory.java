@@ -18,15 +18,16 @@ package org.springframework.webflow.execution;
 /**
  * A factory for a view that allows the client to participate in flow execution. Encapsulates creation and restoration
  * of the view implementation, including any application of request values to determine what user event was signaled.
- * 
+ *
  * @author Keith Donald
  */
 public interface ViewFactory {
 
-	/**
-	 * Get the view to render for this request.
-	 * @param context the flow execution request context.
-	 * @return the view to render
-	 */
-	View getView(RequestContext context);
+    /**
+     * Get the view to render for this request.
+     *
+     * @param context the flow execution request context.
+     * @return the view to render
+     */
+    View getView(RequestContext context);
 }

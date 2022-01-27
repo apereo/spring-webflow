@@ -15,59 +15,60 @@
  */
 package org.springframework.webflow.engine;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import org.junit.jupiter.api.Test;
 import org.springframework.webflow.execution.FlowExecutionException;
 import org.springframework.webflow.test.MockRequestControlContext;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 /**
  * Unit tests for {@link org.springframework.webflow.engine.FlowExecutionExceptionHandler} related code.
- * 
+ *
  * @author Erwin Vervaet
  */
 public class FlowExecutionHandlerSetTests {
 
-	Flow flow = new Flow("myFlow");
-	MockRequestControlContext context = new MockRequestControlContext(flow);
-	boolean handled;
+    Flow flow = new Flow("myFlow");
 
-	@Test
-	public void testHandleException() {
-		FlowExecutionExceptionHandlerSet handlerSet = new FlowExecutionExceptionHandlerSet();
-		handlerSet.add(new TestStateExceptionHandler(NullPointerException.class, "null"));
-		handlerSet.add(new TestStateExceptionHandler(FlowExecutionException.class, "execution 1"));
-		handlerSet.add(new TestStateExceptionHandler(FlowExecutionException.class, "execution 2"));
-		assertEquals(3, handlerSet.size());
-		FlowExecutionException e = new FlowExecutionException("flowId", "stateId", "Test");
-		assertTrue(handlerSet.handleException(e, context));
-		assertFalse(context.getFlowScope().contains("null"));
-		assertTrue(context.getFlowScope().contains("execution 1"));
-		assertFalse(context.getFlowScope().contains("execution 2"));
-	}
+    MockRequestControlContext context = new MockRequestControlContext(flow);
 
-	/**
-	 * State exception handler used in tests.
-	 */
-	public static class TestStateExceptionHandler implements FlowExecutionExceptionHandler {
+    boolean handled;
 
-		private Class<?> typeToHandle;
-		private String resultName;
+    @Test
+    public void testHandleException() {
+        FlowExecutionExceptionHandlerSet handlerSet = new FlowExecutionExceptionHandlerSet();
+        handlerSet.add(new TestStateExceptionHandler(NullPointerException.class, "null"));
+        handlerSet.add(new TestStateExceptionHandler(FlowExecutionException.class, "execution 1"));
+        handlerSet.add(new TestStateExceptionHandler(FlowExecutionException.class, "execution 2"));
+        assertEquals(3, handlerSet.size());
+        FlowExecutionException e = new FlowExecutionException("flowId", "stateId", "Test");
+        assertTrue(handlerSet.handleException(e, context));
+        assertFalse(context.getFlowScope().contains("null"));
+        assertTrue(context.getFlowScope().contains("execution 1"));
+        assertFalse(context.getFlowScope().contains("execution 2"));
+    }
 
-		public TestStateExceptionHandler(Class<?> typeToHandle, String resultName) {
-			this.typeToHandle = typeToHandle;
-			this.resultName = resultName;
-		}
+    /**
+     * State exception handler used in tests.
+     */
+    public static class TestStateExceptionHandler implements FlowExecutionExceptionHandler {
 
-		public boolean canHandle(FlowExecutionException exception) {
-			return typeToHandle.isInstance(exception);
-		}
+        private Class<?> typeToHandle;
 
-		public void handle(FlowExecutionException exception, RequestControlContext context) {
-			context.getFlowScope().put(resultName, true);
-		}
-	}
+        private String resultName;
+
+        public TestStateExceptionHandler(Class<?> typeToHandle, String resultName) {
+            this.typeToHandle = typeToHandle;
+            this.resultName = resultName;
+        }
+
+        public boolean canHandle(FlowExecutionException exception) {
+            return typeToHandle.isInstance(exception);
+        }
+
+        public void handle(FlowExecutionException exception, RequestControlContext context) {
+            context.getFlowScope().put(resultName, true);
+        }
+    }
 
 }

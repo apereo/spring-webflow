@@ -38,231 +38,231 @@ import org.springframework.webflow.execution.View;
  * Default request control context implementation used internally by the web flow system. This class is closely coupled
  * with <code>FlowExecutionImpl</code> and <code>FlowSessionImpl</code>. The three classes work together to form a
  * complete flow execution implementation based on a finite state machine.
- * 
- * @see FlowExecutionImpl
- * 
+ *
  * @author Keith Donald
  * @author Erwin Vervaet
+ * @see FlowExecutionImpl
  */
 class RequestControlContextImpl implements RequestControlContext {
 
-	/**
-	 * The owning flow execution carrying out this request.
-	 */
-	private FlowExecutionImpl flowExecution;
+    /**
+     * The owning flow execution carrying out this request.
+     */
+    private FlowExecutionImpl flowExecution;
 
-	/**
-	 * A source context for the caller who initiated this request.
-	 */
-	private ExternalContext externalContext;
+    /**
+     * A source context for the caller who initiated this request.
+     */
+    private ExternalContext externalContext;
 
-	/**
-	 * A source context for messages to record during this flow execution request.
-	 */
-	private MessageContext messageContext;
+    /**
+     * A source context for messages to record during this flow execution request.
+     */
+    private MessageContext messageContext;
 
-	/**
-	 * The request scope data map. Never null, initially empty.
-	 */
-	private LocalAttributeMap<Object> requestScope = new LocalAttributeMap<>();
+    /**
+     * The request scope data map. Never null, initially empty.
+     */
+    private LocalAttributeMap<Object> requestScope = new LocalAttributeMap<>();
 
-	/**
-	 * Holder for contextual properties describing the currently executing request; never null, initially empty.
-	 */
-	private LocalAttributeMap<Object> attributes = new LocalAttributeMap<>();
+    /**
+     * Holder for contextual properties describing the currently executing request; never null, initially empty.
+     */
+    private LocalAttributeMap<Object> attributes = new LocalAttributeMap<>();
 
-	/**
-	 * The current event being processed by this flow; initially null.
-	 */
-	private Event currentEvent;
+    /**
+     * The current event being processed by this flow; initially null.
+     */
+    private Event currentEvent;
 
-	/**
-	 * The last transition that executed in this request context; initially null.
-	 */
-	private Transition currentTransition;
+    /**
+     * The last transition that executed in this request context; initially null.
+     */
+    private Transition currentTransition;
 
-	/**
-	 * The current view associated with this request context; initially null.
-	 */
-	private View currentView;
+    /**
+     * The current view associated with this request context; initially null.
+     */
+    private View currentView;
 
-	/**
-	 * Create a new request context.
-	 * @param flowExecution the owning flow execution
-	 * @param externalContext the external context that originated the flow execution request
-	 * @param messageContext the message context for recording status or validation messages during the execution of
-	 * this request
-	 */
-	public RequestControlContextImpl(FlowExecutionImpl flowExecution, ExternalContext externalContext,
-			MessageContext messageContext) {
-		this.flowExecution = flowExecution;
-		this.externalContext = externalContext;
-		this.messageContext = messageContext;
-	}
+    /**
+     * Create a new request context.
+     *
+     * @param flowExecution   the owning flow execution
+     * @param externalContext the external context that originated the flow execution request
+     * @param messageContext  the message context for recording status or validation messages during the execution of
+     *                        this request
+     */
+    public RequestControlContextImpl(FlowExecutionImpl flowExecution, ExternalContext externalContext,
+                                     MessageContext messageContext) {
+        this.flowExecution = flowExecution;
+        this.externalContext = externalContext;
+        this.messageContext = messageContext;
+    }
 
-	// implementing RequestContext
+    // implementing RequestContext
 
-	public FlowDefinition getActiveFlow() {
-		return flowExecution.getActiveSession().getDefinition();
-	}
+    public FlowDefinition getActiveFlow() {
+        return flowExecution.getActiveSession().getDefinition();
+    }
 
-	public StateDefinition getCurrentState() {
-		return flowExecution.getActiveSession().getState();
-	}
+    public StateDefinition getCurrentState() {
+        return flowExecution.getActiveSession().getState();
+    }
 
-	public TransitionDefinition getMatchingTransition(String eventId) throws IllegalStateException {
-		return flowExecution.getMatchingTransition(eventId);
-	}
+    public void setCurrentState(State state) {
+        flowExecution.setCurrentState(state, this);
+    }
 
-	public MutableAttributeMap<Object> getRequestScope() {
-		return requestScope;
-	}
+    public TransitionDefinition getMatchingTransition(String eventId) throws IllegalStateException {
+        return flowExecution.getMatchingTransition(eventId);
+    }
 
-	public MutableAttributeMap<Object> getFlashScope() {
-		return flowExecution.getFlashScope();
-	}
+    public MutableAttributeMap<Object> getRequestScope() {
+        return requestScope;
+    }
 
-	public boolean inViewState() {
-		return flowExecution.isActive() && getCurrentState() != null && getCurrentState().isViewState();
-	}
+    public MutableAttributeMap<Object> getFlashScope() {
+        return flowExecution.getFlashScope();
+    }
 
-	public MutableAttributeMap<Object> getViewScope() throws IllegalStateException {
-		return flowExecution.getActiveSession().getViewScope();
-	}
+    public boolean inViewState() {
+        return flowExecution.isActive() && getCurrentState() != null && getCurrentState().isViewState();
+    }
 
-	public MutableAttributeMap<Object> getFlowScope() {
-		return flowExecution.getActiveSession().getScope();
-	}
+    public MutableAttributeMap<Object> getViewScope() throws IllegalStateException {
+        return flowExecution.getActiveSession().getViewScope();
+    }
 
-	public MutableAttributeMap<Object> getConversationScope() {
-		return flowExecution.getConversationScope();
-	}
+    public MutableAttributeMap<Object> getFlowScope() {
+        return flowExecution.getActiveSession().getScope();
+    }
 
-	public ParameterMap getRequestParameters() {
-		return externalContext.getRequestParameterMap();
-	}
+    public MutableAttributeMap<Object> getConversationScope() {
+        return flowExecution.getConversationScope();
+    }
 
-	public ExternalContext getExternalContext() {
-		return externalContext;
-	}
+    public ParameterMap getRequestParameters() {
+        return externalContext.getRequestParameterMap();
+    }
 
-	public MessageContext getMessageContext() {
-		return messageContext;
-	}
+    public ExternalContext getExternalContext() {
+        return externalContext;
+    }
 
-	public FlowExecutionContext getFlowExecutionContext() {
-		return flowExecution;
-	}
+    public MessageContext getMessageContext() {
+        return messageContext;
+    }
 
-	public Event getCurrentEvent() {
-		return currentEvent;
-	}
+    public FlowExecutionContext getFlowExecutionContext() {
+        return flowExecution;
+    }
 
-	public TransitionDefinition getCurrentTransition() {
-		return currentTransition;
-	}
+    public Event getCurrentEvent() {
+        return currentEvent;
+    }
 
-	public View getCurrentView() {
-		return currentView;
-	}
+    public TransitionDefinition getCurrentTransition() {
+        return currentTransition;
+    }
 
-	public MutableAttributeMap<Object> getAttributes() {
-		return attributes;
-	}
+    public void setCurrentTransition(Transition transition) {
+        this.currentTransition = transition;
+    }
 
-	// implementing RequestControlContext
+    // implementing RequestControlContext
 
-	public String getFlowExecutionUrl() {
-		String key = flowExecution.getKey() != null ? flowExecution.getKey().toString() : null;
-		if (key != null) {
-			return externalContext.getFlowExecutionUrl(flowExecution.getDefinition().getId(), key);
-		} else {
-			return null;
-		}
-	}
+    public View getCurrentView() {
+        return currentView;
+    }
 
-	public void sendFlowExecutionRedirect() {
-		externalContext.requestFlowExecutionRedirect();
-	}
+    public void setCurrentView(View currentView) {
+        this.currentView = currentView;
+    }
 
-	public void setCurrentState(State state) {
-		flowExecution.setCurrentState(state, this);
-	}
+    public MutableAttributeMap<Object> getAttributes() {
+        return attributes;
+    }
 
-	public FlowExecutionKey assignFlowExecutionKey() {
-		return flowExecution.assignKey();
-	}
+    public String getFlowExecutionUrl() {
+        String key = flowExecution.getKey() != null ? flowExecution.getKey().toString() : null;
+        if (key != null) {
+            return externalContext.getFlowExecutionUrl(flowExecution.getDefinition().getId(), key);
+        } else {
+            return null;
+        }
+    }
 
-	public void setCurrentView(View currentView) {
-		this.currentView = currentView;
-	}
+    public void sendFlowExecutionRedirect() {
+        externalContext.requestFlowExecutionRedirect();
+    }
 
-	public void viewRendering(View view) {
-		flowExecution.viewRendering(view, this);
-	}
+    public FlowExecutionKey assignFlowExecutionKey() {
+        return flowExecution.assignKey();
+    }
 
-	public void viewRendered(View view) {
-		flowExecution.viewRendered(view, this);
-	}
+    public void viewRendering(View view) {
+        flowExecution.viewRendering(view, this);
+    }
 
-	public boolean handleEvent(Event event) throws FlowExecutionException {
-		this.currentEvent = event;
-		return flowExecution.handleEvent(event, this);
-	}
+    public void viewRendered(View view) {
+        flowExecution.viewRendered(view, this);
+    }
 
-	public boolean execute(Transition transition) {
-		return flowExecution.execute(transition, this);
-	}
+    public boolean handleEvent(Event event) throws FlowExecutionException {
+        this.currentEvent = event;
+        return flowExecution.handleEvent(event, this);
+    }
 
-	public void setCurrentTransition(Transition transition) {
-		this.currentTransition = transition;
-	}
+    public boolean execute(Transition transition) {
+        return flowExecution.execute(transition, this);
+    }
 
-	public void updateCurrentFlowExecutionSnapshot() {
-		flowExecution.updateCurrentFlowExecutionSnapshot();
-	}
+    public void updateCurrentFlowExecutionSnapshot() {
+        flowExecution.updateCurrentFlowExecutionSnapshot();
+    }
 
-	public void removeCurrentFlowExecutionSnapshot() {
-		flowExecution.removeCurrentFlowExecutionSnapshot();
-	}
+    public void removeCurrentFlowExecutionSnapshot() {
+        flowExecution.removeCurrentFlowExecutionSnapshot();
+    }
 
-	public void removeAllFlowExecutionSnapshots() {
-		flowExecution.removeAllFlowExecutionSnapshots();
-	}
+    public void removeAllFlowExecutionSnapshots() {
+        flowExecution.removeAllFlowExecutionSnapshots();
+    }
 
-	public void start(Flow flow, MutableAttributeMap<?> input) throws FlowExecutionException {
-		flowExecution.start(flow, input, this);
-	}
+    public void start(Flow flow, MutableAttributeMap<?> input) throws FlowExecutionException {
+        flowExecution.start(flow, input, this);
+    }
 
-	public void endActiveFlowSession(String outcome, MutableAttributeMap<Object> output) throws IllegalStateException {
-		flowExecution.endActiveFlowSession(outcome, output, this);
-	}
+    public void endActiveFlowSession(String outcome, MutableAttributeMap<Object> output) throws IllegalStateException {
+        flowExecution.endActiveFlowSession(outcome, output, this);
+    }
 
-	public boolean getRedirectOnPause() {
-		if (!getExternalContext().isResponseAllowed()) {
-			return true;
-		}
-		Boolean redirectOnPause = flowExecution.getAttributes().getBoolean("alwaysRedirectOnPause");
-		return redirectOnPause == null ? false : redirectOnPause;
-	}
+    public boolean getRedirectOnPause() {
+        if (!getExternalContext().isResponseAllowed()) {
+            return true;
+        }
+        Boolean redirectOnPause = flowExecution.getAttributes().getBoolean("alwaysRedirectOnPause");
+        return redirectOnPause == null ? false : redirectOnPause;
+    }
 
-	public boolean getRedirectInSameState() {
-		if (!getExternalContext().isResponseAllowed()) {
-			return true;
-		}
-		Boolean redirectInSameState = flowExecution.getAttributes().getBoolean("redirectInSameState");
-		return (redirectInSameState != null) ? redirectInSameState : getRedirectOnPause();
-	}
+    public boolean getRedirectInSameState() {
+        if (!getExternalContext().isResponseAllowed()) {
+            return true;
+        }
+        Boolean redirectInSameState = flowExecution.getAttributes().getBoolean("redirectInSameState");
+        return (redirectInSameState != null) ? redirectInSameState : getRedirectOnPause();
+    }
 
-	public boolean getEmbeddedMode() {
-		return flowExecution.getActiveSession().isEmbeddedMode();
-	}
+    public boolean getEmbeddedMode() {
+        return flowExecution.getActiveSession().isEmbeddedMode();
+    }
 
-	public String toString() {
-		return new ToStringCreator(this).append("externalContext", externalContext)
-				.append("currentEvent", currentEvent).append("requestScope", requestScope)
-				.append("attributes", attributes).append("messageContext", messageContext)
-				.append("flowExecution", flowExecution).toString();
-	}
+    public String toString() {
+        return new ToStringCreator(this).append("externalContext", externalContext)
+            .append("currentEvent", currentEvent).append("requestScope", requestScope)
+            .append("attributes", attributes).append("messageContext", messageContext)
+            .append("flowExecution", flowExecution).toString();
+    }
 
 }

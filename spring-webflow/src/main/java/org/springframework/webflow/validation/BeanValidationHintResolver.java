@@ -15,12 +15,12 @@
  */
 package org.springframework.webflow.validation;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.webflow.execution.FlowExecutionException;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A JSR-303 (Bean Validation) implementation of {@link ValidationHintResolver}
@@ -31,85 +31,80 @@ import org.springframework.webflow.execution.FlowExecutionException;
  */
 public class BeanValidationHintResolver implements ValidationHintResolver {
 
-	/**
-	 * Resolve each hint as a fully qualified class name or the name of an inner
-	 * {@code Class} in the model type or the model or its parent types.
-	 *
-	 * @param model the model object
-	 * @param flowId the current flow id
-	 * @param stateId the current view state id
-	 * @param hints the hints to resolve
-	 *
-	 * @return the resolved hints or {@code null}
-	 * @throws FlowExecutionException if a hint is unresolved
-	 *
-	 * @see #handleUnresolvedHint(Object, String, String, String)
-	 */
-	public Class<?>[] resolveValidationHints(Object model, String flowId, String stateId, String[] hints)
-			throws FlowExecutionException {
+    /**
+     * Resolve each hint as a fully qualified class name or the name of an inner
+     * {@code Class} in the model type or the model or its parent types.
+     *
+     * @param model   the model object
+     * @param flowId  the current flow id
+     * @param stateId the current view state id
+     * @param hints   the hints to resolve
+     * @return the resolved hints or {@code null}
+     * @throws FlowExecutionException if a hint is unresolved
+     * @see #handleUnresolvedHint(Object, String, String, String)
+     */
+    public Class<?>[] resolveValidationHints(Object model, String flowId, String stateId, String[] hints)
+        throws FlowExecutionException {
 
-		if (ObjectUtils.isEmpty(hints)) {
-			return null;
-		}
+        if (ObjectUtils.isEmpty(hints)) {
+            return null;
+        }
 
-		List<Class<?>> result = new ArrayList<>();
-		for (String hint : hints) {
-			if (hint.equalsIgnoreCase("Default")) {
-				hint = "jakarta.validation.groups.Default";
-			}
-			Class<?> resolvedHint = toClass(hint);
-			if ((resolvedHint == null) && (model != null)) {
-				resolvedHint = findInnerClass(model.getClass(), StringUtils.capitalize(hint));
-			}
-			if (resolvedHint == null) {
-				resolvedHint = handleUnresolvedHint(model, flowId, stateId, hint);
-			}
-			if (resolvedHint != null) {
-				result.add(resolvedHint);
-			}
-		}
+        List<Class<?>> result = new ArrayList<>();
+        for (String hint : hints) {
+            if (hint.equalsIgnoreCase("Default")) {
+                hint = "jakarta.validation.groups.Default";
+            }
+            Class<?> resolvedHint = toClass(hint);
+            if ((resolvedHint == null) && (model != null)) {
+                resolvedHint = findInnerClass(model.getClass(), StringUtils.capitalize(hint));
+            }
+            if (resolvedHint == null) {
+                resolvedHint = handleUnresolvedHint(model, flowId, stateId, hint);
+            }
+            if (resolvedHint != null) {
+                result.add(resolvedHint);
+            }
+        }
 
-		return result.toArray(new Class<?>[result.size()]);
-	}
+        return result.toArray(new Class<?>[result.size()]);
+    }
 
-	private Class<?> toClass(String hint) {
-		try {
-			return Class.forName(hint);
-		}
-		catch (ClassNotFoundException e) {
-			// Ignore
-		}
-		return null;
-	}
+    /**
+     * Invoked when a hint could not be resolved. This implementation raises a
+     * {@link FlowExecutionException}.
+     *
+     * @param model   the model object that will be validated using the hints
+     * @param flowId  the current flow id
+     * @param stateId the current state id
+     * @param hint    the hint
+     * @return the resolved hint
+     */
+    protected Class<?> handleUnresolvedHint(Object model, String flowId, String stateId, String hint)
+        throws FlowExecutionException {
 
-	private Class<?> findInnerClass(Class<?> targetClass, String hint) {
-		try {
-			return Class.forName(targetClass.getName() + "$" + hint);
-		}
-		catch (ClassNotFoundException e) {
-			Class<?> superClass = targetClass.getSuperclass();
-			if (superClass != null) {
-				return findInnerClass(superClass, hint);
-			}
-		}
-		return null;
-	}
+        throw new FlowExecutionException(flowId, stateId, "Failed to resolve validation hint [" + hint + "]");
+    }
 
-	/**
-	 * Invoked when a hint could not be resolved. This implementation raises a
-	 * {@link FlowExecutionException}.
-	 *
-	 * @param model the model object that will be validated using the hints
-	 * @param flowId the current flow id
-	 * @param stateId the current state id
-	 * @param hint the hint
-	 * @return the resolved hint
-	 *
-	 */
-	protected Class<?> handleUnresolvedHint(Object model, String flowId, String stateId, String hint)
-			throws FlowExecutionException {
+    private Class<?> toClass(String hint) {
+        try {
+            return Class.forName(hint);
+        } catch (ClassNotFoundException e) {
+            // Ignore
+        }
+        return null;
+    }
 
-		throw new FlowExecutionException(flowId, stateId, "Failed to resolve validation hint [" + hint + "]");
-	}
+    private Class<?> findInnerClass(Class<?> targetClass, String hint) {
+        try {
+            return Class.forName(targetClass.getName() + "$" + hint);
+        } catch (ClassNotFoundException e) {
+            Class<?> superClass = targetClass.getSuperclass();
+            if (superClass != null) {
+                return findInnerClass(superClass, hint);
+            }
+        }
+        return null;
+    }
 
 }

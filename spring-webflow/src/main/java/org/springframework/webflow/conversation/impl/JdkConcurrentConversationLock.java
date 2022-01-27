@@ -15,40 +15,40 @@
  */
 package org.springframework.webflow.conversation.impl;
 
+import org.springframework.webflow.conversation.ConversationLockException;
+
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-import org.springframework.webflow.conversation.ConversationLockException;
-
 /**
  * A conversation lock that relies on a {@link ReentrantLock} within Java 5's <code>util.concurrent.locks</code>
  * package.
- * 
+ *
  * @author Keith Donald
  */
 public class JdkConcurrentConversationLock implements ConversationLock {
 
-	private Lock lock = new ReentrantLock();
+    private Lock lock = new ReentrantLock();
 
-	private int timeoutSeconds;
+    private int timeoutSeconds;
 
-	public JdkConcurrentConversationLock(int timeoutSeconds) {
-		this.timeoutSeconds = timeoutSeconds;
-	}
+    public JdkConcurrentConversationLock(int timeoutSeconds) {
+        this.timeoutSeconds = timeoutSeconds;
+    }
 
-	public void lock() throws ConversationLockException {
-		try {
-			boolean acquired = this.lock.tryLock(this.timeoutSeconds, TimeUnit.SECONDS);
-			if (!acquired) {
-				throw new LockTimeoutException(this.timeoutSeconds);
-			}
-		} catch (InterruptedException e) {
-			throw new LockInterruptedException(e);
-		}
-	}
+    public void lock() throws ConversationLockException {
+        try {
+            boolean acquired = this.lock.tryLock(this.timeoutSeconds, TimeUnit.SECONDS);
+            if (!acquired) {
+                throw new LockTimeoutException(this.timeoutSeconds);
+            }
+        } catch (InterruptedException e) {
+            throw new LockInterruptedException(e);
+        }
+    }
 
-	public void unlock() {
-		this.lock.unlock();
-	}
+    public void unlock() {
+        this.lock.unlock();
+    }
 }

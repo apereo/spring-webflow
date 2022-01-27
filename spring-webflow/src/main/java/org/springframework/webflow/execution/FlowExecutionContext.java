@@ -31,90 +31,99 @@ import org.springframework.webflow.definition.FlowDefinition;
  * This interface provides information that may span more than one request in a thread safe manner. The
  * {@link RequestContext} interface defines a <i>request specific</i> control interface for manipulating exactly one
  * flow execution locally from exactly one request.
- * 
+ *
+ * @author Keith Donald
+ * @author Erwin Vervaet
  * @see FlowDefinition
  * @see FlowSession
  * @see RequestContext
- * 
- * @author Keith Donald
- * @author Erwin Vervaet
  */
 public interface FlowExecutionContext {
 
-	/**
-	 * Returns the key assigned to this flow execution. The flow execution key is the flow execution's persistent
-	 * identity.
-	 * @return the flow execution key; may be <code>null</code> if a key has not yet been assigned.
-	 */
-	FlowExecutionKey getKey();
+    /**
+     * Returns the key assigned to this flow execution. The flow execution key is the flow execution's persistent
+     * identity.
+     *
+     * @return the flow execution key; may be <code>null</code> if a key has not yet been assigned.
+     */
+    FlowExecutionKey getKey();
 
-	/**
-	 * Returns the root flow definition associated with this executing flow.
-	 * <p>
-	 * A call to this method always returns the same flow definition -- the top-level "root" -- no matter what flow may
-	 * actually be active (for example, if subflows have been spawned).
-	 * @return the root flow definition
-	 */
-	FlowDefinition getDefinition();
+    /**
+     * Returns the root flow definition associated with this executing flow.
+     * <p>
+     * A call to this method always returns the same flow definition -- the top-level "root" -- no matter what flow may
+     * actually be active (for example, if subflows have been spawned).
+     *
+     * @return the root flow definition
+     */
+    FlowDefinition getDefinition();
 
-	/**
-	 * Returns a flag indicating if this execution has been started. A flow execution that has started and is active is
-	 * currently in progress. A flow execution that has started and is not active has ended.
-	 * @see #isActive()
-	 * @return true if started, false if not started
-	 */
-	boolean hasStarted();
+    /**
+     * Returns a flag indicating if this execution has been started. A flow execution that has started and is active is
+     * currently in progress. A flow execution that has started and is not active has ended.
+     *
+     * @return true if started, false if not started
+     * @see #isActive()
+     */
+    boolean hasStarted();
 
-	/**
-	 * Is the flow execution active? A flow execution is active once it has an {@link #getActiveSession() active
-	 * session} and remains active until it has ended.
-	 * @return true if active, false if the flow execution has terminated or has not yet been started
-	 */
-	boolean isActive();
+    /**
+     * Is the flow execution active? A flow execution is active once it has an {@link #getActiveSession() active
+     * session} and remains active until it has ended.
+     *
+     * @return true if active, false if the flow execution has terminated or has not yet been started
+     */
+    boolean isActive();
 
-	/**
-	 * Returns a flag indicating if this execution has ended. A flow execution that has ended has been started but is no
-	 * longer active.
-	 * @see #hasStarted()
-	 * @see #isActive()
-	 * @return true if ended, false if not started or still active
-	 */
-	boolean hasEnded();
+    /**
+     * Returns a flag indicating if this execution has ended. A flow execution that has ended has been started but is no
+     * longer active.
+     *
+     * @return true if ended, false if not started or still active
+     * @see #hasStarted()
+     * @see #isActive()
+     */
+    boolean hasEnded();
 
-	/**
-	 * Returns the outcome reached by this execution, or null if this execution has not yet ended.
-	 * @return the outcome, or <code>null</code> if this execution has not yet ended
-	 */
-	FlowExecutionOutcome getOutcome();
+    /**
+     * Returns the outcome reached by this execution, or null if this execution has not yet ended.
+     *
+     * @return the outcome, or <code>null</code> if this execution has not yet ended
+     */
+    FlowExecutionOutcome getOutcome();
 
-	/**
-	 * Returns the active flow session of this flow execution. The active flow session is the currently executing
-	 * session. It may be the "root flow" session, or it may be a subflow session if this flow execution has spawned a
-	 * subflow.
-	 * @return the active flow session
-	 * @throws IllegalStateException if this flow execution is not active
-	 * @see #isActive()
-	 */
-	FlowSession getActiveSession() throws IllegalStateException;
+    /**
+     * Returns the active flow session of this flow execution. The active flow session is the currently executing
+     * session. It may be the "root flow" session, or it may be a subflow session if this flow execution has spawned a
+     * subflow.
+     *
+     * @return the active flow session
+     * @throws IllegalStateException if this flow execution is not active
+     * @see #isActive()
+     */
+    FlowSession getActiveSession() throws IllegalStateException;
 
-	/**
-	 * Returns a mutable map for data held in "flash scope". Attributes in this map are cleared out on the next view
-	 * rendering. Flash attributes survive flow execution refresh operations.
-	 * @return flash scope
-	 */
-	MutableAttributeMap<Object> getFlashScope();
+    /**
+     * Returns a mutable map for data held in "flash scope". Attributes in this map are cleared out on the next view
+     * rendering. Flash attributes survive flow execution refresh operations.
+     *
+     * @return flash scope
+     */
+    MutableAttributeMap<Object> getFlashScope();
 
-	/**
-	 * Returns a mutable map for data held in "conversation scope". Conversation scope is a data structure that exists
-	 * for the life of this flow execution and is accessible to all flow sessions.
-	 * @return conversation scope
-	 */
-	MutableAttributeMap<Object> getConversationScope();
+    /**
+     * Returns a mutable map for data held in "conversation scope". Conversation scope is a data structure that exists
+     * for the life of this flow execution and is accessible to all flow sessions.
+     *
+     * @return conversation scope
+     */
+    MutableAttributeMap<Object> getConversationScope();
 
-	/**
-	 * Returns runtime execution attributes that may influence the behavior of flow artifacts, such as states and
-	 * actions.
-	 * @return execution attributes
-	 */
-	AttributeMap<Object> getAttributes();
+    /**
+     * Returns runtime execution attributes that may influence the behavior of flow artifacts, such as states and
+     * actions.
+     *
+     * @return execution attributes
+     */
+    AttributeMap<Object> getAttributes();
 }

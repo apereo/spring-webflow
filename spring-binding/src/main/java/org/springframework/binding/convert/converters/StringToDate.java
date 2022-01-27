@@ -15,125 +15,130 @@
  */
 package org.springframework.binding.convert.converters;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.util.StringUtils;
+
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.util.StringUtils;
-
 /**
  * A formatter for {@link Date} types. Allows the configuration of an explicit date pattern and locale.
- * @see SimpleDateFormat
+ *
  * @author Keith Donald
+ * @see SimpleDateFormat
  */
 public class StringToDate extends StringToObject {
 
-	private static Log logger = LogFactory.getLog(StringToDate.class);
+    /**
+     * The default date pattern.
+     */
+    private static final String DEFAULT_PATTERN = "yyyy-MM-dd";
 
-	/**
-	 * The default date pattern.
-	 */
-	private static final String DEFAULT_PATTERN = "yyyy-MM-dd";
+    private static Log logger = LogFactory.getLog(StringToDate.class);
 
-	private String pattern;
+    private String pattern;
 
-	private Locale locale;
+    private Locale locale;
 
-	public StringToDate() {
-		super(Date.class);
-	}
+    public StringToDate() {
+        super(Date.class);
+    }
 
-	/**
-	 * The pattern to use to format date values. If not specified, the default pattern 'yyyy-MM-dd' is used.
-	 * @return the date formatting pattern
-	 */
-	public String getPattern() {
-		return pattern;
-	}
+    /**
+     * The pattern to use to format date values. If not specified, the default pattern 'yyyy-MM-dd' is used.
+     *
+     * @return the date formatting pattern
+     */
+    public String getPattern() {
+        return pattern;
+    }
 
-	/**
-	 * Sets the pattern to use to format date values.
-	 * @param pattern the date formatting pattern
-	 */
-	public void setPattern(String pattern) {
-		this.pattern = pattern;
-	}
+    /**
+     * Sets the pattern to use to format date values.
+     *
+     * @param pattern the date formatting pattern
+     */
+    public void setPattern(String pattern) {
+        this.pattern = pattern;
+    }
 
-	/**
-	 * The locale to use in formatting date values. If not specified, the locale of the current thread is used.
-	 * @see LocaleContextHolder#getLocale()
-	 * @return the locale
-	 */
-	public Locale getLocale() {
-		return locale;
-	}
+    /**
+     * The locale to use in formatting date values. If not specified, the locale of the current thread is used.
+     *
+     * @return the locale
+     * @see LocaleContextHolder#getLocale()
+     */
+    public Locale getLocale() {
+        return locale;
+    }
 
-	/**
-	 * Sets the locale to use in formatting date values.
-	 * @param locale the locale
-	 */
-	public void setLocale(Locale locale) {
-		this.locale = locale;
-	}
+    /**
+     * Sets the locale to use in formatting date values.
+     *
+     * @param locale the locale
+     */
+    public void setLocale(Locale locale) {
+        this.locale = locale;
+    }
 
-	public Object toObject(String string, Class<?> targetClass) {
-		if (!StringUtils.hasText(string)) {
-			return null;
-		}
-		DateFormat dateFormat = getDateFormat();
-		try {
-			return dateFormat.parse(string);
-		} catch (ParseException e) {
-			throw new InvalidFormatException(string, getPattern(dateFormat), e);
-		}
-	}
+    public Object toObject(String string, Class<?> targetClass) {
+        if (!StringUtils.hasText(string)) {
+            return null;
+        }
+        DateFormat dateFormat = getDateFormat();
+        try {
+            return dateFormat.parse(string);
+        } catch (ParseException e) {
+            throw new InvalidFormatException(string, getPattern(dateFormat), e);
+        }
+    }
 
-	public String toString(Object target) {
-		Date date = (Date) target;
-		if (date == null) {
-			return "";
-		}
-		return getDateFormat().format(date);
-	}
+    public String toString(Object target) {
+        Date date = (Date) target;
+        if (date == null) {
+            return "";
+        }
+        return getDateFormat().format(date);
+    }
 
-	// subclassing hookings
+    // subclassing hookings
 
-	protected DateFormat getDateFormat() {
-		Locale locale = determineLocale(this.locale);
-		DateFormat format = DateFormat.getDateInstance(DateFormat.SHORT, locale);
-		format.setLenient(false);
-		if (format instanceof SimpleDateFormat) {
-			String pattern = determinePattern(this.pattern);
-			((SimpleDateFormat) format).applyPattern(pattern);
-		} else {
-			logger.warn("Unable to apply format pattern '" + pattern
-					+ "'; Returned DateFormat is not a SimpleDateFormat");
-		}
-		return format;
-	}
+    protected DateFormat getDateFormat() {
+        Locale locale = determineLocale(this.locale);
+        DateFormat format = DateFormat.getDateInstance(DateFormat.SHORT, locale);
+        format.setLenient(false);
+        if (format instanceof SimpleDateFormat) {
+            String pattern = determinePattern(this.pattern);
+            ((SimpleDateFormat) format).applyPattern(pattern);
+        } else {
+            logger.warn("Unable to apply format pattern '" + pattern
+                        + "'; Returned DateFormat is not a SimpleDateFormat");
+        }
+        return format;
+    }
 
-	// internal helpers
+    // internal helpers
 
-	private String determinePattern(String pattern) {
-		return pattern != null ? pattern : DEFAULT_PATTERN;
-	}
+    private String determinePattern(String pattern) {
+        return pattern != null ? pattern : DEFAULT_PATTERN;
+    }
 
-	private Locale determineLocale(Locale locale) {
-		return locale != null ? locale : LocaleContextHolder.getLocale();
-	}
+    private Locale determineLocale(Locale locale) {
+        return locale != null ? locale : LocaleContextHolder.getLocale();
+    }
 
-	private String getPattern(DateFormat format) {
-		if (format instanceof SimpleDateFormat) {
-			return ((SimpleDateFormat) format).toPattern();
-		} else {
-			logger.warn("Pattern string cannot be determined because DateFormat is not a SimpleDateFormat");
-			return "defaultDateFormatInstance";
-		}
-	}
+    private String getPattern(DateFormat format) {
+        if (format instanceof SimpleDateFormat) {
+            return ((SimpleDateFormat) format).toPattern();
+        } else {
+            logger.warn("Pattern string cannot be determined because DateFormat is not a SimpleDateFormat");
+            return "defaultDateFormatInstance";
+        }
+    }
 
 }

@@ -15,31 +15,31 @@
  */
 package org.springframework.webflow.engine;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import org.junit.jupiter.api.Test;
 import org.springframework.webflow.core.AnnotatedObject;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 public class AnnotatedObjectTests {
 
-	private AnnotatedObject object = new Flow("foo");
+    private AnnotatedObject object = new Flow("foo");
 
-	@Test
-	public void testSetCaption() {
-		object.setCaption("caption");
-		assertEquals("caption", object.getCaption());
-	}
+    @Test
+    public void testSetCaption() {
+        object.setCaption("caption");
+        assertEquals("caption", object.getCaption());
+    }
 
-	@Test
-	public void testSetDescription() {
-		object.setDescription("description");
-		assertEquals("description", object.getDescription());
-	}
+    @Test
+    public void testSetDescription() {
+        object.setDescription("description");
+        assertEquals("description", object.getDescription());
+    }
 
-	@Test
-	public void testPutCustomAttributes() {
-		object.getAttributes().put("foo", "bar");
-		assertEquals("bar", object.getAttributes().get("foo"));
-	}
+    @Test
+    public void testPutCustomAttributes() {
+        object.getAttributes().put("foo", "bar");
+        assertEquals("bar", object.getAttributes().get("foo"));
+    }
 
 }

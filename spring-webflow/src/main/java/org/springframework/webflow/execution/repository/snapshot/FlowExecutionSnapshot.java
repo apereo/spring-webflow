@@ -19,11 +19,10 @@ import java.io.Serializable;
 
 /**
  * A snapshot that can be used to restore a FlowExecution using a {@link FlowExecutionSnapshotFactory}.
- * 
- * @see FlowExecutionSnapshotFactory
- * 
+ *
  * @author Erwin Vervaet
  * @author Keith Donald
+ * @see FlowExecutionSnapshotFactory
  */
 public abstract class FlowExecutionSnapshot implements Serializable {
 

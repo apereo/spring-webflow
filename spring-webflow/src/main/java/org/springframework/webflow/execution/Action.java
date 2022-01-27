@@ -46,56 +46,56 @@ package org.springframework.webflow.execution;
  * <i>commands</i>. Such commands do not select views, they execute arbitrary behavioral logic and then return an
  * logical execution result. The flow that invokes an Action is responsible for responding to the execution result to
  * decide what to do next. In Spring Web Flow, the flow <i>is</i> the controller.
- * 
+ *
  * @author Keith Donald
  * @author Erwin Vervaet
  */
 public interface Action {
 
-	/**
-	 * Execute this action. Action execution will occur in the context of a request associated with an active flow
-	 * execution.
-	 * <p>
-	 * Action invocation is typically triggered in a production environment by a state within a flow carrying out the
-	 * execution of a flow definition. The result of action execution, a logical outcome event, can be used as grounds
-	 * for a transition out of the calling state.
-	 * <p>
-	 * Note: The {@link RequestContext} argument to this method provides access to data about the active flow execution
-	 * in the context of the currently executing thread. Among other things, this allows this action to access
-	 * {@link RequestContext#getRequestScope() data} set by other actions, as well as set its own attributes it wishes
-	 * to expose in a given scope.
-	 * <p>
-	 * Some notes about actions and their usage of the attribute scope types:
-	 * <ul>
-	 * <li>Attributes set in {@link RequestContext#getRequestScope() request scope} exist for the life of the currently
-	 * executing request only.
-	 * <li>Attributes set in {@link RequestContext#getFlashScope() flash scope} exist until after view rendering is
-	 * completed. That time includes the current request plus any redirect required for the view render to complete.
-	 * <li>Attributes set in {@link RequestContext#getFlowScope() flow scope} exist for the life of the flow session and
-	 * will be cleaned up automatically when the flow session ends.
-	 * <li>Attributes set in {@link RequestContext#getConversationScope() conversation scope} exist for the life of the
-	 * entire flow execution representing a single logical "conversation" with a user.
-	 * </ul>
-	 * <p>
-	 * All attributes present in any scope are typically exposed in a model for access by a view when an "interactive"
-	 * state type such as a view state is entered.
-	 * <p>
-	 * Note: flow scope should generally not be used as a general purpose cache, but rather as a context for data needed
-	 * locally by other states of the flow this action participates in. For example, it would be inappropriate to stuff
-	 * large collections of objects (like those returned to support a search results view) into flow scope. Instead, put
-	 * such result collections in request scope, and ensure you execute this action again each time you wish to view
-	 * those results. 2nd level caches managed outside of SWF are more general cache solutions.
-	 * <p>
-	 * Note: as flow scoped attributes are eligible for serialization they should be <code>Serializable</code>.
-	 * 
-	 * @param context the action execution context, for accessing and setting data in a {@link ScopeType scope type}, as
-	 * well as obtaining other flow contextual information (e.g. request context attributes and flow execution context
-	 * information)
-	 * @return a logical result outcome, used as grounds for a transition in the calling flow (e.g. "success", "error",
-	 * "yes", "no", * ...)
-	 * @throws Exception a exception occurred during action execution, either checked or unchecked; note, any
-	 * <i>recoverable</i> exceptions should be caught within this method and an appropriate result outcome returned
-	 * <i>or</i> be handled by the current state of the calling flow execution.
-	 */
-	Event execute(RequestContext context) throws Exception;
+    /**
+     * Execute this action. Action execution will occur in the context of a request associated with an active flow
+     * execution.
+     * <p>
+     * Action invocation is typically triggered in a production environment by a state within a flow carrying out the
+     * execution of a flow definition. The result of action execution, a logical outcome event, can be used as grounds
+     * for a transition out of the calling state.
+     * <p>
+     * Note: The {@link RequestContext} argument to this method provides access to data about the active flow execution
+     * in the context of the currently executing thread. Among other things, this allows this action to access
+     * {@link RequestContext#getRequestScope() data} set by other actions, as well as set its own attributes it wishes
+     * to expose in a given scope.
+     * <p>
+     * Some notes about actions and their usage of the attribute scope types:
+     * <ul>
+     * <li>Attributes set in {@link RequestContext#getRequestScope() request scope} exist for the life of the currently
+     * executing request only.
+     * <li>Attributes set in {@link RequestContext#getFlashScope() flash scope} exist until after view rendering is
+     * completed. That time includes the current request plus any redirect required for the view render to complete.
+     * <li>Attributes set in {@link RequestContext#getFlowScope() flow scope} exist for the life of the flow session and
+     * will be cleaned up automatically when the flow session ends.
+     * <li>Attributes set in {@link RequestContext#getConversationScope() conversation scope} exist for the life of the
+     * entire flow execution representing a single logical "conversation" with a user.
+     * </ul>
+     * <p>
+     * All attributes present in any scope are typically exposed in a model for access by a view when an "interactive"
+     * state type such as a view state is entered.
+     * <p>
+     * Note: flow scope should generally not be used as a general purpose cache, but rather as a context for data needed
+     * locally by other states of the flow this action participates in. For example, it would be inappropriate to stuff
+     * large collections of objects (like those returned to support a search results view) into flow scope. Instead, put
+     * such result collections in request scope, and ensure you execute this action again each time you wish to view
+     * those results. 2nd level caches managed outside of SWF are more general cache solutions.
+     * <p>
+     * Note: as flow scoped attributes are eligible for serialization they should be <code>Serializable</code>.
+     *
+     * @param context the action execution context, for accessing and setting data in a {@link ScopeType scope type}, as
+     *                well as obtaining other flow contextual information (e.g. request context attributes and flow execution context
+     *                information)
+     * @return a logical result outcome, used as grounds for a transition in the calling flow (e.g. "success", "error",
+     * "yes", "no", * ...)
+     * @throws Exception a exception occurred during action execution, either checked or unchecked; note, any
+     *                   <i>recoverable</i> exceptions should be caught within this method and an appropriate result outcome returned
+     *                   <i>or</i> be handled by the current state of the calling flow execution.
+     */
+    Event execute(RequestContext context) throws Exception;
 }

@@ -15,54 +15,51 @@
  */
 package org.springframework.webflow.engine.model;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.Test;
 
 import java.util.LinkedList;
 
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit tests for {@link ActionStateModel}.
  */
 public class ActionStateModelTests {
 
-	@Test
-	public void testMergeable() {
-		ActionStateModel child = new ActionStateModel("child");
-		assertTrue(child.isMergeableWith(child));
-	}
+    @Test
+    public void testMergeable() {
+        ActionStateModel child = new ActionStateModel("child");
+        assertTrue(child.isMergeableWith(child));
+    }
 
-	@Test
-	public void testNotMergeable() {
-		ActionStateModel child = new ActionStateModel("child");
-		ActionStateModel parent = new ActionStateModel("parent");
-		assertFalse(child.isMergeableWith(parent));
-	}
+    @Test
+    public void testNotMergeable() {
+        ActionStateModel child = new ActionStateModel("child");
+        ActionStateModel parent = new ActionStateModel("parent");
+        assertFalse(child.isMergeableWith(parent));
+    }
 
-	@Test
-	public void testNotMergeableWithNull() {
-		ActionStateModel child = new ActionStateModel("child");
-		assertFalse(child.isMergeableWith(null));
-	}
+    @Test
+    public void testNotMergeableWithNull() {
+        ActionStateModel child = new ActionStateModel("child");
+        assertFalse(child.isMergeableWith(null));
+    }
 
-	@Test
-	public void testMerge() {
-		ActionStateModel child = new ActionStateModel("child");
-		ActionStateModel parent = new ActionStateModel("parent");
+    @Test
+    public void testMerge() {
+        ActionStateModel child = new ActionStateModel("child");
+        ActionStateModel parent = new ActionStateModel("parent");
 
-		LinkedList<AbstractActionModel> actions = new LinkedList<>();
-		EvaluateModel eval = new EvaluateModel("foo.bar");
-		actions.add(eval);
-		parent.setActions(actions);
+        LinkedList<AbstractActionModel> actions = new LinkedList<>();
+        EvaluateModel eval = new EvaluateModel("foo.bar");
+        actions.add(eval);
+        parent.setActions(actions);
 
-		parent.setSecured(new SecuredModel("secured"));
-		child.merge(parent);
+        parent.setSecured(new SecuredModel("secured"));
+        child.merge(parent);
 
-		assertNotNull(child.getSecured());
-		assertEquals("foo.bar", ((EvaluateModel) child.getActions().get(0)).getExpression());
-	}
+        assertNotNull(child.getSecured());
+        assertEquals("foo.bar", ((EvaluateModel) child.getActions().get(0)).getExpression());
+    }
 
 }

@@ -23,76 +23,77 @@ import org.springframework.util.StringUtils;
  * <p>
  * An instance variable. Variables are created when the flow starts or state enters and destroyed when the flow or state
  * ends, respectively.
- * 
+ *
  * @author Scott Andrews
  */
 public class VarModel extends AbstractModel {
 
-	private String name;
+    private String name;
 
-	private String className;
+    private String className;
 
-	/**
-	 * Create a variable model
-	 * @param name the name of the variable
-	 * @param className the class type of the variable
-	 */
-	public VarModel(String name, String className) {
-		setName(name);
-		setClassName(className);
-	}
+    /**
+     * Create a variable model
+     *
+     * @param name      the name of the variable
+     * @param className the class type of the variable
+     */
+    public VarModel(String name, String className) {
+        setName(name);
+        setClassName(className);
+    }
 
-	public boolean isMergeableWith(Model model) {
-		if (!(model instanceof VarModel)) {
-			return false;
-		}
-		VarModel var = (VarModel) model;
-		return ObjectUtils.nullSafeEquals(getName(), var.getName());
-	}
+    public boolean isMergeableWith(Model model) {
+        if (!(model instanceof VarModel)) {
+            return false;
+        }
+        VarModel var = (VarModel) model;
+        return ObjectUtils.nullSafeEquals(getName(), var.getName());
+    }
 
-	public void merge(Model model) {
-		VarModel var = (VarModel) model;
-		setClassName(merge(getClassName(), var.getClassName()));
-	}
+    public void merge(Model model) {
+        VarModel var = (VarModel) model;
+        setClassName(merge(getClassName(), var.getClassName()));
+    }
 
-	public Model createCopy() {
-		return new VarModel(name, className);
-	}
+    public Model createCopy() {
+        return new VarModel(name, className);
+    }
 
-	/**
-	 * @return the name
-	 */
-	public String getName() {
-		return name;
-	}
+    /**
+     * @return the name
+     */
+    public String getName() {
+        return name;
+    }
 
-	/**
-	 * @param name the name to set
-	 */
-	public void setName(String name) {
-		if (StringUtils.hasText(name)) {
-			this.name = name;
-		} else {
-			this.name = null;
-		}
-	}
+    /**
+     * @param name the name to set
+     */
+    public void setName(String name) {
+        if (StringUtils.hasText(name)) {
+            this.name = name;
+        } else {
+            this.name = null;
+        }
+    }
 
-	/**
-	 * @return the class name
-	 */
-	public String getClassName() {
-		return className;
-	}
+    /**
+     * @return the class name
+     */
+    public String getClassName() {
+        return className;
+    }
 
-	/**
-	 * @param className the class name to set
-	 */
-	public void setClassName(String className) {
-		if (StringUtils.hasText(className)) {
-			this.className = className;
-		} else {
-			this.className = null;
-		}
-	}
+    /**
+     * @param className the class name to set
+     */
+    public void setClassName(String className) {
+        if (StringUtils.hasText(className)) {
+            this.className = className;
+        } else {
+            this.className = null;
+        }
+    }
 
 }

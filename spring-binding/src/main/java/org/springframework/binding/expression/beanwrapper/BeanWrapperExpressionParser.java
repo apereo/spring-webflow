@@ -33,75 +33,80 @@ import org.springframework.binding.expression.support.AbstractExpressionParser;
  */
 public class BeanWrapperExpressionParser extends AbstractExpressionParser {
 
-	private ConversionService conversionService;
+    private ConversionService conversionService;
 
-	private boolean autoGrowNestedPaths = false;
+    private boolean autoGrowNestedPaths = false;
 
-	private int autoGrowCollectionLimit = Integer.MAX_VALUE;
+    private int autoGrowCollectionLimit = Integer.MAX_VALUE;
 
-	/**
-	 * Creates a new expression parser that uses a {@link DefaultConversionService} to perform type conversion.
-	 */
-	public BeanWrapperExpressionParser() {
-		this.conversionService = new DefaultConversionService();
-	}
+    /**
+     * Creates a new expression parser that uses a {@link DefaultConversionService} to perform type conversion.
+     */
+    public BeanWrapperExpressionParser() {
+        this.conversionService = new DefaultConversionService();
+    }
 
-	/**
-	 * Creates a new expression parser that uses the specified conversion service for type conversion.
-	 * @param conversionService the conversion service to use
-	 */
-	public BeanWrapperExpressionParser(ConversionService conversionService) {
-		this.conversionService = conversionService;
-	}
+    /**
+     * Creates a new expression parser that uses the specified conversion service for type conversion.
+     *
+     * @param conversionService the conversion service to use
+     */
+    public BeanWrapperExpressionParser(ConversionService conversionService) {
+        this.conversionService = conversionService;
+    }
 
-	/**
-	 * The conversion service to use to obtain {@link ConversionExecutor conversion executors} that will be adapted to
-	 * {@link PropertiesEditor property editors} for use during a
-	 * {@link BeanWrapperImpl#setPropertyValue(String, Object) set value} call. The default if not specified is an
-	 * instance of {@link DefaultConversionService}.
+    /**
+     * The conversion service to use to obtain {@link ConversionExecutor conversion executors} that will be adapted to
+     * {@link PropertiesEditor property editors} for use during a
+     * {@link BeanWrapperImpl#setPropertyValue(String, Object) set value} call. The default if not specified is an
+     * instance of {@link DefaultConversionService}.
+     *
      * @return
      */
-	public ConversionService getConversionService() {
-		return conversionService;
-	}
+    public ConversionService getConversionService() {
+        return conversionService;
+    }
 
-	/**
-	 * Sets the conversion service to use to obtain {@link ConversionExecutor conversion executors} that will be adapted
-	 * to {@link PropertiesEditor property editors} for use during a
-	 * {@link BeanWrapperImpl#setPropertyValue(String, Object) set value} call.
-	 * @param conversionService the conversion service
-	 */
-	public void setConversionService(ConversionService conversionService) {
-		this.conversionService = conversionService;
-	}
+    /**
+     * Sets the conversion service to use to obtain {@link ConversionExecutor conversion executors} that will be adapted
+     * to {@link PropertiesEditor property editors} for use during a
+     * {@link BeanWrapperImpl#setPropertyValue(String, Object) set value} call.
+     *
+     * @param conversionService the conversion service
+     */
+    public void setConversionService(ConversionService conversionService) {
+        this.conversionService = conversionService;
+    }
 
-	/**
-	 * Set whether this BeanWrapper should attempt to "auto-grow" a nested path that contains a null value.
-	 * <p>If "true", a null path location will be populated with a default object value and traversed
-	 * instead of resulting in a {@link NullValueInNestedPathException}. Turning this flag on also
-	 * enables auto-growth of collection elements when accessing an out-of-bounds index.
-	 * <p>Default is "false" on a plain BeanWrapper.
+    /**
+     * Set whether this BeanWrapper should attempt to "auto-grow" a nested path that contains a null value.
+     * <p>If "true", a null path location will be populated with a default object value and traversed
+     * instead of resulting in a {@link NullValueInNestedPathException}. Turning this flag on also
+     * enables auto-growth of collection elements when accessing an out-of-bounds index.
+     * <p>Default is "false" on a plain BeanWrapper.
+     *
      * @param autoGrowNestedPaths
      * @param autoGrowNestedPaths
      */
-	public void setAutoGrowNestedPaths(boolean autoGrowNestedPaths) {
-		this.autoGrowNestedPaths = autoGrowNestedPaths;
-	}
+    public void setAutoGrowNestedPaths(boolean autoGrowNestedPaths) {
+        this.autoGrowNestedPaths = autoGrowNestedPaths;
+    }
 
-	/**
-	 * Specify a limit for array and collection auto-growing.
-	 * <p>Default is unlimited on a plain BeanWrapper.
+    /**
+     * Specify a limit for array and collection auto-growing.
+     * <p>Default is unlimited on a plain BeanWrapper.
+     *
      * @param autoGrowCollectionLimit
      * @param autoGrowCollectionLimit
      */
-	public void setAutoGrowCollectionLimit(int autoGrowCollectionLimit) {
-		this.autoGrowCollectionLimit = autoGrowCollectionLimit;
-	}
+    public void setAutoGrowCollectionLimit(int autoGrowCollectionLimit) {
+        this.autoGrowCollectionLimit = autoGrowCollectionLimit;
+    }
 
-	protected Expression doParseExpression(String expressionString, ParserContext context) throws ParserException {
-		BeanWrapperExpression expression = new BeanWrapperExpression(expressionString, conversionService);
-		expression.setAutoGrowNestedPaths(autoGrowNestedPaths);
-		expression.setAutoGrowCollectionLimit(autoGrowCollectionLimit);
-		return expression;
-	}
+    protected Expression doParseExpression(String expressionString, ParserContext context) throws ParserException {
+        BeanWrapperExpression expression = new BeanWrapperExpression(expressionString, conversionService);
+        expression.setAutoGrowNestedPaths(autoGrowNestedPaths);
+        expression.setAutoGrowCollectionLimit(autoGrowCollectionLimit);
+        return expression;
+    }
 }

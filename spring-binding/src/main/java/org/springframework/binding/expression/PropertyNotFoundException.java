@@ -18,18 +18,20 @@ package org.springframework.binding.expression;
 /**
  * An evaluation exception indicating a expression that references a property failed to evaluate because the property
  * could not be found.
+ *
  * @author Keith Donald
  */
 public class PropertyNotFoundException extends EvaluationException {
 
-	/**
-	 * Creates a new property not found exception
-	 * @param contextClass the class of object upon which property evaluation was attempted
-	 * @param property the property that could not be found
-	 * @param cause root cause of the failure
-	 */
-	public PropertyNotFoundException(Class<?> contextClass, String property, Throwable cause) {
-		super(contextClass, property, "Property not found", cause);
-	}
+    /**
+     * Creates a new property not found exception
+     *
+     * @param contextClass the class of object upon which property evaluation was attempted
+     * @param property     the property that could not be found
+     * @param cause        root cause of the failure
+     */
+    public PropertyNotFoundException(Class<?> contextClass, String property, Throwable cause) {
+        super(contextClass, property, "Property not found", cause);
+    }
 
 }

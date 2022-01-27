@@ -15,80 +15,77 @@
  */
 package org.springframework.webflow.context.servlet;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
-
-import java.util.Iterator;
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 
+import java.util.Iterator;
+
+import static org.junit.jupiter.api.Assertions.*;
+
 /**
  * Unit test for the {@link HttpServletRequestParameterMap} class.
- * 
+ *
  * @author Ulrik Sandberg
  */
 public class HttpServletRequestParameterMapTests {
 
-	private HttpServletRequestParameterMap tested;
+    private HttpServletRequestParameterMap tested;
 
-	private MockHttpServletRequest request;
+    private MockHttpServletRequest request;
 
-	@BeforeEach
-	public void setUp() throws Exception {
-		request = new MockHttpServletRequest();
-		tested = new HttpServletRequestParameterMap(request);
-	}
+    @BeforeEach
+    public void setUp() throws Exception {
+        request = new MockHttpServletRequest();
+        tested = new HttpServletRequestParameterMap(request);
+    }
 
-	@AfterEach
-	public void tearDown() throws Exception {
-		request = null;
-		tested = null;
-	}
+    @AfterEach
+    public void tearDown() throws Exception {
+        request = null;
+        tested = null;
+    }
 
-	@Test
-	public void testGetAttribute() {
-		request.setParameter("Some param", "Some value");
-		// perform test
-		Object result = tested.getAttribute("Some param");
-		assertEquals("Some value", result);
-	}
+    @Test
+    public void testGetAttribute() {
+        request.setParameter("Some param", "Some value");
+        // perform test
+        Object result = tested.getAttribute("Some param");
+        assertEquals("Some value", result);
+    }
 
-	@Test
-	public void testSetAttribute() {
-		// perform test
-		try {
-			tested.setAttribute("Some key", "Some value");
-			fail("UnsupportedOperationException expected");
-		} catch (UnsupportedOperationException expected) {
-			// expected
-		}
-	}
+    @Test
+    public void testSetAttribute() {
+        // perform test
+        try {
+            tested.setAttribute("Some key", "Some value");
+            fail("UnsupportedOperationException expected");
+        } catch (UnsupportedOperationException expected) {
+            // expected
+        }
+    }
 
-	@Test
-	public void testRemoveAttribute() {
-		request.setParameter("Some param", "Some value");
-		// perform test
-		try {
-			tested.removeAttribute("Some param");
-			fail("UnsupportedOperationException expected");
-		} catch (UnsupportedOperationException expected) {
-			// expected
-		}
-	}
+    @Test
+    public void testRemoveAttribute() {
+        request.setParameter("Some param", "Some value");
+        // perform test
+        try {
+            tested.removeAttribute("Some param");
+            fail("UnsupportedOperationException expected");
+        } catch (UnsupportedOperationException expected) {
+            // expected
+        }
+    }
 
-	@Test
-	public void testGetAttributeNames() {
-		request.setParameter("Some param", "Some value");
-		// perform test
-		Iterator<String> names = tested.getAttributeNames();
-		assertNotNull(names, "Null result unexpected");
-		assertTrue(names.hasNext(), "More elements");
-		String name = names.next();
-		assertEquals("Some param", name);
-	}
+    @Test
+    public void testGetAttributeNames() {
+        request.setParameter("Some param", "Some value");
+        // perform test
+        Iterator<String> names = tested.getAttributeNames();
+        assertNotNull(names, "Null result unexpected");
+        assertTrue(names.hasNext(), "More elements");
+        String name = names.next();
+        assertEquals("Some param", name);
+    }
 }

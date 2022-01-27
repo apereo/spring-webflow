@@ -20,32 +20,32 @@ import java.io.ObjectStreamException;
 /**
  * A singleton lock that doesn't do anything. For use when conversations don't require or choose not to implement
  * locking.
- * 
+ *
  * @author Keith Donald
  */
 public class NoOpConversationLock implements ConversationLock {
 
-	/**
-	 * The singleton instance.
-	 */
-	public static final NoOpConversationLock INSTANCE = new NoOpConversationLock();
+    /**
+     * The singleton instance.
+     */
+    public static final NoOpConversationLock INSTANCE = new NoOpConversationLock();
 
-	/**
-	 * Private constructor to avoid instantiation.
-	 */
-	private NoOpConversationLock() {
-	}
+    /**
+     * Private constructor to avoid instantiation.
+     */
+    private NoOpConversationLock() {
+    }
 
-	public void lock() {
-		// no-op
-	}
+    public void lock() {
+        // no-op
+    }
 
-	public void unlock() {
-		// no-op
-	}
+    public void unlock() {
+        // no-op
+    }
 
-	// resolve the singleton instance
-	private Object readResolve() throws ObjectStreamException {
-		return INSTANCE;
-	}
+    // resolve the singleton instance
+    private Object readResolve() throws ObjectStreamException {
+        return INSTANCE;
+    }
 }

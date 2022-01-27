@@ -20,12 +20,12 @@ import java.util.Locale;
 
 /**
  * Produces NumberFormat instances that format percent values.
- * 
- * @see NumberFormat
+ *
  * @author Keith Donald
+ * @see NumberFormat
  */
 public class PercentNumberFormatFactory extends AbstractNumberFormatFactory {
-	protected NumberFormat getNumberFormat(Locale locale) {
-		return NumberFormat.getPercentInstance(locale);
-	}
+    protected NumberFormat getNumberFormat(Locale locale) {
+        return NumberFormat.getPercentInstance(locale);
+    }
 }

@@ -15,10 +15,6 @@
  */
 package org.springframework.webflow.expression.spel;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-import java.util.Locale;
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -33,48 +29,52 @@ import org.springframework.webflow.execution.RequestContextHolder;
 import org.springframework.webflow.test.MockExternalContext;
 import org.springframework.webflow.test.MockRequestContext;
 
+import java.util.Locale;
+
+import static org.junit.jupiter.api.Assertions.*;
+
 public class WebFlowSpringELExpressionParserTests {
 
-	private ExpressionParser parser = new WebFlowSpringELExpressionParser(new SpelExpressionParser());
+    private ExpressionParser parser = new WebFlowSpringELExpressionParser(new SpelExpressionParser());
 
-	private MockRequestContext requestContext;
+    private MockRequestContext requestContext;
 
-	@BeforeEach
-	public void setUp() throws Exception {
-		requestContext = new MockRequestContext();
-		RequestContextHolder.setRequestContext(requestContext);
-	}
+    @BeforeEach
+    public void setUp() throws Exception {
+        requestContext = new MockRequestContext();
+        RequestContextHolder.setRequestContext(requestContext);
+    }
 
-	@AfterEach
-	public void tearDown() throws Exception {
-		RequestContextHolder.setRequestContext(null);
-	}
+    @AfterEach
+    public void tearDown() throws Exception {
+        RequestContextHolder.setRequestContext(null);
+    }
 
-	@Test
-	public void testResourceBundleRead() {
-		MockExternalContext externalContext = (MockExternalContext) requestContext.getExternalContext();
-		externalContext.setLocale(Locale.ENGLISH);
+    @Test
+    public void testResourceBundleRead() {
+        MockExternalContext externalContext = (MockExternalContext) requestContext.getExternalContext();
+        externalContext.setLocale(Locale.ENGLISH);
 
-		StaticApplicationContext applicationContext = new StaticApplicationContext();
-		StaticMessageSource messageSource = applicationContext.getStaticMessageSource();
-		messageSource.addMessage("myCode", externalContext.getLocale(), "myCode message");
-		messageSource.addMessage("myCode.myCode", externalContext.getLocale(), "myCode myCode message");
-		applicationContext.refresh();
+        StaticApplicationContext applicationContext = new StaticApplicationContext();
+        StaticMessageSource messageSource = applicationContext.getStaticMessageSource();
+        messageSource.addMessage("myCode", externalContext.getLocale(), "myCode message");
+        messageSource.addMessage("myCode.myCode", externalContext.getLocale(), "myCode myCode message");
+        applicationContext.refresh();
 
-		Flow flow = (Flow) requestContext.getActiveFlow();
-		flow.setApplicationContext(applicationContext);
+        Flow flow = (Flow) requestContext.getActiveFlow();
+        flow.setApplicationContext(applicationContext);
 
-		String expressionString = "#{resourceBundle.myCode}";
-		Expression exp = parser.parseExpression(expressionString, new FluentParserContext().template());
-		assertEquals("myCode message", exp.getValue(requestContext));
+        String expressionString = "#{resourceBundle.myCode}";
+        Expression exp = parser.parseExpression(expressionString, new FluentParserContext().template());
+        assertEquals("myCode message", exp.getValue(requestContext));
 
-		expressionString = "#{resourceBundle['myCode']}";
-		exp = parser.parseExpression(expressionString, new FluentParserContext().template());
-		assertEquals("myCode message", exp.getValue(requestContext));
+        expressionString = "#{resourceBundle['myCode']}";
+        exp = parser.parseExpression(expressionString, new FluentParserContext().template());
+        assertEquals("myCode message", exp.getValue(requestContext));
 
-		expressionString = "#{resourceBundle['myCode.myCode']}";
-		exp = parser.parseExpression(expressionString, new FluentParserContext().template());
-		assertEquals("myCode myCode message", exp.getValue(requestContext));
-	}
+        expressionString = "#{resourceBundle['myCode.myCode']}";
+        exp = parser.parseExpression(expressionString, new FluentParserContext().template());
+        assertEquals("myCode myCode message", exp.getValue(requestContext));
+    }
 
 }

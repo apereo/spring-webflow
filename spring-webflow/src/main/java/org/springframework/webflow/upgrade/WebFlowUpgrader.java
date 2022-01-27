@@ -15,8 +15,9 @@
  */
 package org.springframework.webflow.upgrade;
 
-import java.io.IOException;
-import java.io.StringWriter;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
 
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
@@ -26,16 +27,14 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
-
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.FileSystemResource;
-import org.springframework.core.io.Resource;
+import java.io.IOException;
+import java.io.StringWriter;
 
 /**
  * Converts Web Flow 1 flow definitions to the version 2 syntax. To use, invoke as a Java application, passing the
  * file-system path to the flow definition you wish to convert as a program argument. The converted flow definition is
  * printed to standard out.
- *
+ * <p>
  * This class requires a XSLT transformer to run. Saxon is recommended to preserve flow definition formatting and line
  * breaks.
  *
@@ -43,47 +42,47 @@ import org.springframework.core.io.Resource;
  */
 public class WebFlowUpgrader {
 
-	private static final String XSL_NAME = "spring-webflow-1.0-to-2.0.xsl";
+    private static final String XSL_NAME = "spring-webflow-1.0-to-2.0.xsl";
 
-	private Transformer transformer;
+    private Transformer transformer;
 
-	public static void main(String[] args) {
-		if (args.length < 1) {
-			System.err.println("The file path to the flow to convert is required");
-			System.exit(-1);
-		}
-		WebFlowUpgrader converter = new WebFlowUpgrader();
-		String result = converter.convert(new FileSystemResource(args[0]));
-		System.out.println(result);
-	}
+    public static void main(String[] args) {
+        if (args.length < 1) {
+            System.err.println("The file path to the flow to convert is required");
+            System.exit(-1);
+        }
+        WebFlowUpgrader converter = new WebFlowUpgrader();
+        String result = converter.convert(new FileSystemResource(args[0]));
+        System.out.println(result);
+    }
 
-	public String convert(Resource flowResource) {
-		StringWriter output = new StringWriter();
-		try {
-			Source source = new StreamSource(flowResource.getInputStream());
-			Result result = new StreamResult(output);
-			transform(source, result);
-		} catch (TransformerException | IOException e) {
-			e.printStackTrace();
-		}
-		return output.toString();
-	}
+    public String convert(Resource flowResource) {
+        StringWriter output = new StringWriter();
+        try {
+            Source source = new StreamSource(flowResource.getInputStream());
+            Result result = new StreamResult(output);
+            transform(source, result);
+        } catch (TransformerException | IOException e) {
+            e.printStackTrace();
+        }
+        return output.toString();
+    }
 
-	public synchronized void transform(Source source, Result result) throws TransformerConfigurationException,
-			TransformerException, IOException {
-		getTransformer().transform(source, result);
-	}
+    public synchronized void transform(Source source, Result result) throws TransformerConfigurationException,
+        TransformerException, IOException {
+        getTransformer().transform(source, result);
+    }
 
-	private Transformer getTransformer() throws TransformerConfigurationException, IOException {
-		if (transformer == null) {
-			Resource xslResource = new ClassPathResource(XSL_NAME, getClass());
-			TransformerFactory factory = TransformerFactory.newInstance();
-			Source source = new StreamSource(xslResource.getInputStream());
-			transformer = factory.newTransformer(source);
-			// com.sun.org.apache.xml.internal.serializer.OutputPropertiesFactory.S_KEY_INDENT_AMOUNT
-			transformer.setOutputProperty("{https://xml.apache.org/xalan}indent-amount", "4");
-		}
-		return transformer;
-	}
+    private Transformer getTransformer() throws TransformerConfigurationException, IOException {
+        if (transformer == null) {
+            Resource xslResource = new ClassPathResource(XSL_NAME, getClass());
+            TransformerFactory factory = TransformerFactory.newInstance();
+            Source source = new StreamSource(xslResource.getInputStream());
+            transformer = factory.newTransformer(source);
+            // com.sun.org.apache.xml.internal.serializer.OutputPropertiesFactory.S_KEY_INDENT_AMOUNT
+            transformer.setOutputProperty("{https://xml.apache.org/xalan}indent-amount", "4");
+        }
+        return transformer;
+    }
 
 }

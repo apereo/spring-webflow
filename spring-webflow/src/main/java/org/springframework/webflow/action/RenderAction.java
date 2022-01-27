@@ -24,39 +24,40 @@ import org.springframework.webflow.execution.View;
 /**
  * An action that sets a special attribute that views use to render partial views called "fragments", instead of the
  * entire view.
- * 
+ *
  * @author Keith Donald
  */
 public class RenderAction extends AbstractAction {
 
-	/**
-	 * The expression for setting the scoped attribute value.
-	 */
-	private Expression[] fragmentExpressions;
+    /**
+     * The expression for setting the scoped attribute value.
+     */
+    private Expression[] fragmentExpressions;
 
-	/**
-	 * Creates a new render action.
-	 * @param fragmentExpressions the set of expressions to resolve the view fragments to render
-	 */
-	public RenderAction(Expression... fragmentExpressions) {
-		if (fragmentExpressions == null || fragmentExpressions.length == 0) {
-			throw new IllegalArgumentException(
-					"You must provide at least one fragment expression to this render action");
-		}
-		this.fragmentExpressions = fragmentExpressions;
-	}
+    /**
+     * Creates a new render action.
+     *
+     * @param fragmentExpressions the set of expressions to resolve the view fragments to render
+     */
+    public RenderAction(Expression... fragmentExpressions) {
+        if (fragmentExpressions == null || fragmentExpressions.length == 0) {
+            throw new IllegalArgumentException(
+                "You must provide at least one fragment expression to this render action");
+        }
+        this.fragmentExpressions = fragmentExpressions;
+    }
 
-	protected Event doExecute(RequestContext context) throws Exception {
-		String[] fragments = new String[fragmentExpressions.length];
-		for (int i = 0; i < fragmentExpressions.length; i++) {
-			Expression exp = fragmentExpressions[i];
-			fragments[i] = (String) exp.getValue(context);
-		}
-		context.getFlashScope().put(View.RENDER_FRAGMENTS_ATTRIBUTE, fragments);
-		return success();
-	}
+    public String toString() {
+        return new ToStringCreator(this).append("fragments", fragmentExpressions).toString();
+    }
 
-	public String toString() {
-		return new ToStringCreator(this).append("fragments", fragmentExpressions).toString();
-	}
+    protected Event doExecute(RequestContext context) throws Exception {
+        String[] fragments = new String[fragmentExpressions.length];
+        for (int i = 0; i < fragmentExpressions.length; i++) {
+            Expression exp = fragmentExpressions[i];
+            fragments[i] = (String) exp.getValue(context);
+        }
+        context.getFlashScope().put(View.RENDER_FRAGMENTS_ATTRIBUTE, fragments);
+        return success();
+    }
 }

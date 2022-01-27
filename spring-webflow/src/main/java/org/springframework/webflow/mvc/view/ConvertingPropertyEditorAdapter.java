@@ -15,13 +15,13 @@
  */
 package org.springframework.webflow.mvc.view;
 
-import java.beans.PropertyEditor;
-import java.beans.PropertyEditorSupport;
-
 import org.springframework.binding.convert.ConversionService;
 import org.springframework.core.convert.TypeDescriptor;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
+
+import java.beans.PropertyEditor;
+import java.beans.PropertyEditorSupport;
 
 /**
  * <p>
@@ -29,49 +29,49 @@ import org.springframework.util.StringUtils;
  * converterId is provided, conversion will be delegated to the Spring Binding ConversionService instead as Spring's
  * type conversion system does not support named converters.
  * </p>
- * 
+ *
  * @author Rossen Stoyanchev
  */
 class ConvertingPropertyEditorAdapter extends PropertyEditorSupport {
 
-	private ConversionService conversionService;
+    private ConversionService conversionService;
 
-	private TypeDescriptor fieldType;
+    private TypeDescriptor fieldType;
 
-	private String converterId;
+    private String converterId;
 
-	private boolean canConvertToString;
+    private boolean canConvertToString;
 
-	public ConvertingPropertyEditorAdapter(ConversionService conversionService, String converterId,
-			TypeDescriptor fieldType) {
-		Assert.notNull(conversionService, "A ConversionService instance is required.");
-		Assert.notNull(fieldType, "The field type is required");
-		this.conversionService = conversionService;
-		this.fieldType = fieldType;
-		this.converterId = converterId;
-		this.canConvertToString = conversionService.getDelegateConversionService().canConvert(this.fieldType,
-				TypeDescriptor.valueOf(String.class));
-	}
+    public ConvertingPropertyEditorAdapter(ConversionService conversionService, String converterId,
+                                           TypeDescriptor fieldType) {
+        Assert.notNull(conversionService, "A ConversionService instance is required.");
+        Assert.notNull(fieldType, "The field type is required");
+        this.conversionService = conversionService;
+        this.fieldType = fieldType;
+        this.converterId = converterId;
+        this.canConvertToString = conversionService.getDelegateConversionService().canConvert(this.fieldType,
+            TypeDescriptor.valueOf(String.class));
+    }
 
-	public String getAsText() {
-		if (StringUtils.hasText(converterId)) {
-			return (String) conversionService.executeConversion(converterId, getValue(), String.class);
-		} else {
-			if (canConvertToString) {
-				return (String) conversionService.getDelegateConversionService().convert(getValue(), fieldType,
-						TypeDescriptor.valueOf(String.class));
-			} else {
-				return null;
-			}
-		}
-	}
+    public String getAsText() {
+        if (StringUtils.hasText(converterId)) {
+            return (String) conversionService.executeConversion(converterId, getValue(), String.class);
+        } else {
+            if (canConvertToString) {
+                return (String) conversionService.getDelegateConversionService().convert(getValue(), fieldType,
+                    TypeDescriptor.valueOf(String.class));
+            } else {
+                return null;
+            }
+        }
+    }
 
-	public void setAsText(String text) throws IllegalArgumentException {
-		if (StringUtils.hasText(converterId)) {
-			setValue(conversionService.executeConversion(converterId, text, fieldType.getType()));
-		} else {
-			setValue(conversionService.getDelegateConversionService().convert(text,
-					TypeDescriptor.valueOf(String.class), fieldType));
-		}
-	}
+    public void setAsText(String text) throws IllegalArgumentException {
+        if (StringUtils.hasText(converterId)) {
+            setValue(conversionService.executeConversion(converterId, text, fieldType.getType()));
+        } else {
+            setValue(conversionService.getDelegateConversionService().convert(text,
+                TypeDescriptor.valueOf(String.class), fieldType));
+        }
+    }
 }

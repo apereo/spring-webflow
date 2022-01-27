@@ -19,45 +19,47 @@ import org.springframework.binding.mapping.Mapping;
 
 /**
  * Indicates a successful mapping operation.
+ *
  * @author Keith Donald
  */
 public class Success extends AbstractMappingResult {
 
-	private Object mappedValue;
+    private Object mappedValue;
 
-	private Object originalValue;
+    private Object originalValue;
 
-	/**
-	 * Creates a new success result.
-	 * @param mapping
+    /**
+     * Creates a new success result.
+     *
      * @param mapping
-     * @param mappedValue the successfully mapped value
-	 * @param originalValue the original value
-	 */
-	public Success(Mapping mapping, Object mappedValue, Object originalValue) {
-		super(mapping);
-		this.mappedValue = mappedValue;
-		this.originalValue = originalValue;
-	}
+     * @param mapping
+     * @param mappedValue   the successfully mapped value
+     * @param originalValue the original value
+     */
+    public Success(Mapping mapping, Object mappedValue, Object originalValue) {
+        super(mapping);
+        this.mappedValue = mappedValue;
+        this.originalValue = originalValue;
+    }
 
-	public String getCode() {
-		return "success";
-	}
+    public String getCode() {
+        return "success";
+    }
 
-	public boolean isError() {
-		return false;
-	}
+    public boolean isError() {
+        return false;
+    }
 
-	public Throwable getErrorCause() {
-		return null;
-	}
+    public Throwable getErrorCause() {
+        return null;
+    }
 
-	public Object getOriginalValue() {
-		return originalValue;
-	}
+    public Object getOriginalValue() {
+        return originalValue;
+    }
 
-	public Object getMappedValue() {
-		return mappedValue;
-	}
+    public Object getMappedValue() {
+        return mappedValue;
+    }
 
 }

@@ -15,10 +15,6 @@
  */
 package org.springframework.webflow.config;
 
-import java.io.IOException;
-import java.util.Collections;
-import java.util.Set;
-
 import org.springframework.beans.factory.BeanClassLoaderAware;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.FactoryBean;
@@ -45,253 +41,257 @@ import org.springframework.webflow.engine.model.builder.FlowModelBuilder;
 import org.springframework.webflow.engine.model.builder.xml.XmlFlowModelBuilder;
 import org.springframework.webflow.engine.model.registry.FlowModelHolder;
 
+import java.io.IOException;
+import java.util.Collections;
+import java.util.Set;
+
 /**
  * A factory for a flow definition registry. Is a Spring FactoryBean, for provision by the flow definition registry bean
  * definition parser. Is package-private, as people should not be using this class directly, but rather through the
  * higher-level webflow-config Spring 2.x configuration namespace.
- * 
+ *
  * @author Keith Donald
  * @author Jeremy Grelle
  * @author Scott Andrews
  */
 class FlowRegistryFactoryBean implements FactoryBean<FlowDefinitionRegistry>, BeanClassLoaderAware, InitializingBean,
-		DisposableBean {
+    DisposableBean {
 
-	private FlowLocation[] flowLocations;
+    private FlowLocation[] flowLocations;
 
-	private String[] flowLocationPatterns;
+    private String[] flowLocationPatterns;
 
-	private FlowBuilderInfo[] flowBuilders;
+    private FlowBuilderInfo[] flowBuilders;
 
-	private FlowBuilderServices flowBuilderServices;
+    private FlowBuilderServices flowBuilderServices;
 
-	private FlowDefinitionRegistry parent;
+    private FlowDefinitionRegistry parent;
 
-	private String basePath;
+    private String basePath;
 
-	private ClassLoader classLoader;
+    private ClassLoader classLoader;
 
-	/**
-	 * The definition registry produced by this factory bean.
-	 */
-	private DefaultFlowRegistry flowRegistry;
+    /**
+     * The definition registry produced by this factory bean.
+     */
+    private DefaultFlowRegistry flowRegistry;
 
-	/**
-	 * A helper for creating abstract representation of externalized flow definition resources.
-	 */
-	private FlowDefinitionResourceFactory flowResourceFactory;
+    /**
+     * A helper for creating abstract representation of externalized flow definition resources.
+     */
+    private FlowDefinitionResourceFactory flowResourceFactory;
 
-	/**
-	 * Flow definitions defined in external files that should be registered in the registry produced by this factory
-	 * bean.
-	 */
-	public void setFlowLocations(FlowLocation... flowLocations) {
-		this.flowLocations = flowLocations;
-	}
+    /**
+     * Flow definitions defined in external files that should be registered in the registry produced by this factory
+     * bean.
+     */
+    public void setFlowLocations(FlowLocation... flowLocations) {
+        this.flowLocations = flowLocations;
+    }
 
-	/**
-	 * Resolvable path patterns to flows to register in the registry produced by this factory bean.
-	 */
-	public void setFlowLocationPatterns(String... flowLocationPatterns) {
-		this.flowLocationPatterns = flowLocationPatterns;
-	}
+    /**
+     * Resolvable path patterns to flows to register in the registry produced by this factory bean.
+     */
+    public void setFlowLocationPatterns(String... flowLocationPatterns) {
+        this.flowLocationPatterns = flowLocationPatterns;
+    }
 
-	/**
-	 * Java {@link FlowBuilder flow builder} classes that should be registered in the registry produced by this factory
-	 * bean.
-	 */
-	public void setFlowBuilders(FlowBuilderInfo... flowBuilders) {
-		this.flowBuilders = flowBuilders;
-	}
+    /**
+     * Java {@link FlowBuilder flow builder} classes that should be registered in the registry produced by this factory
+     * bean.
+     */
+    public void setFlowBuilders(FlowBuilderInfo... flowBuilders) {
+        this.flowBuilders = flowBuilders;
+    }
 
-	/**
-	 * The holder for services needed to build flow definitions registered in this registry.
-	 */
-	public void setFlowBuilderServices(FlowBuilderServices flowBuilderServices) {
-		this.flowBuilderServices = flowBuilderServices;
-	}
+    /**
+     * The holder for services needed to build flow definitions registered in this registry.
+     */
+    public void setFlowBuilderServices(FlowBuilderServices flowBuilderServices) {
+        this.flowBuilderServices = flowBuilderServices;
+    }
 
-	/**
-	 * Base path used when determining the default flow id
-	 */
-	public void setBasePath(String basePath) {
-		this.basePath = basePath;
-	}
+    /**
+     * Base path used when determining the default flow id
+     */
+    public void setBasePath(String basePath) {
+        this.basePath = basePath;
+    }
 
-	/**
-	 * The parent of the registry created by this factory bean.
-	 */
-	public void setParent(FlowDefinitionRegistry parent) {
-		this.parent = parent;
-	}
+    /**
+     * The parent of the registry created by this factory bean.
+     */
+    public void setParent(FlowDefinitionRegistry parent) {
+        this.parent = parent;
+    }
 
-	// implement BeanClassLoaderAware
+    // implement BeanClassLoaderAware
 
-	public void setBeanClassLoader(ClassLoader classLoader) {
-		this.classLoader = classLoader;
-	}
+    public void setBeanClassLoader(ClassLoader classLoader) {
+        this.classLoader = classLoader;
+    }
 
-	public void afterPropertiesSet() {
-		flowResourceFactory = new FlowDefinitionResourceFactory(flowBuilderServices.getApplicationContext());
-		if (basePath != null) {
-			flowResourceFactory.setBasePath(basePath);
-		}
-		flowRegistry = new DefaultFlowRegistry();
-		flowRegistry.setParent(parent);
-		registerFlowLocations();
-		registerFlowLocationPatterns();
-		registerFlowBuilders();
-	}
+    public void afterPropertiesSet() {
+        flowResourceFactory = new FlowDefinitionResourceFactory(flowBuilderServices.getApplicationContext());
+        if (basePath != null) {
+            flowResourceFactory.setBasePath(basePath);
+        }
+        flowRegistry = new DefaultFlowRegistry();
+        flowRegistry.setParent(parent);
+        registerFlowLocations();
+        registerFlowLocationPatterns();
+        registerFlowBuilders();
+    }
 
-	public FlowDefinitionRegistry getObject() {
-		return flowRegistry;
-	}
+    public FlowDefinitionRegistry getObject() {
+        return flowRegistry;
+    }
 
-	public Class<?> getObjectType() {
-		return FlowDefinitionRegistry.class;
-	}
+    public Class<?> getObjectType() {
+        return FlowDefinitionRegistry.class;
+    }
 
-	public boolean isSingleton() {
-		return true;
-	}
+    public boolean isSingleton() {
+        return true;
+    }
 
-	// implement DisposableBean
+    // implement DisposableBean
 
-	public void destroy() {
-		flowRegistry.destroy();
-	}
+    public void destroy() {
+        flowRegistry.destroy();
+    }
 
-	private void registerFlowLocations() {
-		if (flowLocations != null) {
-			for (FlowLocation location : flowLocations) {
-				flowRegistry.registerFlowDefinition(createFlowDefinitionHolder(createResource(location)));
-			}
-		}
-	}
+    private void registerFlowLocations() {
+        if (flowLocations != null) {
+            for (FlowLocation location : flowLocations) {
+                flowRegistry.registerFlowDefinition(createFlowDefinitionHolder(createResource(location)));
+            }
+        }
+    }
 
-	private void registerFlowLocationPatterns() {
-		if (flowLocationPatterns != null) {
-			for (String pattern : flowLocationPatterns) {
-				FlowDefinitionResource[] resources;
-				AttributeMap<Object> attributes = getFlowAttributes(Collections.emptySet());
-				try {
-					resources = flowResourceFactory.createResources(pattern, attributes);
-				} catch (IOException e) {
-					IllegalStateException ise = new IllegalStateException(
-							"An I/O Exception occurred resolving the flow location pattern '" + pattern + "'");
-					ise.initCause(e);
-					throw ise;
-				}
-				for (FlowDefinitionResource resource : resources) {
-					flowRegistry.registerFlowDefinition(createFlowDefinitionHolder(resource));
-				}
-			}
-		}
-	}
+    private void registerFlowLocationPatterns() {
+        if (flowLocationPatterns != null) {
+            for (String pattern : flowLocationPatterns) {
+                FlowDefinitionResource[] resources;
+                AttributeMap<Object> attributes = getFlowAttributes(Collections.emptySet());
+                try {
+                    resources = flowResourceFactory.createResources(pattern, attributes);
+                } catch (IOException e) {
+                    IllegalStateException ise = new IllegalStateException(
+                        "An I/O Exception occurred resolving the flow location pattern '" + pattern + "'");
+                    ise.initCause(e);
+                    throw ise;
+                }
+                for (FlowDefinitionResource resource : resources) {
+                    flowRegistry.registerFlowDefinition(createFlowDefinitionHolder(resource));
+                }
+            }
+        }
+    }
 
-	private void registerFlowBuilders() {
-		if (flowBuilders != null) {
-			for (FlowBuilderInfo builderInfo : flowBuilders) {
-				flowRegistry.registerFlowDefinition(buildFlowDefinition(builderInfo));
-			}
-		}
-	}
+    private void registerFlowBuilders() {
+        if (flowBuilders != null) {
+            for (FlowBuilderInfo builderInfo : flowBuilders) {
+                flowRegistry.registerFlowDefinition(buildFlowDefinition(builderInfo));
+            }
+        }
+    }
 
-	private FlowDefinitionHolder createFlowDefinitionHolder(FlowDefinitionResource flowResource) {
-		FlowBuilder builder = createFlowBuilder(flowResource);
-		FlowBuilderContext builderContext = new FlowBuilderContextImpl(flowResource.getId(),
-				flowResource.getAttributes(), flowRegistry, flowBuilderServices);
-		FlowAssembler assembler = new FlowAssembler(builder, builderContext);
-		return new DefaultFlowHolder(assembler);
-	}
+    private FlowDefinitionHolder createFlowDefinitionHolder(FlowDefinitionResource flowResource) {
+        FlowBuilder builder = createFlowBuilder(flowResource);
+        FlowBuilderContext builderContext = new FlowBuilderContextImpl(flowResource.getId(),
+            flowResource.getAttributes(), flowRegistry, flowBuilderServices);
+        FlowAssembler assembler = new FlowAssembler(builder, builderContext);
+        return new DefaultFlowHolder(assembler);
+    }
 
-	private FlowDefinitionResource createResource(FlowLocation location) {
-		AttributeMap<Object> flowAttributes = getFlowAttributes(location.getAttributes());
-		return flowResourceFactory.createResource(location.getPath(), flowAttributes, location.getId());
-	}
+    private FlowDefinitionResource createResource(FlowLocation location) {
+        AttributeMap<Object> flowAttributes = getFlowAttributes(location.getAttributes());
+        return flowResourceFactory.createResource(location.getPath(), flowAttributes, location.getId());
+    }
 
-	private AttributeMap<Object> getFlowAttributes(Set<FlowElementAttribute> attributes) {
-		MutableAttributeMap<Object> flowAttributes = null;
-		if (flowBuilderServices.getDevelopment()) {
-			flowAttributes = new LocalAttributeMap<>(1 + attributes.size(), 1);
-			flowAttributes.put("development", true);
-		}
-		if (!attributes.isEmpty()) {
-			if (flowAttributes == null) {
-				flowAttributes = new LocalAttributeMap<>(attributes.size(), 1);
-			}
-			for (FlowElementAttribute attribute : attributes) {
-				flowAttributes.put(attribute.getName(), getConvertedValue(attribute));
-			}
-		}
-		return flowAttributes;
-	}
+    private AttributeMap<Object> getFlowAttributes(Set<FlowElementAttribute> attributes) {
+        MutableAttributeMap<Object> flowAttributes = null;
+        if (flowBuilderServices.getDevelopment()) {
+            flowAttributes = new LocalAttributeMap<>(1 + attributes.size(), 1);
+            flowAttributes.put("development", true);
+        }
+        if (!attributes.isEmpty()) {
+            if (flowAttributes == null) {
+                flowAttributes = new LocalAttributeMap<>(attributes.size(), 1);
+            }
+            for (FlowElementAttribute attribute : attributes) {
+                flowAttributes.put(attribute.getName(), getConvertedValue(attribute));
+            }
+        }
+        return flowAttributes;
+    }
 
-	private FlowBuilder createFlowBuilder(FlowDefinitionResource resource) {
-		return new FlowModelFlowBuilder(createFlowModelHolder(resource));
-	}
+    private FlowBuilder createFlowBuilder(FlowDefinitionResource resource) {
+        return new FlowModelFlowBuilder(createFlowModelHolder(resource));
+    }
 
-	private FlowModelHolder createFlowModelHolder(FlowDefinitionResource resource) {
-		FlowModelHolder modelHolder = new DefaultFlowModelHolder(createFlowModelBuilder(resource));
-		// register the flow model holder with the backing flow model registry - this is needed to support flow model
-		// merging during the flow build process
-		flowRegistry.getFlowModelRegistry().registerFlowModel(resource.getId(), modelHolder);
-		return modelHolder;
-	}
+    private FlowModelHolder createFlowModelHolder(FlowDefinitionResource resource) {
+        FlowModelHolder modelHolder = new DefaultFlowModelHolder(createFlowModelBuilder(resource));
+        // register the flow model holder with the backing flow model registry - this is needed to support flow model
+        // merging during the flow build process
+        flowRegistry.getFlowModelRegistry().registerFlowModel(resource.getId(), modelHolder);
+        return modelHolder;
+    }
 
-	private FlowModelBuilder createFlowModelBuilder(FlowDefinitionResource resource) {
-		if (isXml(resource.getPath())) {
-			return new XmlFlowModelBuilder(resource.getPath(), flowRegistry.getFlowModelRegistry());
-		} else {
-			throw new IllegalArgumentException(resource
-					+ " is not a supported resource type; supported types are [.xml]");
-		}
-	}
+    private FlowModelBuilder createFlowModelBuilder(FlowDefinitionResource resource) {
+        if (isXml(resource.getPath())) {
+            return new XmlFlowModelBuilder(resource.getPath(), flowRegistry.getFlowModelRegistry());
+        } else {
+            throw new IllegalArgumentException(resource
+                                               + " is not a supported resource type; supported types are [.xml]");
+        }
+    }
 
-	private boolean isXml(Resource flowResource) {
-		return flowResource.getFilename().endsWith(".xml");
-	}
+    private boolean isXml(Resource flowResource) {
+        return flowResource.getFilename().endsWith(".xml");
+    }
 
-	private Object getConvertedValue(FlowElementAttribute attribute) {
-		if (attribute.needsTypeConversion()) {
-			Class<?> targetType = fromStringToClass(attribute.getType());
-			ConversionExecutor converter = flowBuilderServices.getConversionService().getConversionExecutor(
-					String.class, targetType);
-			return converter.execute(attribute.getValue());
-		} else {
-			return attribute.getValue();
-		}
-	}
+    private Object getConvertedValue(FlowElementAttribute attribute) {
+        if (attribute.needsTypeConversion()) {
+            Class<?> targetType = fromStringToClass(attribute.getType());
+            ConversionExecutor converter = flowBuilderServices.getConversionService().getConversionExecutor(
+                String.class, targetType);
+            return converter.execute(attribute.getValue());
+        } else {
+            return attribute.getValue();
+        }
+    }
 
-	private Class<?> fromStringToClass(String name) {
-		Class<?> clazz = flowBuilderServices.getConversionService().getClassForAlias(name);
-		if (clazz != null) {
-			return clazz;
-		} else {
-			return loadClass(name);
-		}
-	}
+    private Class<?> fromStringToClass(String name) {
+        Class<?> clazz = flowBuilderServices.getConversionService().getClassForAlias(name);
+        if (clazz != null) {
+            return clazz;
+        } else {
+            return loadClass(name);
+        }
+    }
 
-	private Class<?> loadClass(String name) {
-		try {
-			return ClassUtils.forName(name, classLoader);
-		} catch (ClassNotFoundException e) {
-			throw new IllegalArgumentException("Unable to load class '" + name + "'");
-		}
-	}
+    private Class<?> loadClass(String name) {
+        try {
+            return ClassUtils.forName(name, classLoader);
+        } catch (ClassNotFoundException e) {
+            throw new IllegalArgumentException("Unable to load class '" + name + "'");
+        }
+    }
 
-	private FlowDefinition buildFlowDefinition(FlowBuilderInfo builderInfo) {
-		try {
-			Class<?> flowBuilderClass = loadClass(builderInfo.getClassName());
-			FlowBuilder builder = (FlowBuilder) flowBuilderClass.newInstance();
-			AttributeMap<Object> flowAttributes = getFlowAttributes(builderInfo.getAttributes());
-			FlowBuilderContext builderContext = new FlowBuilderContextImpl(builderInfo.getId(), flowAttributes,
-					flowRegistry, flowBuilderServices);
-			FlowAssembler assembler = new FlowAssembler(builder, builderContext);
-			return assembler.assembleFlow();
-		} catch (IllegalArgumentException | IllegalAccessException | InstantiationException e) {
-			throw new FlowDefinitionConstructionException(builderInfo.getId(), e);
-		}
-	}
+    private FlowDefinition buildFlowDefinition(FlowBuilderInfo builderInfo) {
+        try {
+            Class<?> flowBuilderClass = loadClass(builderInfo.getClassName());
+            FlowBuilder builder = (FlowBuilder) flowBuilderClass.newInstance();
+            AttributeMap<Object> flowAttributes = getFlowAttributes(builderInfo.getAttributes());
+            FlowBuilderContext builderContext = new FlowBuilderContextImpl(builderInfo.getId(), flowAttributes,
+                flowRegistry, flowBuilderServices);
+            FlowAssembler assembler = new FlowAssembler(builder, builderContext);
+            return assembler.assembleFlow();
+        } catch (IllegalArgumentException | IllegalAccessException | InstantiationException e) {
+            throw new FlowDefinitionConstructionException(builderInfo.getId(), e);
+        }
+    }
 
 }

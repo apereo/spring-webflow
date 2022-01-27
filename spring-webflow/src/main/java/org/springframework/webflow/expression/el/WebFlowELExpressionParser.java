@@ -15,74 +15,75 @@
  */
 package org.springframework.webflow.expression.el;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import jakarta.el.ELContext;
 import jakarta.el.ELResolver;
 import jakarta.el.ExpressionFactory;
 import jakarta.el.FunctionMapper;
 import jakarta.el.VariableMapper;
-
 import org.springframework.binding.expression.el.DefaultELResolver;
 import org.springframework.binding.expression.el.ELContextFactory;
 import org.springframework.binding.expression.el.ELExpressionParser;
 import org.springframework.webflow.execution.RequestContext;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Allows for Unified EL expressions in a FlowDefinition.
- * 
+ *
  * @author Jeremy Grelle
  */
 public class WebFlowELExpressionParser extends ELExpressionParser {
 
-	/**
-	 * Creates a new Web Flow EL expression parser.
-	 * @param expressionFactory the underlying EL expression factory (EL provider specific)
-	 */
-	public WebFlowELExpressionParser(ExpressionFactory expressionFactory) {
-		super(expressionFactory);
-		putContextFactory(RequestContext.class, new RequestContextELContextFactory());
-	}
+    /**
+     * Creates a new Web Flow EL expression parser.
+     *
+     * @param expressionFactory the underlying EL expression factory (EL provider specific)
+     */
+    public WebFlowELExpressionParser(ExpressionFactory expressionFactory) {
+        super(expressionFactory);
+        putContextFactory(RequestContext.class, new RequestContextELContextFactory());
+    }
 
-	/**
-	 * Configures EL context instances for evaluating against a Web Flow request context.
-	 * @author Keith Donald
-	 */
-	private static class RequestContextELContextFactory implements ELContextFactory {
-		public ELContext getELContext(Object target) {
-			RequestContext context = (RequestContext) target;
-			List<ELResolver> customResolvers = new ArrayList<>();
-			customResolvers.add(new RequestContextELResolver(context));
-			customResolvers.add(new FlowResourceELResolver(context));
-			customResolvers.add(new ImplicitFlowVariableELResolver(context));
-			customResolvers.add(new ScopeSearchingELResolver(context));
-			customResolvers.add(new SpringBeanWebFlowELResolver(context));
-			customResolvers.add(new ActionMethodELResolver());
-			ELResolver resolver = new DefaultELResolver(customResolvers);
-			return new WebFlowELContext(resolver);
-		}
-	}
+    /**
+     * Configures EL context instances for evaluating against a Web Flow request context.
+     *
+     * @author Keith Donald
+     */
+    private static class RequestContextELContextFactory implements ELContextFactory {
+        public ELContext getELContext(Object target) {
+            RequestContext context = (RequestContext) target;
+            List<ELResolver> customResolvers = new ArrayList<>();
+            customResolvers.add(new RequestContextELResolver(context));
+            customResolvers.add(new FlowResourceELResolver(context));
+            customResolvers.add(new ImplicitFlowVariableELResolver(context));
+            customResolvers.add(new ScopeSearchingELResolver(context));
+            customResolvers.add(new SpringBeanWebFlowELResolver(context));
+            customResolvers.add(new ActionMethodELResolver());
+            ELResolver resolver = new DefaultELResolver(customResolvers);
+            return new WebFlowELContext(resolver);
+        }
+    }
 
-	private static class WebFlowELContext extends ELContext {
+    private static class WebFlowELContext extends ELContext {
 
-		private ELResolver resolver;
+        private ELResolver resolver;
 
-		public WebFlowELContext(ELResolver resolver) {
-			this.resolver = resolver;
-		}
+        public WebFlowELContext(ELResolver resolver) {
+            this.resolver = resolver;
+        }
 
-		public ELResolver getELResolver() {
-			return resolver;
-		}
+        public ELResolver getELResolver() {
+            return resolver;
+        }
 
-		public FunctionMapper getFunctionMapper() {
-			return null;
-		}
+        public FunctionMapper getFunctionMapper() {
+            return null;
+        }
 
-		public VariableMapper getVariableMapper() {
-			return null;
-		}
-	}
+        public VariableMapper getVariableMapper() {
+            return null;
+        }
+    }
 
 }

@@ -15,8 +15,6 @@
  */
 package org.springframework.webflow.engine.support;
 
-import java.io.Serializable;
-
 import org.springframework.web.util.WebUtils;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.ActionExecutor;
@@ -25,90 +23,93 @@ import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.View;
 import org.springframework.webflow.execution.ViewFactory;
 
+import java.io.Serializable;
+
 /**
  * A view factory implementation that creates views that execute an action when rendered. Used mainly to encapsulate an
  * action that renders a response. Examples include flow redirect and external redirect actions.
  */
 public class ActionExecutingViewFactory implements ViewFactory {
 
-	/**
-	 * The action to execute.
-	 */
-	private Action action;
+    /**
+     * The action to execute.
+     */
+    private Action action;
 
-	/**
-	 * Create a new action invoking view factory
-	 * @param action the action to execute
-	 */
-	public ActionExecutingViewFactory(Action action) {
-		this.action = action;
-	}
+    /**
+     * Create a new action invoking view factory
+     *
+     * @param action the action to execute
+     */
+    public ActionExecutingViewFactory(Action action) {
+        this.action = action;
+    }
 
-	public Action getAction() {
-		return action;
-	}
+    public Action getAction() {
+        return action;
+    }
 
-	public View getView(RequestContext context) {
-		return new ActionExecutingView(action, context);
-	}
+    public View getView(RequestContext context) {
+        return new ActionExecutingView(action, context);
+    }
 
-	private static class ActionExecutingView implements View {
+    private static class ActionExecutingView implements View {
 
-		private Action action;
+        private Action action;
 
-		private RequestContext requestContext;
+        private RequestContext requestContext;
 
-		private String eventId;
+        private String eventId;
 
-		private boolean userEventProcessed;
+        private boolean userEventProcessed;
 
-		private ActionExecutingView(Action action, RequestContext requestContext) {
-			this.action = action;
-			this.requestContext = requestContext;
-		}
+        private ActionExecutingView(Action action, RequestContext requestContext) {
+            this.action = action;
+            this.requestContext = requestContext;
+        }
 
-		public void render() {
-			if (action != null) {
-				ActionExecutor.execute(action, requestContext);
-			}
-		}
+        public void render() {
+            if (action != null) {
+                ActionExecutor.execute(action, requestContext);
+            }
+        }
 
-		public boolean userEventQueued() {
-			return getEventId() != null;
-		}
+        public boolean userEventQueued() {
+            return getEventId() != null;
+        }
 
-		public void processUserEvent() {
-			userEventProcessed = true;
-		}
+        public void processUserEvent() {
+            userEventProcessed = true;
+        }
 
-		public Serializable getUserEventState() {
-			return null;
-		}
+        public Serializable getUserEventState() {
+            return null;
+        }
 
-		public boolean hasFlowEvent() {
-			return userEventProcessed && getEventId() != null;
-		}
+        public boolean hasFlowEvent() {
+            return userEventProcessed && getEventId() != null;
+        }
 
-		public Event getFlowEvent() {
-			if (!hasFlowEvent()) {
-				return null;
-			}
-			return new Event(this, eventId);
-		}
+        public Event getFlowEvent() {
+            if (!hasFlowEvent()) {
+                return null;
+            }
+            return new Event(this, eventId);
+        }
 
-		public void saveState() {
+        public void saveState() {
 
-		}
+        }
 
-		private String getEventId() {
-			if (eventId == null) {
-				eventId = determineEventId(requestContext);
-			}
-			return this.eventId;
-		}
+        protected String determineEventId(RequestContext context) {
+            return WebUtils.findParameterValue(context.getRequestParameters().asMap(), "_eventId");
+        }
 
-		protected String determineEventId(RequestContext context) {
-			return WebUtils.findParameterValue(context.getRequestParameters().asMap(), "_eventId");
-		}
-	}
+        private String getEventId() {
+            if (eventId == null) {
+                eventId = determineEventId(requestContext);
+            }
+            return this.eventId;
+        }
+    }
 }

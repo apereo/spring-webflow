@@ -25,11 +25,12 @@ import org.springframework.expression.EvaluationContext;
  */
 public interface EvaluationContextFactory {
 
-	/**
-	 * Create an {@link EvaluationContext} for the given root object.
-	 * @param rootObject the root object
-	 * @return the created context instance
-	 */
-	EvaluationContext createContext(Object rootObject);
+    /**
+     * Create an {@link EvaluationContext} for the given root object.
+     *
+     * @param rootObject the root object
+     * @return the created context instance
+     */
+    EvaluationContext createContext(Object rootObject);
 
 }

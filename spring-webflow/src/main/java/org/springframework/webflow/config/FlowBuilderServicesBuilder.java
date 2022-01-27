@@ -39,125 +39,132 @@ import org.springframework.webflow.validation.ValidationHintResolver;
  */
 public class FlowBuilderServicesBuilder {
 
-	private ConversionService conversionService = new DefaultConversionService();
+    private ConversionService conversionService = new DefaultConversionService();
 
-	private ExpressionParser expressionParser;
+    private ExpressionParser expressionParser;
 
-	private ViewFactoryCreator viewFactoryCreator;
+    private ViewFactoryCreator viewFactoryCreator;
 
-	private Validator validator;
+    private Validator validator;
 
-	private ValidationHintResolver validationHintResolver;
+    private ValidationHintResolver validationHintResolver;
 
-	private boolean enableDevelopmentMode;
+    private boolean enableDevelopmentMode;
 
 
-	public FlowBuilderServicesBuilder() {
-		this.viewFactoryCreator = new MvcViewFactoryCreator();
-	}
+    public FlowBuilderServicesBuilder() {
+        this.viewFactoryCreator = new MvcViewFactoryCreator();
+    }
 
-	/**
-	 * Create a new instance with the given ApplicationContext.
-	 * @param applicationContext
-     * @deprecated as of 2.5 an ApplicationContext is no longer required
+    /**
+     * Create a new instance with the given ApplicationContext.
+     *
      * @param applicationContext
-	 */
-	public FlowBuilderServicesBuilder(ApplicationContext applicationContext) {
-		Assert.notNull(applicationContext, "applicationContext is required");
-		this.viewFactoryCreator = new MvcViewFactoryCreator();
-	}
+     * @param applicationContext
+     * @deprecated as of 2.5 an ApplicationContext is no longer required
+     */
+    public FlowBuilderServicesBuilder(ApplicationContext applicationContext) {
+        Assert.notNull(applicationContext, "applicationContext is required");
+        this.viewFactoryCreator = new MvcViewFactoryCreator();
+    }
 
 
-	/**
-	 * Set the {@link ConversionService} to use.
-	 * By default a {@link DefaultConversionService} instance is used.
-	 * @param conversionService the conversion service
-     * @return
-	 */
-	public FlowBuilderServicesBuilder setConversionService(ConversionService conversionService) {
-		this.conversionService = conversionService;
-		return this;
-	}
-
-	/**
-	 * Set the {@link ExpressionParser} to use.
-	 * By default a {@link WebFlowSpringELExpressionParser} with SpEL expressions is used.
-	 * @param expressionParser the expression parser to use
-     * @return
-	 */
-	public FlowBuilderServicesBuilder setExpressionParser(ExpressionParser expressionParser) {
-		this.expressionParser = expressionParser;
-		return this;
-	}
-
-	/**
-	 * Set a custom {@link ViewFactoryCreator} to use for rendering.
-	 * By default an {@link MvcViewFactoryCreator} instance is used.
-	 * @param viewFactoryCreator the ViewFactory creator to use
-     * @return
-	 */
-	public FlowBuilderServicesBuilder setViewFactoryCreator(ViewFactoryCreator viewFactoryCreator) {
-		this.viewFactoryCreator = viewFactoryCreator;
-		return this;
-	}
-
-	/**
-	 * Set the {@link Validator} to use for validating a model declared on a view state.
-	 * By default bean validation (JSR-303) is enabled if a bean validation provider is
-	 * present on the classpath.
-	 * @param validator the validator to use
-     * @return
-	 */
-	public FlowBuilderServicesBuilder setValidator(Validator validator) {
-		this.validator = validator;
-		return this;
-	}
-
-	/**
-	 * The {@link ValidationHintResolver} to use to resolve validation hints such as bean validation groups.
-	 * By default a {@link BeanValidationHintResolver} is used.
-	 * @param resolver the resolver to use
-     * @return
-	 */
-	public FlowBuilderServicesBuilder setValidationHintResolver(ValidationHintResolver resolver) {
-		this.validationHintResolver = resolver;
-		return this;
-	}
-
-	/**
-	 * Put all flows in development mode. When set to {@code true}, changes to a flow
-	 * definition are auto-detected and result in a flow refresh.
-	 * By default this is set to {@code false}
-	 * @param enableDevelopmentMode whether to enable development mode
-     * @return
-	 */
-	public FlowBuilderServicesBuilder setDevelopmentMode(boolean enableDevelopmentMode) {
-		this.enableDevelopmentMode = enableDevelopmentMode;
-		return this;
-	}
-
-	/**
-	 * Create and return a {@link FlowBuilderServices} instance.
+    /**
+     * Set the {@link ConversionService} to use.
+     * By default a {@link DefaultConversionService} instance is used.
+     *
+     * @param conversionService the conversion service
      * @return
      */
-	public FlowBuilderServices build() {
-		FlowBuilderServices flowBuilderServices = new FlowBuilderServices();
-		flowBuilderServices.setConversionService(this.conversionService);
-		flowBuilderServices.setExpressionParser(getExpressionParser());
-		flowBuilderServices.setViewFactoryCreator(this.viewFactoryCreator);
-		flowBuilderServices.setValidator(this.validator);
-		flowBuilderServices.setValidationHintResolver(this.validationHintResolver);
-		flowBuilderServices.setDevelopment(this.enableDevelopmentMode);
-		return flowBuilderServices;
-	}
+    public FlowBuilderServicesBuilder setConversionService(ConversionService conversionService) {
+        this.conversionService = conversionService;
+        return this;
+    }
 
-	private ExpressionParser getExpressionParser() {
-		if (this.expressionParser != null) {
-			return this.expressionParser;
-		}
-		else {
-			return new WebFlowSpringELExpressionParser(new SpelExpressionParser(), this.conversionService);
-		}
-	}
+    /**
+     * Set a custom {@link ViewFactoryCreator} to use for rendering.
+     * By default an {@link MvcViewFactoryCreator} instance is used.
+     *
+     * @param viewFactoryCreator the ViewFactory creator to use
+     * @return
+     */
+    public FlowBuilderServicesBuilder setViewFactoryCreator(ViewFactoryCreator viewFactoryCreator) {
+        this.viewFactoryCreator = viewFactoryCreator;
+        return this;
+    }
+
+    /**
+     * Set the {@link Validator} to use for validating a model declared on a view state.
+     * By default bean validation (JSR-303) is enabled if a bean validation provider is
+     * present on the classpath.
+     *
+     * @param validator the validator to use
+     * @return
+     */
+    public FlowBuilderServicesBuilder setValidator(Validator validator) {
+        this.validator = validator;
+        return this;
+    }
+
+    /**
+     * The {@link ValidationHintResolver} to use to resolve validation hints such as bean validation groups.
+     * By default a {@link BeanValidationHintResolver} is used.
+     *
+     * @param resolver the resolver to use
+     * @return
+     */
+    public FlowBuilderServicesBuilder setValidationHintResolver(ValidationHintResolver resolver) {
+        this.validationHintResolver = resolver;
+        return this;
+    }
+
+    /**
+     * Put all flows in development mode. When set to {@code true}, changes to a flow
+     * definition are auto-detected and result in a flow refresh.
+     * By default this is set to {@code false}
+     *
+     * @param enableDevelopmentMode whether to enable development mode
+     * @return
+     */
+    public FlowBuilderServicesBuilder setDevelopmentMode(boolean enableDevelopmentMode) {
+        this.enableDevelopmentMode = enableDevelopmentMode;
+        return this;
+    }
+
+    /**
+     * Create and return a {@link FlowBuilderServices} instance.
+     *
+     * @return
+     */
+    public FlowBuilderServices build() {
+        FlowBuilderServices flowBuilderServices = new FlowBuilderServices();
+        flowBuilderServices.setConversionService(this.conversionService);
+        flowBuilderServices.setExpressionParser(getExpressionParser());
+        flowBuilderServices.setViewFactoryCreator(this.viewFactoryCreator);
+        flowBuilderServices.setValidator(this.validator);
+        flowBuilderServices.setValidationHintResolver(this.validationHintResolver);
+        flowBuilderServices.setDevelopment(this.enableDevelopmentMode);
+        return flowBuilderServices;
+    }
+
+    private ExpressionParser getExpressionParser() {
+        if (this.expressionParser != null) {
+            return this.expressionParser;
+        } else {
+            return new WebFlowSpringELExpressionParser(new SpelExpressionParser(), this.conversionService);
+        }
+    }
+
+    /**
+     * Set the {@link ExpressionParser} to use.
+     * By default a {@link WebFlowSpringELExpressionParser} with SpEL expressions is used.
+     *
+     * @param expressionParser the expression parser to use
+     * @return
+     */
+    public FlowBuilderServicesBuilder setExpressionParser(ExpressionParser expressionParser) {
+        this.expressionParser = expressionParser;
+        return this;
+    }
 
 }

@@ -23,53 +23,53 @@ import org.springframework.webflow.execution.RequestContext;
 
 /**
  * Spring EL PropertyAccessor that searches through all Web Flow scopes.
- * 
+ *
  * @author Rossen Stoyanchev
  * @since 2.1
  */
 public class ScopeSearchingPropertyAccessor implements PropertyAccessor {
 
-	public Class<?>[] getSpecificTargetClasses() {
-		return new Class[] { RequestContext.class };
-	}
+    public Class<?>[] getSpecificTargetClasses() {
+        return new Class[]{RequestContext.class};
+    }
 
-	public boolean canRead(EvaluationContext context, Object target, String name) {
-		return (findScopeForAttribute((RequestContext) target, name) != null);
-	}
+    public boolean canRead(EvaluationContext context, Object target, String name) {
+        return (findScopeForAttribute((RequestContext) target, name) != null);
+    }
 
-	public TypedValue read(EvaluationContext context, Object target, String name) {
-		MutableAttributeMap<Object> scope = findScopeForAttribute((RequestContext) target, name);
-		return new TypedValue(scope == null ? null : scope.get(name));
-	}
+    public TypedValue read(EvaluationContext context, Object target, String name) {
+        MutableAttributeMap<Object> scope = findScopeForAttribute((RequestContext) target, name);
+        return new TypedValue(scope == null ? null : scope.get(name));
+    }
 
-	public boolean canWrite(EvaluationContext context, Object target, String name) {
-		return (findScopeForAttribute((RequestContext) target, name) != null);
-	}
+    public boolean canWrite(EvaluationContext context, Object target, String name) {
+        return (findScopeForAttribute((RequestContext) target, name) != null);
+    }
 
-	public void write(EvaluationContext context, Object target, String name, Object newValue) {
-		MutableAttributeMap<Object> scope = findScopeForAttribute((RequestContext) target, name);
-		if (scope != null) {
-			scope.put(name, newValue);
-		}
-	}
+    public void write(EvaluationContext context, Object target, String name, Object newValue) {
+        MutableAttributeMap<Object> scope = findScopeForAttribute((RequestContext) target, name);
+        if (scope != null) {
+            scope.put(name, newValue);
+        }
+    }
 
-	private MutableAttributeMap<Object> findScopeForAttribute(RequestContext requestContext, String name) {
-		if (requestContext.getRequestScope().contains(name)) {
-			return requestContext.getRequestScope();
-		}
-		if (requestContext.getFlashScope().contains(name)) {
-			return requestContext.getFlashScope();
-		}
-		if (requestContext.inViewState() && requestContext.getViewScope().contains(name)) {
-			return requestContext.getViewScope();
-		}
-		if (requestContext.getFlowScope().contains(name)) {
-			return requestContext.getFlowScope();
-		}
-		if (requestContext.getConversationScope().contains(name)) {
-			return requestContext.getConversationScope();
-		}
-		return null;
-	}
+    private MutableAttributeMap<Object> findScopeForAttribute(RequestContext requestContext, String name) {
+        if (requestContext.getRequestScope().contains(name)) {
+            return requestContext.getRequestScope();
+        }
+        if (requestContext.getFlashScope().contains(name)) {
+            return requestContext.getFlashScope();
+        }
+        if (requestContext.inViewState() && requestContext.getViewScope().contains(name)) {
+            return requestContext.getViewScope();
+        }
+        if (requestContext.getFlowScope().contains(name)) {
+            return requestContext.getFlowScope();
+        }
+        if (requestContext.getConversationScope().contains(name)) {
+            return requestContext.getConversationScope();
+        }
+        return null;
+    }
 
 }

@@ -15,12 +15,12 @@
  */
 package org.springframework.webflow.engine.model.builder.xml;
 
-import java.io.IOException;
-
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
+
+import java.io.IOException;
 
 /**
  * EntityResolver implementation for the Spring Web Flow XML Schema. This will load the XSD from the classpath.
@@ -40,34 +40,34 @@ import org.xml.sax.InputSource;
  */
 class WebFlowEntityResolver implements EntityResolver {
 
-	private static final String SPRING_WEBFLOW_XSD = "spring-webflow.xsd";
+    private static final String SPRING_WEBFLOW_XSD = "spring-webflow.xsd";
 
-	private static final String[] WEBFLOW_VERSIONS = new String[] { "spring-webflow-2.4", "spring-webflow-2.0" };
+    private static final String[] WEBFLOW_VERSIONS = new String[]{"spring-webflow-2.4", "spring-webflow-2.0"};
 
 
-	public InputSource resolveEntity(String publicId, String systemId) {
-		if (systemId != null && systemId.contains(SPRING_WEBFLOW_XSD)) {
-			return createInputSource(publicId, systemId, SPRING_WEBFLOW_XSD);
-		}
-		for (String element : WEBFLOW_VERSIONS) {
-			if (systemId != null && systemId.indexOf(element) > systemId.lastIndexOf("/")) {
-				return createInputSource(publicId, systemId, SPRING_WEBFLOW_XSD);
-			}
-		}
-		// let the parser handle it
-		return null;
-	}
+    public InputSource resolveEntity(String publicId, String systemId) {
+        if (systemId != null && systemId.contains(SPRING_WEBFLOW_XSD)) {
+            return createInputSource(publicId, systemId, SPRING_WEBFLOW_XSD);
+        }
+        for (String element : WEBFLOW_VERSIONS) {
+            if (systemId != null && systemId.indexOf(element) > systemId.lastIndexOf("/")) {
+                return createInputSource(publicId, systemId, SPRING_WEBFLOW_XSD);
+            }
+        }
+        // let the parser handle it
+        return null;
+    }
 
-	private InputSource createInputSource(String publicId, String systemId, String fileName) {
-		try {
-			Resource resource = new ClassPathResource(fileName, getClass());
-			InputSource source = new InputSource(resource.getInputStream());
-			source.setPublicId(publicId);
-			source.setSystemId(systemId);
-			return source;
-		} catch (IOException ex) {
-			// fall through below
-		}
-		return null;
-	}
+    private InputSource createInputSource(String publicId, String systemId, String fileName) {
+        try {
+            Resource resource = new ClassPathResource(fileName, getClass());
+            InputSource source = new InputSource(resource.getInputStream());
+            source.setPublicId(publicId);
+            source.setSystemId(systemId);
+            return source;
+        } catch (IOException ex) {
+            // fall through below
+        }
+        return null;
+    }
 }

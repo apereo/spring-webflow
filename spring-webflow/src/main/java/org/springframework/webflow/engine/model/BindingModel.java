@@ -20,80 +20,82 @@ import org.springframework.util.StringUtils;
 
 /**
  * Model support for binding elements.
+ *
  * @author Scott Andrews
  */
 public class BindingModel extends AbstractModel {
 
-	private String property;
+    private String property;
 
-	private String converter;
+    private String converter;
 
-	private String required;
+    private String required;
 
-	/**
-	 * Create a binding model
-	 * @param property the name of the bound property
-	 * @param converter the converter
-	 * @param required required status
-	 */
-	public BindingModel(String property, String converter, String required) {
-		setProperty(property);
-		setConverter(converter);
-		setRequired(required);
-	}
+    /**
+     * Create a binding model
+     *
+     * @param property  the name of the bound property
+     * @param converter the converter
+     * @param required  required status
+     */
+    public BindingModel(String property, String converter, String required) {
+        setProperty(property);
+        setConverter(converter);
+        setRequired(required);
+    }
 
-	public boolean isMergeableWith(Model model) {
-		if (!(model instanceof BindingModel)) {
-			return false;
-		}
-		BindingModel binding = (BindingModel) model;
-		return ObjectUtils.nullSafeEquals(getProperty(), binding.getProperty());
-	}
+    public boolean isMergeableWith(Model model) {
+        if (!(model instanceof BindingModel)) {
+            return false;
+        }
+        BindingModel binding = (BindingModel) model;
+        return ObjectUtils.nullSafeEquals(getProperty(), binding.getProperty());
+    }
 
-	public void merge(Model model) {
-		BindingModel binding = (BindingModel) model;
-		setConverter(merge(getConverter(), binding.getConverter()));
-		setRequired(merge(getRequired(), binding.getRequired()));
-	}
+    public void merge(Model model) {
+        BindingModel binding = (BindingModel) model;
+        setConverter(merge(getConverter(), binding.getConverter()));
+        setRequired(merge(getRequired(), binding.getRequired()));
+    }
 
-	public Model createCopy() {
-		return new BindingModel(property, converter, required);
-	}
+    public Model createCopy() {
+        return new BindingModel(property, converter, required);
+    }
 
-	public String getProperty() {
-		return property;
-	}
+    public String getProperty() {
+        return property;
+    }
 
-	public void setProperty(String property) {
-		if (StringUtils.hasText(property)) {
-			this.property = property;
-		} else {
-			this.property = null;
-		}
-	}
+    public void setProperty(String property) {
+        if (StringUtils.hasText(property)) {
+            this.property = property;
+        } else {
+            this.property = null;
+        }
+    }
 
-	public String getConverter() {
-		return converter;
-	}
+    public String getConverter() {
+        return converter;
+    }
 
-	public void setConverter(String converter) {
-		if (StringUtils.hasText(converter)) {
-			this.converter = converter;
-		} else {
-			this.converter = null;
-		}
-	}
+    public void setConverter(String converter) {
+        if (StringUtils.hasText(converter)) {
+            this.converter = converter;
+        } else {
+            this.converter = null;
+        }
+    }
 
-	public String getRequired() {
-		return required;
-	}
+    public String getRequired() {
+        return required;
+    }
 
-	public void setRequired(String required) {
-		if (StringUtils.hasText(required)) {
-			this.required = required;
-		} else {
-			this.required = null;
-		}
-	}
+    public void setRequired(String required) {
+        if (StringUtils.hasText(required)) {
+            this.required = required;
+        } else {
+            this.required = null;
+        }
+    }
 
 }

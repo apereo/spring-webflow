@@ -15,43 +15,41 @@
  */
 package org.springframework.webflow.engine.model;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit tests for {@link SecuredModel}.
  */
 public class SecuredModelTests {
 
-	@Test
-	public void testMergeable() {
-		SecuredModel child = new SecuredModel("child");
-		assertTrue(child.isMergeableWith(child));
-	}
+    @Test
+    public void testMergeable() {
+        SecuredModel child = new SecuredModel("child");
+        assertTrue(child.isMergeableWith(child));
+    }
 
-	@Test
-	public void testNotMergeable() {
-		SecuredModel child = new SecuredModel("child");
-		SecuredModel parent = new SecuredModel("parent");
-		assertFalse(child.isMergeableWith(parent));
-	}
+    @Test
+    public void testNotMergeable() {
+        SecuredModel child = new SecuredModel("child");
+        SecuredModel parent = new SecuredModel("parent");
+        assertFalse(child.isMergeableWith(parent));
+    }
 
-	@Test
-	public void testNotMergeableWithNull() {
-		SecuredModel child = new SecuredModel("child");
-		assertFalse(child.isMergeableWith(null));
-	}
+    @Test
+    public void testNotMergeableWithNull() {
+        SecuredModel child = new SecuredModel("child");
+        assertFalse(child.isMergeableWith(null));
+    }
 
-	@Test
-	public void testMerge() {
-		SecuredModel child = new SecuredModel("child");
-		SecuredModel parent = new SecuredModel("child");
-		parent.setMatch("all");
-		child.merge(parent);
-		assertEquals("all", child.getMatch());
-	}
+    @Test
+    public void testMerge() {
+        SecuredModel child = new SecuredModel("child");
+        SecuredModel parent = new SecuredModel("child");
+        parent.setMatch("all");
+        child.merge(parent);
+        assertEquals("all", child.getMatch());
+    }
 
 }

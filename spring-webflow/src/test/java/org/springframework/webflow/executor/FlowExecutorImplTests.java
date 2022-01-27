@@ -1,10 +1,5 @@
 package org.springframework.webflow.executor;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import org.easymock.EasyMock;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,181 +18,188 @@ import org.springframework.webflow.test.GeneratedFlowExecutionKey;
 import org.springframework.webflow.test.MockExternalContext;
 import org.springframework.webflow.test.MockFlowExecutionKey;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 public class FlowExecutorImplTests {
-	private FlowExecutor flowExecutor;
+    private FlowExecutor flowExecutor;
 
-	// mocks
-	private FlowDefinitionLocator locator;
-	private FlowDefinition definition;
-	private FlowExecutionFactory factory;
-	private FlowExecution execution;
-	private FlowExecutionRepository repository;
-	private FlowExecutionLock lock;
+    // mocks
+    private FlowDefinitionLocator locator;
 
-	@BeforeEach
-	public void setUp() {
-		locator = EasyMock.createMock(FlowDefinitionLocator.class);
-		definition = EasyMock.createMock(FlowDefinition.class);
-		factory = EasyMock.createMock(FlowExecutionFactory.class);
-		execution = EasyMock.createMock(FlowExecution.class);
-		repository = EasyMock.createMock(FlowExecutionRepository.class);
-		lock = EasyMock.createMock(FlowExecutionLock.class);
+    private FlowDefinition definition;
 
-		flowExecutor = new FlowExecutorImpl(locator, factory, repository);
-	}
+    private FlowExecutionFactory factory;
 
-	@Test
-	public void testLaunchFlowExecution() {
-		String flowId = "foo";
-		MutableAttributeMap<Object> input = null;
-		MockExternalContext context = new MockExternalContext();
+    private FlowExecution execution;
 
-		EasyMock.expect(locator.getFlowDefinition(flowId)).andReturn(definition);
-		EasyMock.expect(factory.createFlowExecution(definition)).andReturn(execution);
+    private FlowExecutionRepository repository;
 
-		execution.start(input, context);
+    private FlowExecutionLock lock;
 
-		execution.hasEnded();
-		EasyMock.expectLastCall().andReturn(false);
+    @BeforeEach
+    public void setUp() {
+        locator = EasyMock.createMock(FlowDefinitionLocator.class);
+        definition = EasyMock.createMock(FlowDefinition.class);
+        factory = EasyMock.createMock(FlowExecutionFactory.class);
+        execution = EasyMock.createMock(FlowExecution.class);
+        repository = EasyMock.createMock(FlowExecutionRepository.class);
+        lock = EasyMock.createMock(FlowExecutionLock.class);
 
-		MockFlowExecutionKey flowExecutionKey = new MockFlowExecutionKey("12345");
-		EasyMock.expect(execution.getKey()).andReturn(flowExecutionKey);
-		EasyMock.expect(repository.getLock(flowExecutionKey)).andReturn(lock);
+        flowExecutor = new FlowExecutorImpl(locator, factory, repository);
+    }
 
-		lock.lock();
+    @Test
+    public void testLaunchFlowExecution() {
+        String flowId = "foo";
+        MutableAttributeMap<Object> input = null;
+        MockExternalContext context = new MockExternalContext();
 
-		repository.putFlowExecution(execution);
+        EasyMock.expect(locator.getFlowDefinition(flowId)).andReturn(definition);
+        EasyMock.expect(factory.createFlowExecution(definition)).andReturn(execution);
 
-		lock.unlock();
+        execution.start(input, context);
 
-		EasyMock.expect(execution.getDefinition()).andReturn(definition);
-		EasyMock.expect(definition.getId()).andReturn("foo");
-		EasyMock.expect(execution.getKey()).andReturn(flowExecutionKey);
+        execution.hasEnded();
+        EasyMock.expectLastCall().andReturn(false);
 
-		replayMocks();
+        MockFlowExecutionKey flowExecutionKey = new MockFlowExecutionKey("12345");
+        EasyMock.expect(execution.getKey()).andReturn(flowExecutionKey);
+        EasyMock.expect(repository.getLock(flowExecutionKey)).andReturn(lock);
 
-		FlowExecutionResult result = flowExecutor.launchExecution("foo", null, context);
-		assertTrue(result.isPaused());
-		assertEquals("12345", result.getPausedKey());
-		assertFalse(result.isEnded());
-		assertNull(result.getOutcome());
-		assertNull(ExternalContextHolder.getExternalContext());
-		verifyMocks();
-	}
+        lock.lock();
 
-	@Test
-	public void testLaunchFlowExecutionEndsAfterProcessing() {
-		String flowId = "foo";
-		MutableAttributeMap<Object> input = null;
-		MockExternalContext context = new MockExternalContext();
+        repository.putFlowExecution(execution);
 
-		EasyMock.expect(locator.getFlowDefinition(flowId)).andReturn(definition);
-		EasyMock.expect(factory.createFlowExecution(definition)).andReturn(execution);
+        lock.unlock();
 
-		execution.start(input, context);
+        EasyMock.expect(execution.getDefinition()).andReturn(definition);
+        EasyMock.expect(definition.getId()).andReturn("foo");
+        EasyMock.expect(execution.getKey()).andReturn(flowExecutionKey);
 
-		execution.hasEnded();
-		EasyMock.expectLastCall().andReturn(true);
+        replayMocks();
 
-		EasyMock.expect(execution.getDefinition()).andReturn(definition);
-		EasyMock.expect(definition.getId()).andReturn("foo");
-		EasyMock.expect(execution.getOutcome()).andReturn(new FlowExecutionOutcome("finish", null));
+        FlowExecutionResult result = flowExecutor.launchExecution("foo", null, context);
+        assertTrue(result.isPaused());
+        assertEquals("12345", result.getPausedKey());
+        assertFalse(result.isEnded());
+        assertNull(result.getOutcome());
+        assertNull(ExternalContextHolder.getExternalContext());
+        verifyMocks();
+    }
 
-		replayMocks();
+    @Test
+    public void testLaunchFlowExecutionEndsAfterProcessing() {
+        String flowId = "foo";
+        MutableAttributeMap<Object> input = null;
+        MockExternalContext context = new MockExternalContext();
 
-		FlowExecutionResult result = flowExecutor.launchExecution("foo", null, context);
-		assertTrue(result.isEnded());
-		assertEquals("finish", result.getOutcome().getId());
-		assertTrue(result.getOutcome().getOutput().isEmpty());
-		assertFalse(result.isPaused());
-		assertNull(result.getPausedKey());
-		assertNull(ExternalContextHolder.getExternalContext());
-		verifyMocks();
-	}
+        EasyMock.expect(locator.getFlowDefinition(flowId)).andReturn(definition);
+        EasyMock.expect(factory.createFlowExecution(definition)).andReturn(execution);
 
-	@Test
-	public void testResumeFlowExecution() {
-		String flowExecutionKey = "12345";
-		MockExternalContext context = new MockExternalContext();
-		FlowExecutionKey key = new GeneratedFlowExecutionKey();
+        execution.start(input, context);
 
-		EasyMock.expect(repository.parseFlowExecutionKey(flowExecutionKey)).andReturn(key);
-		EasyMock.expect(repository.getLock(key)).andReturn(lock);
+        execution.hasEnded();
+        EasyMock.expectLastCall().andReturn(true);
 
-		lock.lock();
-		EasyMock.expect(repository.getFlowExecution(key)).andReturn(execution);
+        EasyMock.expect(execution.getDefinition()).andReturn(definition);
+        EasyMock.expect(definition.getId()).andReturn("foo");
+        EasyMock.expect(execution.getOutcome()).andReturn(new FlowExecutionOutcome("finish", null));
 
-		execution.resume(context);
+        replayMocks();
 
-		execution.hasEnded();
-		EasyMock.expectLastCall().andReturn(false);
+        FlowExecutionResult result = flowExecutor.launchExecution("foo", null, context);
+        assertTrue(result.isEnded());
+        assertEquals("finish", result.getOutcome().getId());
+        assertTrue(result.getOutcome().getOutput().isEmpty());
+        assertFalse(result.isPaused());
+        assertNull(result.getPausedKey());
+        assertNull(ExternalContextHolder.getExternalContext());
+        verifyMocks();
+    }
 
-		repository.putFlowExecution(execution);
+    @Test
+    public void testResumeFlowExecution() {
+        String flowExecutionKey = "12345";
+        MockExternalContext context = new MockExternalContext();
+        FlowExecutionKey key = new GeneratedFlowExecutionKey();
 
-		EasyMock.expect(execution.getDefinition()).andReturn(definition);
-		EasyMock.expect(definition.getId()).andReturn("foo");
-		EasyMock.expect(execution.getKey()).andReturn(new MockFlowExecutionKey("12345"));
+        EasyMock.expect(repository.parseFlowExecutionKey(flowExecutionKey)).andReturn(key);
+        EasyMock.expect(repository.getLock(key)).andReturn(lock);
 
-		lock.unlock();
+        lock.lock();
+        EasyMock.expect(repository.getFlowExecution(key)).andReturn(execution);
 
-		replayMocks();
-		FlowExecutionResult result = flowExecutor.resumeExecution(flowExecutionKey, context);
-		verifyMocks();
+        execution.resume(context);
 
-		assertTrue(result.isPaused());
-		assertEquals("12345", result.getPausedKey());
-		assertFalse(result.isEnded());
-		assertNull(result.getOutcome());
-		assertNull(ExternalContextHolder.getExternalContext());
-		verifyMocks();
+        execution.hasEnded();
+        EasyMock.expectLastCall().andReturn(false);
 
-	}
+        repository.putFlowExecution(execution);
 
-	@Test
-	public void testResumeFlowExecutionEndsAfterProcessing() {
-		String flowExecutionKey = "12345";
-		MockExternalContext context = new MockExternalContext();
-		FlowExecutionKey key = new MockFlowExecutionKey("12345");
+        EasyMock.expect(execution.getDefinition()).andReturn(definition);
+        EasyMock.expect(definition.getId()).andReturn("foo");
+        EasyMock.expect(execution.getKey()).andReturn(new MockFlowExecutionKey("12345"));
 
-		EasyMock.expect(repository.parseFlowExecutionKey(flowExecutionKey)).andReturn(key);
-		EasyMock.expect(repository.getLock(key)).andReturn(lock);
+        lock.unlock();
 
-		lock.lock();
-		EasyMock.expect(repository.getFlowExecution(key)).andReturn(execution);
+        replayMocks();
+        FlowExecutionResult result = flowExecutor.resumeExecution(flowExecutionKey, context);
+        verifyMocks();
 
-		execution.resume(context);
+        assertTrue(result.isPaused());
+        assertEquals("12345", result.getPausedKey());
+        assertFalse(result.isEnded());
+        assertNull(result.getOutcome());
+        assertNull(ExternalContextHolder.getExternalContext());
+        verifyMocks();
 
-		execution.hasEnded();
-		EasyMock.expectLastCall().andReturn(true);
+    }
 
-		EasyMock.expect(execution.getDefinition()).andReturn(definition);
-		EasyMock.expect(definition.getId()).andReturn("foo");
+    @Test
+    public void testResumeFlowExecutionEndsAfterProcessing() {
+        String flowExecutionKey = "12345";
+        MockExternalContext context = new MockExternalContext();
+        FlowExecutionKey key = new MockFlowExecutionKey("12345");
 
-		LocalAttributeMap<Object> output = new LocalAttributeMap<>();
-		output.put("foo", "bar");
-		EasyMock.expect(execution.getOutcome()).andReturn(new FlowExecutionOutcome("finish", output));
+        EasyMock.expect(repository.parseFlowExecutionKey(flowExecutionKey)).andReturn(key);
+        EasyMock.expect(repository.getLock(key)).andReturn(lock);
 
-		repository.removeFlowExecution(execution);
+        lock.lock();
+        EasyMock.expect(repository.getFlowExecution(key)).andReturn(execution);
 
-		lock.unlock();
+        execution.resume(context);
 
-		replayMocks();
+        execution.hasEnded();
+        EasyMock.expectLastCall().andReturn(true);
 
-		FlowExecutionResult result = flowExecutor.resumeExecution(flowExecutionKey, context);
-		assertTrue(result.isEnded());
-		assertEquals("finish", result.getOutcome().getId());
-		assertEquals(output, result.getOutcome().getOutput());
-		assertFalse(result.isPaused());
-		assertNull(result.getPausedKey());
-		assertNull(ExternalContextHolder.getExternalContext());
-		verifyMocks();
-	}
+        EasyMock.expect(execution.getDefinition()).andReturn(definition);
+        EasyMock.expect(definition.getId()).andReturn("foo");
 
-	private void replayMocks() {
-		EasyMock.replay(locator, definition, factory, execution, repository, lock);
-	}
+        LocalAttributeMap<Object> output = new LocalAttributeMap<>();
+        output.put("foo", "bar");
+        EasyMock.expect(execution.getOutcome()).andReturn(new FlowExecutionOutcome("finish", output));
 
-	private void verifyMocks() {
-		EasyMock.verify(locator, definition, factory, execution, repository, lock);
-	}
+        repository.removeFlowExecution(execution);
+
+        lock.unlock();
+
+        replayMocks();
+
+        FlowExecutionResult result = flowExecutor.resumeExecution(flowExecutionKey, context);
+        assertTrue(result.isEnded());
+        assertEquals("finish", result.getOutcome().getId());
+        assertEquals(output, result.getOutcome().getOutput());
+        assertFalse(result.isPaused());
+        assertNull(result.getPausedKey());
+        assertNull(ExternalContextHolder.getExternalContext());
+        verifyMocks();
+    }
+
+    private void replayMocks() {
+        EasyMock.replay(locator, definition, factory, execution, repository, lock);
+    }
+
+    private void verifyMocks() {
+        EasyMock.verify(locator, definition, factory, execution, repository, lock);
+    }
 }

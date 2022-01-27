@@ -19,32 +19,34 @@ import org.springframework.webflow.core.FlowException;
 
 /**
  * Thrown when no flow model was found during a lookup operation by a flow locator.
- * 
+ *
  * @author Keith Donald
  * @author Erwin Vervaet
  * @author Scott Andrews
  */
 public class NoSuchFlowModelException extends FlowException {
 
-	/**
-	 * The id of the flow model that could not be located.
-	 */
-	private String flowModelId;
+    /**
+     * The id of the flow model that could not be located.
+     */
+    private String flowModelId;
 
-	/**
-	 * Creates an exception indicating a flow model could not be found.
-	 * @param flowModelId the flow model id
-	 */
-	public NoSuchFlowModelException(String flowModelId) {
-		super("No flow model '" + flowModelId + "' found");
-		this.flowModelId = flowModelId;
-	}
+    /**
+     * Creates an exception indicating a flow model could not be found.
+     *
+     * @param flowModelId the flow model id
+     */
+    public NoSuchFlowModelException(String flowModelId) {
+        super("No flow model '" + flowModelId + "' found");
+        this.flowModelId = flowModelId;
+    }
 
-	/**
-	 * Returns the id of the flow model that could not be found.
+    /**
+     * Returns the id of the flow model that could not be found.
+     *
      * @return
      */
-	public String getFlowModelId() {
-		return flowModelId;
-	}
+    public String getFlowModelId() {
+        return flowModelId;
+    }
 }

@@ -19,27 +19,28 @@ import org.springframework.webflow.core.FlowException;
 
 /**
  * Exception thrown to indicate a problem while building a flow.
- * 
- * @see FlowBuilder
- * 
+ *
  * @author Erwin Vervaet
+ * @see FlowBuilder
  */
 public class FlowBuilderException extends FlowException {
 
-	/**
-	 * Create a new flow builder exception.
-	 * @param message descriptive message
-	 */
-	public FlowBuilderException(String message) {
-		super(message);
-	}
+    /**
+     * Create a new flow builder exception.
+     *
+     * @param message descriptive message
+     */
+    public FlowBuilderException(String message) {
+        super(message);
+    }
 
-	/**
-	 * Create a new flow builder exception.
-	 * @param message descriptive message
-	 * @param cause the underlying cause of this exception
-	 */
-	public FlowBuilderException(String message, Throwable cause) {
-		super(message, cause);
-	}
+    /**
+     * Create a new flow builder exception.
+     *
+     * @param message descriptive message
+     * @param cause   the underlying cause of this exception
+     */
+    public FlowBuilderException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

@@ -26,70 +26,73 @@ import org.springframework.webflow.execution.RequestContext;
  * equal to the 'trueEventId', <code>false</code> otherwise.
  * <p>
  * This effectively adapts an <code>Action</code> to a <code>TransitionCriteria</code>.
- * 
- * @see org.springframework.webflow.execution.Action
- * @see org.springframework.webflow.engine.TransitionCriteria
- * 
+ *
  * @author Keith Donald
  * @author Erwin Vervaet
+ * @see org.springframework.webflow.execution.Action
+ * @see org.springframework.webflow.engine.TransitionCriteria
  */
 public class ActionTransitionCriteria implements TransitionCriteria {
 
-	/**
-	 * The result event id that should map to a <code>true</code> return value.
-	 */
-	private String[] trueEventIds = new String[] { "success", "yes", "true" };
+    /**
+     * The result event id that should map to a <code>true</code> return value.
+     */
+    private String[] trueEventIds = new String[]{"success", "yes", "true"};
 
-	/**
-	 * The action to execute when the criteria is tested, annotated with usage attributes.
-	 */
-	private Action action;
+    /**
+     * The action to execute when the criteria is tested, annotated with usage attributes.
+     */
+    private Action action;
 
-	/**
-	 * Create action transition criteria delegating to the specified action.
-	 * @param action the action
-	 */
-	public ActionTransitionCriteria(Action action) {
-		this.action = action;
-	}
+    /**
+     * Create action transition criteria delegating to the specified action.
+     *
+     * @param action the action
+     */
+    public ActionTransitionCriteria(Action action) {
+        this.action = action;
+    }
 
-	/**
-	 * Returns the action result <code>eventIds</code> that should cause this criteria to return true (it will return
-	 * false otherwise). Defaults to "success".
+    /**
+     * Returns the action result <code>eventIds</code> that should cause this criteria to return true (it will return
+     * false otherwise). Defaults to "success".
+     *
      * @return
      */
-	public String[] getTrueEventIds() {
-		return trueEventIds;
-	}
+    public String[] getTrueEventIds() {
+        return trueEventIds;
+    }
 
-	/**
-	 * Sets the action result <code>eventIds</code> that should cause this precondition to return true (it will return
-	 * false otherwise).
-	 * @param trueEventIds the true result event IDs
-	 */
-	public void setTrueEventIds(String... trueEventIds) {
-		this.trueEventIds = trueEventIds;
-	}
+    /**
+     * Sets the action result <code>eventIds</code> that should cause this precondition to return true (it will return
+     * false otherwise).
+     *
+     * @param trueEventIds the true result event IDs
+     */
+    public void setTrueEventIds(String... trueEventIds) {
+        this.trueEventIds = trueEventIds;
+    }
 
-	/**
-	 * Returns the action wrapped by this object.
-	 * @return the action
-	 */
-	protected Action getAction() {
-		return action;
-	}
+    public boolean test(RequestContext context) {
+        Event result = ActionExecutor.execute(getAction(), context);
+        return result != null && isTrueEvent(result.getId());
+    }
 
-	public boolean test(RequestContext context) {
-		Event result = ActionExecutor.execute(getAction(), context);
-		return result != null && isTrueEvent(result.getId());
-	}
+    /**
+     * Returns the action wrapped by this object.
+     *
+     * @return the action
+     */
+    protected Action getAction() {
+        return action;
+    }
 
-	private boolean isTrueEvent(String eventId) {
-		for (String trueEventId : trueEventIds) {
-			if (trueEventId.equals(eventId)) {
-				return true;
-			}
-		}
-		return false;
-	}
+    private boolean isTrueEvent(String eventId) {
+        for (String trueEventId : trueEventIds) {
+            if (trueEventId.equals(eventId)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

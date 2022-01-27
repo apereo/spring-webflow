@@ -28,56 +28,57 @@ import org.springframework.webflow.execution.repository.FlowExecutionRestoration
 /**
  * A factory that creates new flow execution snapshot instances that simply wraps an underlying {@link FlowExecution
  * flow execution} instance.
- * 
+ * <p>
  * Note: this class is generally only suitable for use with a repository that has maxSnapshots set to 1, since no actual
  * copies of the execution data are made by this factory. This class exists to support the use case where taking copies
  * of flow execution state is not needed.
- * 
+ *
  * @author Keith Donald
  */
 public class SimpleFlowExecutionSnapshotFactory implements FlowExecutionSnapshotFactory {
 
-	private FlowExecutionFactory flowExecutionFactory;
+    private FlowExecutionFactory flowExecutionFactory;
 
-	private FlowDefinitionLocator flowDefinitionLocator;
+    private FlowDefinitionLocator flowDefinitionLocator;
 
-	/**
-	 * Creates a new simple flow execution snapshot factory
-	 * @param flowDefinitionLocator the flow definition locator
-	 * @param flowExecutionFactory the flow execution factory
-	 */
-	public SimpleFlowExecutionSnapshotFactory(FlowExecutionFactory flowExecutionFactory,
-			FlowDefinitionLocator flowDefinitionLocator) {
-		Assert.notNull(flowExecutionFactory, "The FlowExecutionFactory to restore transient flow state is required");
-		Assert.notNull(flowDefinitionLocator, "The FlowDefinitionLocator to restore FlowDefinitions is required");
-		this.flowExecutionFactory = flowExecutionFactory;
-		this.flowDefinitionLocator = flowDefinitionLocator;
-	}
+    /**
+     * Creates a new simple flow execution snapshot factory
+     *
+     * @param flowDefinitionLocator the flow definition locator
+     * @param flowExecutionFactory  the flow execution factory
+     */
+    public SimpleFlowExecutionSnapshotFactory(FlowExecutionFactory flowExecutionFactory,
+                                              FlowDefinitionLocator flowDefinitionLocator) {
+        Assert.notNull(flowExecutionFactory, "The FlowExecutionFactory to restore transient flow state is required");
+        Assert.notNull(flowDefinitionLocator, "The FlowDefinitionLocator to restore FlowDefinitions is required");
+        this.flowExecutionFactory = flowExecutionFactory;
+        this.flowDefinitionLocator = flowDefinitionLocator;
+    }
 
-	public FlowExecutionSnapshot createSnapshot(FlowExecution flowExecution) throws SnapshotCreationException {
-		return new SimpleFlowExecutionSnapshot(flowExecution);
-	}
+    public FlowExecutionSnapshot createSnapshot(FlowExecution flowExecution) throws SnapshotCreationException {
+        return new SimpleFlowExecutionSnapshot(flowExecution);
+    }
 
-	public FlowExecution restoreExecution(FlowExecutionSnapshot snapshot, String flowId, FlowExecutionKey key,
-			MutableAttributeMap<Object> conversationScope, FlowExecutionKeyFactory keyFactory)
-			throws FlowExecutionRestorationFailureException {
-		SimpleFlowExecutionSnapshot snapshotImpl = (SimpleFlowExecutionSnapshot) snapshot;
-		FlowDefinition def = flowDefinitionLocator.getFlowDefinition(flowId);
-		FlowExecution execution = snapshotImpl.getFlowExecution();
-		flowExecutionFactory.restoreFlowExecution(execution, def, key, conversationScope, flowDefinitionLocator);
-		return execution;
-	}
+    public FlowExecution restoreExecution(FlowExecutionSnapshot snapshot, String flowId, FlowExecutionKey key,
+                                          MutableAttributeMap<Object> conversationScope, FlowExecutionKeyFactory keyFactory)
+        throws FlowExecutionRestorationFailureException {
+        SimpleFlowExecutionSnapshot snapshotImpl = (SimpleFlowExecutionSnapshot) snapshot;
+        FlowDefinition def = flowDefinitionLocator.getFlowDefinition(flowId);
+        FlowExecution execution = snapshotImpl.getFlowExecution();
+        flowExecutionFactory.restoreFlowExecution(execution, def, key, conversationScope, flowDefinitionLocator);
+        return execution;
+    }
 
-	private static class SimpleFlowExecutionSnapshot extends FlowExecutionSnapshot {
-		private FlowExecution flowExecution;
+    private static class SimpleFlowExecutionSnapshot extends FlowExecutionSnapshot {
+        private FlowExecution flowExecution;
 
-		public SimpleFlowExecutionSnapshot(FlowExecution flowExecution) {
-			this.flowExecution = flowExecution;
-		}
+        public SimpleFlowExecutionSnapshot(FlowExecution flowExecution) {
+            this.flowExecution = flowExecution;
+        }
 
-		public FlowExecution getFlowExecution() {
-			return flowExecution;
-		}
-	}
+        public FlowExecution getFlowExecution() {
+            return flowExecution;
+        }
+    }
 
 }

@@ -20,20 +20,20 @@ import org.springframework.webflow.execution.repository.FlowExecutionRepositoryE
 
 /**
  * Thrown when a FlowExecutionContinuation could not be deserialized into a FlowExecution.
- * 
+ *
+ * @author Keith Donald
  * @see FlowExecutionSnapshot
  * @see FlowExecution
- * 
- * @author Keith Donald
  */
 public class SnapshotUnmarshalException extends FlowExecutionRepositoryException {
 
-	/**
-	 * Creates a new flow execution unmarshalling exception.
-	 * @param message the exception message
-	 * @param cause the cause
-	 */
-	public SnapshotUnmarshalException(String message, Throwable cause) {
-		super(message, cause);
-	}
+    /**
+     * Creates a new flow execution unmarshalling exception.
+     *
+     * @param message the exception message
+     * @param cause   the cause
+     */
+    public SnapshotUnmarshalException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

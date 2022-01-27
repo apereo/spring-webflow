@@ -36,42 +36,42 @@ import org.springframework.webflow.execution.RequestContext;
  * expression against the request context. The resolved value can be a target state identifier or a custom
  * TargetStateResolver to delegate to.</li>
  * </ul>
- * 
+ *
  * @author Keith Donald
  * @author Erwin Vervaet
  */
 class TextToTargetStateResolver implements Converter {
 
-	/**
-	 * Context for flow builder services.
-	 */
-	private FlowBuilderContext flowBuilderContext;
+    /**
+     * Context for flow builder services.
+     */
+    private FlowBuilderContext flowBuilderContext;
 
-	/**
-	 * Create a new converter that converts strings to transition target state resolver objects. The given conversion
-	 * service will be used to do all necessary internal conversion (e.g. parsing expression strings).
-	 */
-	public TextToTargetStateResolver(FlowBuilderContext flowBuilderContext) {
-		this.flowBuilderContext = flowBuilderContext;
-	}
+    /**
+     * Create a new converter that converts strings to transition target state resolver objects. The given conversion
+     * service will be used to do all necessary internal conversion (e.g. parsing expression strings).
+     */
+    public TextToTargetStateResolver(FlowBuilderContext flowBuilderContext) {
+        this.flowBuilderContext = flowBuilderContext;
+    }
 
-	public Class<?> getSourceClass() {
-		return String.class;
-	}
+    public Class<?> getSourceClass() {
+        return String.class;
+    }
 
-	public Class<?> getTargetClass() {
-		return TargetStateResolver.class;
-	}
+    public Class<?> getTargetClass() {
+        return TargetStateResolver.class;
+    }
 
-	public Object convertSourceToTargetClass(Object source, Class<?> targetClass) throws Exception {
-		String targetStateId = (String) source;
-		if (!StringUtils.hasText(targetStateId)) {
-			return null;
-		}
-		ExpressionParser parser = flowBuilderContext.getExpressionParser();
-		Expression expression = parser.parseExpression(targetStateId,
-				new FluentParserContext().template().evaluate(RequestContext.class).expectResult(String.class));
-		return new DefaultTargetStateResolver(expression);
+    public Object convertSourceToTargetClass(Object source, Class<?> targetClass) throws Exception {
+        String targetStateId = (String) source;
+        if (!StringUtils.hasText(targetStateId)) {
+            return null;
+        }
+        ExpressionParser parser = flowBuilderContext.getExpressionParser();
+        Expression expression = parser.parseExpression(targetStateId,
+            new FluentParserContext().template().evaluate(RequestContext.class).expectResult(String.class));
+        return new DefaultTargetStateResolver(expression);
 
-	}
+    }
 }

@@ -22,42 +22,43 @@ import org.springframework.util.StringUtils;
  * <p>
  * Requests that the next view render a fragment of content. Multiple fragments may be specified using a comma
  * delimiter.
- * 
+ *
  * @author Scott Andrews
  */
 public class RenderModel extends AbstractActionModel {
 
-	private String fragments;
+    private String fragments;
 
-	public Model createCopy() {
-		RenderModel copy = new RenderModel(fragments);
-		super.fillCopy(copy);
-		return copy;
-	}
+    /**
+     * Create a render action model
+     *
+     * @param fragments the fragments to render
+     */
+    public RenderModel(String fragments) {
+        setFragments(fragments);
+    }
 
-	/**
-	 * Create a render action model
-	 * @param fragments the fragments to render
-	 */
-	public RenderModel(String fragments) {
-		setFragments(fragments);
-	}
+    public Model createCopy() {
+        RenderModel copy = new RenderModel(fragments);
+        super.fillCopy(copy);
+        return copy;
+    }
 
-	/**
-	 * @return the fragments
-	 */
-	public String getFragments() {
-		return fragments;
-	}
+    /**
+     * @return the fragments
+     */
+    public String getFragments() {
+        return fragments;
+    }
 
-	/**
-	 * @param fragments the fragments to set
-	 */
-	public void setFragments(String fragments) {
-		if (StringUtils.hasText(fragments)) {
-			this.fragments = fragments;
-		} else {
-			this.fragments = null;
-		}
-	}
+    /**
+     * @param fragments the fragments to set
+     */
+    public void setFragments(String fragments) {
+        if (StringUtils.hasText(fragments)) {
+            this.fragments = fragments;
+        } else {
+            this.fragments = null;
+        }
+    }
 }

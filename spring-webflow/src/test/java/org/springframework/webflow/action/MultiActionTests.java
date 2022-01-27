@@ -15,9 +15,6 @@
  */
 package org.springframework.webflow.action;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
-
 import org.junit.jupiter.api.Test;
 import org.springframework.webflow.action.DispatchMethodInvoker.MethodLookupException;
 import org.springframework.webflow.action.MultiAction.MethodResolver;
@@ -27,67 +24,69 @@ import org.springframework.webflow.execution.AnnotatedAction;
 import org.springframework.webflow.test.MockFlowSession;
 import org.springframework.webflow.test.MockRequestContext;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 /**
  * Unit tests for {@link MultiAction}.
  */
 public class MultiActionTests {
 
-	private TestMultiAction action = new TestMultiAction();
+    private TestMultiAction action = new TestMultiAction();
 
-	private MockRequestContext context = new MockRequestContext();
+    private MockRequestContext context = new MockRequestContext();
 
-	@Test
-	public void testDispatchWithMethodSignature() throws Exception {
-		context.getAttributeMap().put(AnnotatedAction.METHOD_ATTRIBUTE, "increment");
-		action.execute(context);
-		assertEquals(1, action.counter);
-	}
+    @Test
+    public void testDispatchWithMethodSignature() throws Exception {
+        context.getAttributeMap().put(AnnotatedAction.METHOD_ATTRIBUTE, "increment");
+        action.execute(context);
+        assertEquals(1, action.counter);
+    }
 
-	@Test
-	public void testDispatchWithBogusMethodSignature() throws Exception {
-		context.getAttributeMap().put(AnnotatedAction.METHOD_ATTRIBUTE, "bogus");
-		try {
-			action.execute(context);
-			fail("Should've failed with no such method");
-		} catch (MethodLookupException e) {
+    @Test
+    public void testDispatchWithBogusMethodSignature() throws Exception {
+        context.getAttributeMap().put(AnnotatedAction.METHOD_ATTRIBUTE, "bogus");
+        try {
+            action.execute(context);
+            fail("Should've failed with no such method");
+        } catch (MethodLookupException e) {
 
-		}
-	}
+        }
+    }
 
-	@Test
-	public void testDispatchWithCurrentStateId() throws Exception {
-		MockFlowSession session = context.getMockFlowExecutionContext().getMockActiveSession();
-		session.setState(new ViewState(session.getDefinitionInternal(), "increment", new StubViewFactory()));
-		action.execute(context);
-		assertEquals(1, action.counter);
-	}
+    @Test
+    public void testDispatchWithCurrentStateId() throws Exception {
+        MockFlowSession session = context.getMockFlowExecutionContext().getMockActiveSession();
+        session.setState(new ViewState(session.getDefinitionInternal(), "increment", new StubViewFactory()));
+        action.execute(context);
+        assertEquals(1, action.counter);
+    }
 
-	@Test
-	public void testNoSuchMethodWithCurrentStateId() throws Exception {
-		try {
-			action.execute(context);
-			fail("Should've failed with no such method");
-		} catch (MethodLookupException e) {
+    @Test
+    public void testNoSuchMethodWithCurrentStateId() throws Exception {
+        try {
+            action.execute(context);
+            fail("Should've failed with no such method");
+        } catch (MethodLookupException e) {
 
-		}
-	}
+        }
+    }
 
-	@Test
-	public void testCannotResolveMethod() throws Exception {
-		try {
-			context.getMockFlowExecutionContext().getMockActiveSession().setState(null);
-			action.execute(context);
-			fail("Should've failed with illegal state");
-		} catch (IllegalStateException e) {
+    @Test
+    public void testCannotResolveMethod() throws Exception {
+        try {
+            context.getMockFlowExecutionContext().getMockActiveSession().setState(null);
+            action.execute(context);
+            fail("Should've failed with illegal state");
+        } catch (IllegalStateException e) {
 
-		}
-	}
+        }
+    }
 
-	@Test
-	public void testCustomMethodResolver() throws Exception {
-		MethodResolver methodResolver = context -> "increment";
-		action.setMethodResolver(methodResolver);
-		action.execute(context);
-		assertEquals(1, action.counter);
-	}
+    @Test
+    public void testCustomMethodResolver() throws Exception {
+        MethodResolver methodResolver = context -> "increment";
+        action.setMethodResolver(methodResolver);
+        action.execute(context);
+        assertEquals(1, action.counter);
+    }
 }

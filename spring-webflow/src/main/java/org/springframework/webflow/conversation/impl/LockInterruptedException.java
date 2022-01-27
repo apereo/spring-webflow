@@ -25,11 +25,12 @@ import org.springframework.webflow.conversation.ConversationLockException;
  */
 public class LockInterruptedException extends ConversationLockException {
 
-	/**
-	 * Creates a new <code>SystemInterruptedException</code>.
-	 * @param cause the root cause of this <code>Exception</code>
-	 */
-	public LockInterruptedException(InterruptedException cause) {
-		super("Unable to acquire conversation lock - thread interrupted", cause);
-	}
+    /**
+     * Creates a new <code>SystemInterruptedException</code>.
+     *
+     * @param cause the root cause of this <code>Exception</code>
+     */
+    public LockInterruptedException(InterruptedException cause) {
+        super("Unable to acquire conversation lock - thread interrupted", cause);
+    }
 }

@@ -15,43 +15,41 @@
  */
 package org.springframework.webflow.engine.model;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit tests for {@link IfModel}.
  */
 public class IfModelTests {
 
-	@Test
-	public void testMergeable() {
-		IfModel child = new IfModel("child", "childthen");
-		assertTrue(child.isMergeableWith(child));
-	}
+    @Test
+    public void testMergeable() {
+        IfModel child = new IfModel("child", "childthen");
+        assertTrue(child.isMergeableWith(child));
+    }
 
-	@Test
-	public void testNotMergeable() {
-		IfModel child = new IfModel("child", "childthen");
-		IfModel parent = new IfModel("parent", "parentthen");
-		assertFalse(child.isMergeableWith(parent));
-	}
+    @Test
+    public void testNotMergeable() {
+        IfModel child = new IfModel("child", "childthen");
+        IfModel parent = new IfModel("parent", "parentthen");
+        assertFalse(child.isMergeableWith(parent));
+    }
 
-	@Test
-	public void testNotMergeableWithNull() {
-		IfModel child = new IfModel("child", "childthen");
-		assertFalse(child.isMergeableWith(null));
-	}
+    @Test
+    public void testNotMergeableWithNull() {
+        IfModel child = new IfModel("child", "childthen");
+        assertFalse(child.isMergeableWith(null));
+    }
 
-	@Test
-	public void testMerge() {
-		IfModel child = new IfModel("child", "childthen");
-		IfModel parent = new IfModel("child", "parentthen");
-		parent.setElse("parentelse");
-		child.merge(parent);
-		assertEquals("parentelse", child.getElse());
-	}
+    @Test
+    public void testMerge() {
+        IfModel child = new IfModel("child", "childthen");
+        IfModel parent = new IfModel("child", "parentthen");
+        parent.setElse("parentelse");
+        child.merge(parent);
+        assertEquals("parentelse", child.getElse());
+    }
 
 }

@@ -19,23 +19,25 @@ import org.springframework.webflow.core.Annotated;
 
 /**
  * A transition takes a flow from one state to another.
- * 
+ *
  * @author Keith Donald
  * @author Erwin Vervaet
  */
 public interface TransitionDefinition extends Annotated {
 
-	/**
-	 * The identifier of this transition. This id value should be unique among all other transitions in a set.
-	 * @return the transition identifier
-	 */
-	String getId();
+    /**
+     * The identifier of this transition. This id value should be unique among all other transitions in a set.
+     *
+     * @return the transition identifier
+     */
+    String getId();
 
-	/**
-	 * Returns an identification of the target state of this transition. This could be an actual static state id or
-	 * something more dynamic, like a string representation of an expression evaluating the target state id at flow
-	 * execution time.
-	 * @return the target state identifier
-	 */
-	String getTargetStateId();
+    /**
+     * Returns an identification of the target state of this transition. This could be an actual static state id or
+     * something more dynamic, like a string representation of an expression evaluating the target state id at flow
+     * execution time.
+     *
+     * @return the target state identifier
+     */
+    String getTargetStateId();
 }

@@ -25,70 +25,70 @@ import java.util.Map;
  */
 public class TestBean implements Serializable {
 
-	public String datum1 = "";
+    public String datum1 = "";
 
-	public int datum2;
+    public int datum2;
 
-	private Date datum3;
+    public boolean executed;
 
-	public boolean executed;
+    public Map<String, Object> emptyMap;
 
-	public Map<String, Object> emptyMap;
+    private Date datum3;
 
-	public void execute() {
-		this.executed = true;
-	}
+    public void execute() {
+        this.executed = true;
+    }
 
-	public String getDatum1() {
-		return datum1;
-	}
+    public String getDatum1() {
+        return datum1;
+    }
 
-	public int getDatum2() {
-		return datum2;
-	}
+    public int getDatum2() {
+        return datum2;
+    }
 
-	public Date getDatum3() {
-		return datum3;
-	}
+    public Date getDatum3() {
+        return datum3;
+    }
 
-	public Map<String, Object> getEmptyMap() {
-		if (emptyMap == null) {
-			emptyMap = new HashMap<>();
-			emptyMap.put("foo", null);
-		}
-		return emptyMap;
-	}
+    public void setDatum3(Date datum3) {
+        this.datum3 = datum3;
+    }
 
-	public void setDatum3(Date datum3) {
-		this.datum3 = datum3;
-	}
+    public Map<String, Object> getEmptyMap() {
+        if (emptyMap == null) {
+            emptyMap = new HashMap<>();
+            emptyMap.put("foo", null);
+        }
+        return emptyMap;
+    }
 
-	public boolean isExecuted() {
-		return executed;
-	}
+    public boolean isExecuted() {
+        return executed;
+    }
 
-	public void execute(String parameter) {
-		this.executed = true;
-		this.datum1 = parameter;
-	}
+    public void execute(String parameter) {
+        this.executed = true;
+        this.datum1 = parameter;
+    }
 
-	public int execute(String parameter, int parameter2) {
-		this.executed = true;
-		this.datum1 = parameter;
-		this.datum2 = parameter2;
-		return datum2;
-	}
+    public int execute(String parameter, int parameter2) {
+        this.executed = true;
+        this.datum1 = parameter;
+        this.datum2 = parameter2;
+        return datum2;
+    }
 
-	public boolean equals(Object obj) {
-		if (!(obj instanceof TestBean)) {
-			return false;
-		}
-		TestBean other = (TestBean) obj;
-		return datum1.equals(other.datum1) && datum2 == other.datum2 && executed == other.executed;
-	}
+    public boolean equals(Object obj) {
+        if (!(obj instanceof TestBean)) {
+            return false;
+        }
+        TestBean other = (TestBean) obj;
+        return datum1.equals(other.datum1) && datum2 == other.datum2 && executed == other.executed;
+    }
 
-	public int hashCode() {
-		return (datum1.hashCode() + datum2 + (executed ? 1 : 0)) * 29;
-	}
+    public int hashCode() {
+        return (datum1.hashCode() + datum2 + (executed ? 1 : 0)) * 29;
+    }
 
 }

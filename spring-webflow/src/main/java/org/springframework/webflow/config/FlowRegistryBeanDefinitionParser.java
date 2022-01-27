@@ -15,12 +15,6 @@
  */
 package org.springframework.webflow.config;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.parsing.BeanComponentDefinition;
 import org.springframework.beans.factory.parsing.CompositeComponentDefinition;
@@ -32,151 +26,162 @@ import org.springframework.util.StringUtils;
 import org.springframework.util.xml.DomUtils;
 import org.w3c.dom.Element;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 /**
  * {@link BeanDefinitionParser} for the flow <code>&lt;flow-registry&gt;</code> tag.
- * 
+ *
  * @author Keith Donald
  * @author Scott Andrews
  */
 class FlowRegistryBeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
 
-	// --------------------------- Full qualified class names ----------------------- //
-	private static final String DEFAULT_CONVERSION_SERVICE_CLASS_NAME = "org.springframework.binding.convert.service.DefaultConversionService";
-	private static final String WEB_FLOW_SPRING_EL_EXPRESSION_PARSER_CLASS_NAME = "org.springframework.webflow.expression.spel.WebFlowSpringELExpressionParser";
-	private static final String SPRING_EL_EXPRESSION_PARSER_CLASS_NAME = "org.springframework.expression.spel.standard.SpelExpressionParser";
-	private static final String FLOW_BUILDER_SERVICES_CLASS_NAME = "org.springframework.webflow.engine.builder.support.FlowBuilderServices";
-	private static final String FLOW_REGISTRY_FACTORY_BEAN_CLASS_NAME = "org.springframework.webflow.config.FlowRegistryFactoryBean";
-	private static final String MVC_VIEW_FACTORY_CREATOR_CLASS_NAME = "org.springframework.webflow.mvc.builder.MvcViewFactoryCreator";
+    // --------------------------- Full qualified class names ----------------------- //
+    private static final String DEFAULT_CONVERSION_SERVICE_CLASS_NAME = "org.springframework.binding.convert.service.DefaultConversionService";
 
-	protected String getBeanClassName(Element element) {
-		return FLOW_REGISTRY_FACTORY_BEAN_CLASS_NAME;
-	}
+    private static final String WEB_FLOW_SPRING_EL_EXPRESSION_PARSER_CLASS_NAME = "org.springframework.webflow.expression.spel.WebFlowSpringELExpressionParser";
 
-	protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder definitionBuilder) {
-		CompositeComponentDefinition componentDefinition = new CompositeComponentDefinition(element.getLocalName(),
-				parserContext.extractSource(element));
-		parserContext.pushContainingComponent(componentDefinition);
+    private static final String SPRING_EL_EXPRESSION_PARSER_CLASS_NAME = "org.springframework.expression.spel.standard.SpelExpressionParser";
 
-		parseFlowBuilderServices(element, parserContext, definitionBuilder);
+    private static final String FLOW_BUILDER_SERVICES_CLASS_NAME = "org.springframework.webflow.engine.builder.support.FlowBuilderServices";
 
-		String parent = element.getAttribute("parent");
-		if (StringUtils.hasText(parent)) {
-			definitionBuilder.addPropertyReference("parent", parent);
-		}
+    private static final String FLOW_REGISTRY_FACTORY_BEAN_CLASS_NAME = "org.springframework.webflow.config.FlowRegistryFactoryBean";
 
-		String basePath = element.getAttribute("base-path");
-		if (StringUtils.hasText(basePath)) {
-			definitionBuilder.addPropertyValue("basePath", basePath);
-		}
+    private static final String MVC_VIEW_FACTORY_CREATOR_CLASS_NAME = "org.springframework.webflow.mvc.builder.MvcViewFactoryCreator";
 
-		definitionBuilder.addPropertyValue("flowLocations", parseLocations(element));
-		definitionBuilder.addPropertyValue("flowLocationPatterns", parseLocationPatterns(element));
-		definitionBuilder.addPropertyValue("flowBuilders", parseFlowBuilders(element));
+    protected String getBeanClassName(Element element) {
+        return FLOW_REGISTRY_FACTORY_BEAN_CLASS_NAME;
+    }
 
-		parserContext.popAndRegisterContainingComponent();
-	}
+    protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder definitionBuilder) {
+        CompositeComponentDefinition componentDefinition = new CompositeComponentDefinition(element.getLocalName(),
+            parserContext.extractSource(element));
+        parserContext.pushContainingComponent(componentDefinition);
 
-	private List<FlowLocation> parseLocations(Element element) {
-		List<Element> locationElements = DomUtils.getChildElementsByTagName(element, "flow-location");
-		if (locationElements.isEmpty()) {
-			return Collections.emptyList();
-		}
-		List<FlowLocation> locations = new ArrayList<>(locationElements.size());
-		for (Element locationElement : locationElements) {
-			String id = locationElement.getAttribute("id");
-			String path = locationElement.getAttribute("path");
-			locations.add(new FlowLocation(id, path, parseAttributes(locationElement)));
-		}
-		return locations;
-	}
+        parseFlowBuilderServices(element, parserContext, definitionBuilder);
 
-	private List<String> parseLocationPatterns(Element element) {
-		List<Element> locationPatternElements = DomUtils.getChildElementsByTagName(element, "flow-location-pattern");
-		if (locationPatternElements.isEmpty()) {
-			return Collections.emptyList();
-		}
-		List<String> locationPatterns = new ArrayList<>(locationPatternElements.size());
-		for (Element locationPatternElement : locationPatternElements) {
-			String value = locationPatternElement.getAttribute("value");
-			locationPatterns.add(value);
-		}
-		return locationPatterns;
-	}
+        String parent = element.getAttribute("parent");
+        if (StringUtils.hasText(parent)) {
+            definitionBuilder.addPropertyReference("parent", parent);
+        }
 
-	private Set<FlowElementAttribute> parseAttributes(Element element) {
-		Element definitionAttributesElement = DomUtils.getChildElementByTagName(element, "flow-definition-attributes");
-		if (definitionAttributesElement != null) {
-			List<Element> attributeElements = DomUtils.getChildElementsByTagName(definitionAttributesElement,
-					"attribute");
-			Set<FlowElementAttribute> attributes = new HashSet<>(attributeElements.size());
-			for (Element attributeElement : attributeElements) {
-				String name = attributeElement.getAttribute("name");
-				String value = attributeElement.getAttribute("value");
-				String type = attributeElement.getAttribute("type");
-				attributes.add(new FlowElementAttribute(name, value, type));
-			}
-			return attributes;
-		} else {
-			return null;
-		}
-	}
+        String basePath = element.getAttribute("base-path");
+        if (StringUtils.hasText(basePath)) {
+            definitionBuilder.addPropertyValue("basePath", basePath);
+        }
 
-	private List<FlowBuilderInfo> parseFlowBuilders(Element element) {
-		List<Element> builderElements = DomUtils.getChildElementsByTagName(element, "flow-builder");
-		if (builderElements.isEmpty()) {
-			return Collections.emptyList();
-		}
-		List<FlowBuilderInfo> builders = new ArrayList<>(builderElements.size());
-		for (Element builderElement : builderElements) {
-			String id = builderElement.getAttribute("id");
-			String className = builderElement.getAttribute("class");
-			builders.add(new FlowBuilderInfo(id, className, parseAttributes(builderElement)));
-		}
-		return builders;
-	}
+        definitionBuilder.addPropertyValue("flowLocations", parseLocations(element));
+        definitionBuilder.addPropertyValue("flowLocationPatterns", parseLocationPatterns(element));
+        definitionBuilder.addPropertyValue("flowBuilders", parseFlowBuilders(element));
 
-	private void parseFlowBuilderServices(Element element, ParserContext context,
-			BeanDefinitionBuilder definitionBuilder) {
-		String flowBuilderServices = element.getAttribute("flow-builder-services");
-		if (!StringUtils.hasText(flowBuilderServices)) {
+        parserContext.popAndRegisterContainingComponent();
+    }
 
-			BeanDefinitionBuilder flowBuilderServicesBuilder = BeanDefinitionBuilder
-					.genericBeanDefinition(FLOW_BUILDER_SERVICES_CLASS_NAME);
+    private List<FlowLocation> parseLocations(Element element) {
+        List<Element> locationElements = DomUtils.getChildElementsByTagName(element, "flow-location");
+        if (locationElements.isEmpty()) {
+            return Collections.emptyList();
+        }
+        List<FlowLocation> locations = new ArrayList<>(locationElements.size());
+        for (Element locationElement : locationElements) {
+            String id = locationElement.getAttribute("id");
+            String path = locationElement.getAttribute("path");
+            locations.add(new FlowLocation(id, path, parseAttributes(locationElement)));
+        }
+        return locations;
+    }
 
-			BeanDefinitionBuilder conversionServiceBuilder = BeanDefinitionBuilder
-					.genericBeanDefinition(DEFAULT_CONVERSION_SERVICE_CLASS_NAME);
-			String conversionService = registerInfrastructureComponent(element, context, conversionServiceBuilder);
-			flowBuilderServicesBuilder.addPropertyReference("conversionService", conversionService);
+    private List<String> parseLocationPatterns(Element element) {
+        List<Element> locationPatternElements = DomUtils.getChildElementsByTagName(element, "flow-location-pattern");
+        if (locationPatternElements.isEmpty()) {
+            return Collections.emptyList();
+        }
+        List<String> locationPatterns = new ArrayList<>(locationPatternElements.size());
+        for (Element locationPatternElement : locationPatternElements) {
+            String value = locationPatternElement.getAttribute("value");
+            locationPatterns.add(value);
+        }
+        return locationPatterns;
+    }
 
-			BeanDefinitionBuilder springElExpressionParserBuilder = BeanDefinitionBuilder
-					.genericBeanDefinition(SPRING_EL_EXPRESSION_PARSER_CLASS_NAME);
-			BeanDefinitionBuilder webFlowElExpressionParserBuilder = BeanDefinitionBuilder
-					.genericBeanDefinition(WEB_FLOW_SPRING_EL_EXPRESSION_PARSER_CLASS_NAME);
-			webFlowElExpressionParserBuilder
-					.addConstructorArgValue(springElExpressionParserBuilder.getBeanDefinition());
+    private Set<FlowElementAttribute> parseAttributes(Element element) {
+        Element definitionAttributesElement = DomUtils.getChildElementByTagName(element, "flow-definition-attributes");
+        if (definitionAttributesElement != null) {
+            List<Element> attributeElements = DomUtils.getChildElementsByTagName(definitionAttributesElement,
+                "attribute");
+            Set<FlowElementAttribute> attributes = new HashSet<>(attributeElements.size());
+            for (Element attributeElement : attributeElements) {
+                String name = attributeElement.getAttribute("name");
+                String value = attributeElement.getAttribute("value");
+                String type = attributeElement.getAttribute("type");
+                attributes.add(new FlowElementAttribute(name, value, type));
+            }
+            return attributes;
+        } else {
+            return null;
+        }
+    }
 
-			String expressionParser = registerInfrastructureComponent(element, context,
-					webFlowElExpressionParserBuilder);
-			flowBuilderServicesBuilder.addPropertyReference("expressionParser", expressionParser);
+    private List<FlowBuilderInfo> parseFlowBuilders(Element element) {
+        List<Element> builderElements = DomUtils.getChildElementsByTagName(element, "flow-builder");
+        if (builderElements.isEmpty()) {
+            return Collections.emptyList();
+        }
+        List<FlowBuilderInfo> builders = new ArrayList<>(builderElements.size());
+        for (Element builderElement : builderElements) {
+            String id = builderElement.getAttribute("id");
+            String className = builderElement.getAttribute("class");
+            builders.add(new FlowBuilderInfo(id, className, parseAttributes(builderElement)));
+        }
+        return builders;
+    }
 
-			BeanDefinitionBuilder viewFactoryCreatorBuilder = BeanDefinitionBuilder
-					.genericBeanDefinition(MVC_VIEW_FACTORY_CREATOR_CLASS_NAME);
-			String viewFactoryCreator = registerInfrastructureComponent(element, context, viewFactoryCreatorBuilder);
-			flowBuilderServicesBuilder.addPropertyReference("viewFactoryCreator", viewFactoryCreator);
+    private void parseFlowBuilderServices(Element element, ParserContext context,
+                                          BeanDefinitionBuilder definitionBuilder) {
+        String flowBuilderServices = element.getAttribute("flow-builder-services");
+        if (!StringUtils.hasText(flowBuilderServices)) {
 
-			flowBuilderServices = registerInfrastructureComponent(element, context, flowBuilderServicesBuilder);
-		}
-		definitionBuilder.addPropertyReference("flowBuilderServices", flowBuilderServices);
-	}
+            BeanDefinitionBuilder flowBuilderServicesBuilder = BeanDefinitionBuilder
+                .genericBeanDefinition(FLOW_BUILDER_SERVICES_CLASS_NAME);
 
-	private String registerInfrastructureComponent(Element element, ParserContext context,
-			BeanDefinitionBuilder viewFactoryCreatorBuilder) {
-		String beanName = context.getReaderContext().generateBeanName(viewFactoryCreatorBuilder.getRawBeanDefinition());
-		viewFactoryCreatorBuilder.getRawBeanDefinition().setSource(context.extractSource(element));
-		viewFactoryCreatorBuilder.getRawBeanDefinition().setRole(BeanDefinition.ROLE_INFRASTRUCTURE);
-		context.registerBeanComponent(new BeanComponentDefinition(viewFactoryCreatorBuilder.getBeanDefinition(),
-				beanName));
-		return beanName;
-	}
+            BeanDefinitionBuilder conversionServiceBuilder = BeanDefinitionBuilder
+                .genericBeanDefinition(DEFAULT_CONVERSION_SERVICE_CLASS_NAME);
+            String conversionService = registerInfrastructureComponent(element, context, conversionServiceBuilder);
+            flowBuilderServicesBuilder.addPropertyReference("conversionService", conversionService);
+
+            BeanDefinitionBuilder springElExpressionParserBuilder = BeanDefinitionBuilder
+                .genericBeanDefinition(SPRING_EL_EXPRESSION_PARSER_CLASS_NAME);
+            BeanDefinitionBuilder webFlowElExpressionParserBuilder = BeanDefinitionBuilder
+                .genericBeanDefinition(WEB_FLOW_SPRING_EL_EXPRESSION_PARSER_CLASS_NAME);
+            webFlowElExpressionParserBuilder
+                .addConstructorArgValue(springElExpressionParserBuilder.getBeanDefinition());
+
+            String expressionParser = registerInfrastructureComponent(element, context,
+                webFlowElExpressionParserBuilder);
+            flowBuilderServicesBuilder.addPropertyReference("expressionParser", expressionParser);
+
+            BeanDefinitionBuilder viewFactoryCreatorBuilder = BeanDefinitionBuilder
+                .genericBeanDefinition(MVC_VIEW_FACTORY_CREATOR_CLASS_NAME);
+            String viewFactoryCreator = registerInfrastructureComponent(element, context, viewFactoryCreatorBuilder);
+            flowBuilderServicesBuilder.addPropertyReference("viewFactoryCreator", viewFactoryCreator);
+
+            flowBuilderServices = registerInfrastructureComponent(element, context, flowBuilderServicesBuilder);
+        }
+        definitionBuilder.addPropertyReference("flowBuilderServices", flowBuilderServices);
+    }
+
+    private String registerInfrastructureComponent(Element element, ParserContext context,
+                                                   BeanDefinitionBuilder viewFactoryCreatorBuilder) {
+        String beanName = context.getReaderContext().generateBeanName(viewFactoryCreatorBuilder.getRawBeanDefinition());
+        viewFactoryCreatorBuilder.getRawBeanDefinition().setSource(context.extractSource(element));
+        viewFactoryCreatorBuilder.getRawBeanDefinition().setRole(BeanDefinition.ROLE_INFRASTRUCTURE);
+        context.registerBeanComponent(new BeanComponentDefinition(viewFactoryCreatorBuilder.getBeanDefinition(),
+            beanName));
+        return beanName;
+    }
 
 }

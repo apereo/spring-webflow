@@ -29,15 +29,15 @@ import org.springframework.binding.expression.ValueCoercionException;
 
 /**
  * An expression that delegates to a {@link BeanWrapperImpl bean wrapper} to evaluate or set a property of a context.
- *
+ * <p>
  * Also supports the configuration of a {@link ConversionService} to allow StringToObject type conversion to occur as
  * part of setting a property. The StringToObject ConversionExecutors are automatically adapted and registered as
  * PropertyEditors.
- *
+ * <p>
  * Mainly exists to take advantage of BeanWrapper's unique property access features as an Expression implementation,
  * notably the ability to infer types of generic collections and maps and perform type coersion on collection elements
  * when setting values.
- *
+ * <p>
  * Note that Spring's BeanWrapper is not a full-blown EL implementation: it only supports property access, and does not
  * support method invocation, arithmetic operations, or logic operations.
  *
@@ -46,113 +46,116 @@ import org.springframework.binding.expression.ValueCoercionException;
  */
 public class BeanWrapperExpression implements Expression {
 
-	private String expression;
+    private String expression;
 
-	private ConversionService conversionService;
+    private ConversionService conversionService;
 
-	private boolean autoGrowNestedPaths = false;
+    private boolean autoGrowNestedPaths = false;
 
-	private int autoGrowCollectionLimit = Integer.MAX_VALUE;
+    private int autoGrowCollectionLimit = Integer.MAX_VALUE;
 
 
-	/**
-	 * Creates a new bean wrapper expression.
-	 * @param expression the property expression string
-	 * @param conversionService the conversion service containing converters to use as PropertyEditors for type
-	 * conversion
-	 */
-	public BeanWrapperExpression(String expression, ConversionService conversionService) {
-		this.expression = expression;
-		this.conversionService = conversionService;
-	}
+    /**
+     * Creates a new bean wrapper expression.
+     *
+     * @param expression        the property expression string
+     * @param conversionService the conversion service containing converters to use as PropertyEditors for type
+     *                          conversion
+     */
+    public BeanWrapperExpression(String expression, ConversionService conversionService) {
+        this.expression = expression;
+        this.conversionService = conversionService;
+    }
 
-	/**
-	 * Set whether this BeanWrapper should attempt to "auto-grow" a nested path that contains a null value.
-	 * <p>If "true", a null path location will be populated with a default object value and traversed
-	 * instead of resulting in a {@link NullValueInNestedPathException}. Turning this flag on also
-	 * enables auto-growth of collection elements when accessing an out-of-bounds index.
-	 * <p>Default is "false" on a plain BeanWrapper.
+    /**
+     * Set whether this BeanWrapper should attempt to "auto-grow" a nested path that contains a null value.
+     * <p>If "true", a null path location will be populated with a default object value and traversed
+     * instead of resulting in a {@link NullValueInNestedPathException}. Turning this flag on also
+     * enables auto-growth of collection elements when accessing an out-of-bounds index.
+     * <p>Default is "false" on a plain BeanWrapper.
+     *
      * @param autoGrowNestedPaths
      * @param autoGrowNestedPaths
      */
-	public void setAutoGrowNestedPaths(boolean autoGrowNestedPaths) {
-		this.autoGrowNestedPaths = autoGrowNestedPaths;
-	}
+    public void setAutoGrowNestedPaths(boolean autoGrowNestedPaths) {
+        this.autoGrowNestedPaths = autoGrowNestedPaths;
+    }
 
-	/**
-	 * Specify a limit for array and collection auto-growing.
-	 * <p>Default is unlimited on a plain BeanWrapper.
+    /**
+     * Specify a limit for array and collection auto-growing.
+     * <p>Default is unlimited on a plain BeanWrapper.
+     *
      * @param autoGrowCollectionLimit
      * @param autoGrowCollectionLimit
      */
-	public void setAutoGrowCollectionLimit(int autoGrowCollectionLimit) {
-		this.autoGrowCollectionLimit = autoGrowCollectionLimit;
-	}
+    public void setAutoGrowCollectionLimit(int autoGrowCollectionLimit) {
+        this.autoGrowCollectionLimit = autoGrowCollectionLimit;
+    }
 
-	public boolean equals(Object o) {
-		if (!(o instanceof BeanWrapperExpression)) {
-			return false;
-		}
-		BeanWrapperExpression other = (BeanWrapperExpression) o;
-		return expression.equals(other.expression);
-	}
+    public boolean equals(Object o) {
+        if (!(o instanceof BeanWrapperExpression)) {
+            return false;
+        }
+        BeanWrapperExpression other = (BeanWrapperExpression) o;
+        return expression.equals(other.expression);
+    }
 
-	public int hashCode() {
-		return expression.hashCode();
-	}
+    public int hashCode() {
+        return expression.hashCode();
+    }
 
-	public Object getValue(Object context) throws EvaluationException {
-		try {
-			BeanWrapperImpl beanWrapper = new BeanWrapperImpl(context);
-			beanWrapper.setAutoGrowNestedPaths(autoGrowNestedPaths);
-			beanWrapper.setAutoGrowCollectionLimit(autoGrowCollectionLimit);
-			return beanWrapper.getPropertyValue(expression);
-		} catch (NotReadablePropertyException e) {
-			throw new PropertyNotFoundException(context.getClass(), expression, e);
-		} catch (BeansException e) {
-			throw new EvaluationException(context.getClass(), getExpressionString(),
-					"A BeansException occurred getting the value for expression '" + getExpressionString()
-							+ "' on context [" + context.getClass() + "]", e);
-		}
-	}
+    public Object getValue(Object context) throws EvaluationException {
+        try {
+            BeanWrapperImpl beanWrapper = new BeanWrapperImpl(context);
+            beanWrapper.setAutoGrowNestedPaths(autoGrowNestedPaths);
+            beanWrapper.setAutoGrowCollectionLimit(autoGrowCollectionLimit);
+            return beanWrapper.getPropertyValue(expression);
+        } catch (NotReadablePropertyException e) {
+            throw new PropertyNotFoundException(context.getClass(), expression, e);
+        } catch (BeansException e) {
+            throw new EvaluationException(context.getClass(), getExpressionString(),
+                "A BeansException occurred getting the value for expression '" + getExpressionString()
+                + "' on context [" + context.getClass() + "]", e);
+        }
+    }
 
-	public void setValue(Object context, Object value) {
-		try {
-			BeanWrapperImpl beanWrapper = new BeanWrapperImpl(context);
-			beanWrapper.setAutoGrowNestedPaths(autoGrowNestedPaths);
-			beanWrapper.setAutoGrowCollectionLimit(autoGrowCollectionLimit);
-			beanWrapper.setConversionService(conversionService.getDelegateConversionService());
-			beanWrapper.setPropertyValue(expression, value);
-		} catch (NotWritablePropertyException e) {
-			throw new PropertyNotFoundException(context.getClass(), expression, e);
-		} catch (TypeMismatchException e) {
-			throw new ValueCoercionException(context.getClass(), expression, value, e.getRequiredType(), e);
-		} catch (BeansException e) {
-			throw new EvaluationException(context.getClass(), getExpressionString(),
-					"A BeansException occurred setting the value of expression '" + getExpressionString()
-							+ "' on context [" + context.getClass() + "] to [" + value + "]", e);
-		}
-	}
+    public void setValue(Object context, Object value) {
+        try {
+            BeanWrapperImpl beanWrapper = new BeanWrapperImpl(context);
+            beanWrapper.setAutoGrowNestedPaths(autoGrowNestedPaths);
+            beanWrapper.setAutoGrowCollectionLimit(autoGrowCollectionLimit);
+            beanWrapper.setConversionService(conversionService.getDelegateConversionService());
+            beanWrapper.setPropertyValue(expression, value);
+        } catch (NotWritablePropertyException e) {
+            throw new PropertyNotFoundException(context.getClass(), expression, e);
+        } catch (TypeMismatchException e) {
+            throw new ValueCoercionException(context.getClass(), expression, value, e.getRequiredType(), e);
+        } catch (BeansException e) {
+            throw new EvaluationException(context.getClass(), getExpressionString(),
+                "A BeansException occurred setting the value of expression '" + getExpressionString()
+                + "' on context [" + context.getClass() + "] to [" + value + "]", e);
+        }
+    }
 
-	public Class<?> getValueType(Object context) {
-		try {
-			BeanWrapperImpl beanWrapper = new BeanWrapperImpl(context);
-			return beanWrapper.getPropertyType(expression);
-		} catch (NotReadablePropertyException e) {
-			throw new PropertyNotFoundException(context.getClass(), expression, e);
-		} catch (BeansException e) {
-			throw new EvaluationException(context.getClass(), getExpressionString(),
-					"An BeansException occurred getting the value type for expression '" + getExpressionString()
-							+ "' on context [" + context.getClass() + "]", e);
-		}
-	}
+    public Class<?> getValueType(Object context) {
+        try {
+            BeanWrapperImpl beanWrapper = new BeanWrapperImpl(context);
+            return beanWrapper.getPropertyType(expression);
+        } catch (NotReadablePropertyException e) {
+            throw new PropertyNotFoundException(context.getClass(), expression, e);
+        } catch (BeansException e) {
+            throw new EvaluationException(context.getClass(), getExpressionString(),
+                "An BeansException occurred getting the value type for expression '" + getExpressionString()
+                + "' on context [" + context.getClass() + "]", e);
+        }
+    }
 
-	public String getExpressionString() {
-		return expression;
-	}
+    public String getExpressionString() {
+        return expression;
+    }
 
-	public String toString() {
-		return expression;
-	}
+    public String toString() {
+        return expression;
+    }
 
 }

@@ -15,116 +15,117 @@
  */
 package org.springframework.webflow.execution.repository.impl;
 
+import org.springframework.webflow.execution.repository.snapshot.FlowExecutionSnapshot;
+import org.springframework.webflow.execution.repository.snapshot.SnapshotNotFoundException;
+
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
-import org.springframework.webflow.execution.repository.snapshot.FlowExecutionSnapshot;
-import org.springframework.webflow.execution.repository.snapshot.SnapshotNotFoundException;
-
 /**
  * A group of flow execution snapshots. Simple typed data structure backed by a map and linked list. Supports expelling
  * the oldest snapshot if the maximum size is met.
- * 
+ *
  * @author Keith Donald
  */
 class SimpleFlowExecutionSnapshotGroup implements FlowExecutionSnapshotGroup, Serializable {
 
-	/**
-	 * The snapshot map; the key is a snapshot id, and the value is a {@link FlowExecutionSnapshot} object.
-	 */
-	private Map<Serializable, FlowExecutionSnapshot> snapshots = new HashMap<>();
+    /**
+     * The snapshot map; the key is a snapshot id, and the value is a {@link FlowExecutionSnapshot} object.
+     */
+    private Map<Serializable, FlowExecutionSnapshot> snapshots = new HashMap<>();
 
-	/**
-	 * An ordered list of snapshot ids. Each snapshot id represents an pointer to a {@link FlowExecutionSnapshot} in the
-	 * map. The first element is the oldest snapshot and the last is the youngest.
-	 */
-	private LinkedList<Serializable> snapshotIds = new LinkedList<>();
+    /**
+     * An ordered list of snapshot ids. Each snapshot id represents an pointer to a {@link FlowExecutionSnapshot} in the
+     * map. The first element is the oldest snapshot and the last is the youngest.
+     */
+    private LinkedList<Serializable> snapshotIds = new LinkedList<>();
 
-	/**
-	 * The maximum number of snapshots allowed in this group. -1 indicates no max limit.
-	 */
-	private int maxSnapshots = -1;
+    /**
+     * The maximum number of snapshots allowed in this group. -1 indicates no max limit.
+     */
+    private int maxSnapshots = -1;
 
-	/**
-	 * The snapshot id sequence ensuring unique snapshot ids within this group; snapshot ids start at 1.
-	 */
-	private int snapshotIdSequence = 1;
+    /**
+     * The snapshot id sequence ensuring unique snapshot ids within this group; snapshot ids start at 1.
+     */
+    private int snapshotIdSequence = 1;
 
-	/**
-	 * Returns the maximum number of snapshots allowed in this group.
-	 */
-	public int getMaxSnapshots() {
-		return maxSnapshots;
-	}
+    /**
+     * Returns the maximum number of snapshots allowed in this group.
+     */
+    public int getMaxSnapshots() {
+        return maxSnapshots;
+    }
 
-	/**
-	 * Sets the maximum number of snapshots allowed in this group.
-	 * @param maxSnapshots them max number of snapshots
-	 */
-	public void setMaxSnapshots(int maxSnapshots) {
-		this.maxSnapshots = maxSnapshots;
-	}
+    /**
+     * Sets the maximum number of snapshots allowed in this group.
+     *
+     * @param maxSnapshots them max number of snapshots
+     */
+    public void setMaxSnapshots(int maxSnapshots) {
+        this.maxSnapshots = maxSnapshots;
+    }
 
-	public FlowExecutionSnapshot getSnapshot(Serializable snapshotId) throws SnapshotNotFoundException {
-		FlowExecutionSnapshot snapshot = snapshots.get(snapshotId);
-		if (snapshot == null) {
-			throw new SnapshotNotFoundException(snapshotId);
-		}
-		return snapshot;
-	}
+    public FlowExecutionSnapshot getSnapshot(Serializable snapshotId) throws SnapshotNotFoundException {
+        FlowExecutionSnapshot snapshot = snapshots.get(snapshotId);
+        if (snapshot == null) {
+            throw new SnapshotNotFoundException(snapshotId);
+        }
+        return snapshot;
+    }
 
-	public void addSnapshot(Serializable snapshotId, FlowExecutionSnapshot snapshot) {
-		snapshots.put(snapshotId, snapshot);
-		if (snapshotIds.contains(snapshotId)) {
-			snapshotIds.remove(snapshotId);
-		}
-		snapshotIds.add(snapshotId);
-		if (maxExceeded()) {
-			removeOldestSnapshot();
-		}
-	}
+    public void addSnapshot(Serializable snapshotId, FlowExecutionSnapshot snapshot) {
+        snapshots.put(snapshotId, snapshot);
+        if (snapshotIds.contains(snapshotId)) {
+            snapshotIds.remove(snapshotId);
+        }
+        snapshotIds.add(snapshotId);
+        if (maxExceeded()) {
+            removeOldestSnapshot();
+        }
+    }
 
-	public void updateSnapshot(Serializable snapshotId, FlowExecutionSnapshot snapshot) {
-		if (!snapshots.containsKey(snapshotId)) {
-			return;
-		}
-		snapshots.put(snapshotId, snapshot);
-	}
+    public void updateSnapshot(Serializable snapshotId, FlowExecutionSnapshot snapshot) {
+        if (!snapshots.containsKey(snapshotId)) {
+            return;
+        }
+        snapshots.put(snapshotId, snapshot);
+    }
 
-	public void removeSnapshot(Serializable snapshotId) {
-		snapshots.remove(snapshotId);
-		snapshotIds.remove(snapshotId);
-	}
+    public void removeSnapshot(Serializable snapshotId) {
+        snapshots.remove(snapshotId);
+        snapshotIds.remove(snapshotId);
+    }
 
-	public void removeAllSnapshots() {
-		snapshots.clear();
-		snapshotIds.clear();
-	}
+    public void removeAllSnapshots() {
+        snapshots.clear();
+        snapshotIds.clear();
+    }
 
-	public int getSnapshotCount() {
-		return snapshotIds.size();
-	}
+    public int getSnapshotCount() {
+        return snapshotIds.size();
+    }
 
-	public Serializable nextSnapshotId() {
-		Integer nextSnapshotId = snapshotIdSequence;
-		snapshotIdSequence++;
-		return nextSnapshotId;
-	}
+    public Serializable nextSnapshotId() {
+        Integer nextSnapshotId = snapshotIdSequence;
+        snapshotIdSequence++;
+        return nextSnapshotId;
+    }
 
-	/**
-	 * Has the maximum number of snapshots in this group been exceeded?
-	 */
-	private boolean maxExceeded() {
-		return maxSnapshots > 0 && snapshotIds.size() > maxSnapshots;
-	}
+    /**
+     * Has the maximum number of snapshots in this group been exceeded?
+     */
+    private boolean maxExceeded() {
+        return maxSnapshots > 0 && snapshotIds.size() > maxSnapshots;
+    }
 
-	/**
-	 * Remove the olders snapshot from this group.
-	 */
-	private void removeOldestSnapshot() {
-		snapshots.remove(snapshotIds.removeFirst());
-	}
+    /**
+     * Remove the olders snapshot from this group.
+     */
+    private void removeOldestSnapshot() {
+        snapshots.remove(snapshotIds.removeFirst());
+    }
 
 }

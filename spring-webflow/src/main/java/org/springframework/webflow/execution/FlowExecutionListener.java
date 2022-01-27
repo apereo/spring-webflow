@@ -39,159 +39,174 @@ import org.springframework.webflow.engine.FlowExecutionExceptionHandler;
  * {@link FlowExecutionFactory factory} or restored by a
  * {@link org.springframework.webflow.execution.repository.FlowExecutionRepository}. Typically a listener will not be
  * registered with a flow execution <i>at runtime</i>, when the flow execution is already active.
- * 
+ *
+ * @author Keith Donald
+ * @author Erwin Vervaet
+ * @author Scott Andrews
  * @see FlowDefinition
  * @see StateDefinition
  * @see FlowExecution
  * @see RequestContext
  * @see Event
- * 
- * @author Keith Donald
- * @author Erwin Vervaet
- * @author Scott Andrews
  */
 public interface FlowExecutionListener {
 
-	/**
-	 * Called when any client request is submitted to manipulate this flow execution. This call happens before request
-	 * processing.
-	 * @param context the current flow request context
-	 */
-	default void requestSubmitted(RequestContext context) {
-	}
+    /**
+     * Called when any client request is submitted to manipulate this flow execution. This call happens before request
+     * processing.
+     *
+     * @param context the current flow request context
+     */
+    default void requestSubmitted(RequestContext context) {
+    }
 
-	/**
-	 * Called when a client request has completed processing.
-	 * @param context the source of the event
-	 */
-	default void requestProcessed(RequestContext context) {
-	}
+    /**
+     * Called when a client request has completed processing.
+     *
+     * @param context the source of the event
+     */
+    default void requestProcessed(RequestContext context) {
+    }
 
-	/**
-	 * Called to indicate a new flow definition session is about to be created. Called before the session is created. An
-	 * exception may be thrown from this method to veto the start operation. Any type of runtime exception can be used
-	 * for this purpose.
-	 * @param context the current flow request context
-	 * @param definition the flow for which a new session is starting
-	 */
-	default void sessionCreating(RequestContext context, FlowDefinition definition) {
-	}
+    /**
+     * Called to indicate a new flow definition session is about to be created. Called before the session is created. An
+     * exception may be thrown from this method to veto the start operation. Any type of runtime exception can be used
+     * for this purpose.
+     *
+     * @param context    the current flow request context
+     * @param definition the flow for which a new session is starting
+     */
+    default void sessionCreating(RequestContext context, FlowDefinition definition) {
+    }
 
-	/**
-	 * Called after a new flow session has been created but before it starts. Useful for setting arbitrary attributes in
-	 * the session before the flow starts.
-	 * @param context the current flow request context
-	 * @param session the session that was created
-	 * @param input a mutable input map - attributes placed in this map are eligible for input mapping by the flow
-	 * definition at startup
-	 */
-	default void sessionStarting(RequestContext context, FlowSession session, MutableAttributeMap<?> input) {
-	}
+    /**
+     * Called after a new flow session has been created but before it starts. Useful for setting arbitrary attributes in
+     * the session before the flow starts.
+     *
+     * @param context the current flow request context
+     * @param session the session that was created
+     * @param input   a mutable input map - attributes placed in this map are eligible for input mapping by the flow
+     *                definition at startup
+     */
+    default void sessionStarting(RequestContext context, FlowSession session, MutableAttributeMap<?> input) {
+    }
 
-	/**
-	 * Called after a new flow session has started. At this point the flow's start state has been entered and any other
-	 * startup behaviors have been executed.
-	 * @param context the current flow request context
-	 * @param session the session that was started
-	 */
-	default void sessionStarted(RequestContext context, FlowSession session) {
-	}
+    /**
+     * Called after a new flow session has started. At this point the flow's start state has been entered and any other
+     * startup behaviors have been executed.
+     *
+     * @param context the current flow request context
+     * @param session the session that was started
+     */
+    default void sessionStarted(RequestContext context, FlowSession session) {
+    }
 
-	/**
-	 * Called when an event is signaled in the current state, but prior to any state transition.
-	 * @param context the current flow request context
-	 * @param event the event that occurred
-	 */
-	default void eventSignaled(RequestContext context, Event event) {
-	}
+    /**
+     * Called when an event is signaled in the current state, but prior to any state transition.
+     *
+     * @param context the current flow request context
+     * @param event   the event that occurred
+     */
+    default void eventSignaled(RequestContext context, Event event) {
+    }
 
-	/**
-	 * Called when a transition is matched but before the transition occurs.
-	 * @param context the current flow request context
-	 * @param transition the proposed transition
-	 */
-	default void transitionExecuting(RequestContext context, TransitionDefinition transition) {
-	}
+    /**
+     * Called when a transition is matched but before the transition occurs.
+     *
+     * @param context    the current flow request context
+     * @param transition the proposed transition
+     */
+    default void transitionExecuting(RequestContext context, TransitionDefinition transition) {
+    }
 
-	/**
-	 * Called when a state transitions, after the transition is matched but before the transition occurs.
-	 * @param context the current flow request context
-	 * @param state the proposed state to transition to
-	 * @throws EnterStateVetoException when entering the state is not allowed
-	 */
-	default void stateEntering(RequestContext context, StateDefinition state) throws EnterStateVetoException {
-	}
+    /**
+     * Called when a state transitions, after the transition is matched but before the transition occurs.
+     *
+     * @param context the current flow request context
+     * @param state   the proposed state to transition to
+     * @throws EnterStateVetoException when entering the state is not allowed
+     */
+    default void stateEntering(RequestContext context, StateDefinition state) throws EnterStateVetoException {
+    }
 
-	/**
-	 * Called when a state transitions, after the transition occurred.
-	 * @param context the current flow request context
-	 * @param previousState <i>from</i> state of the transition
-	 * @param state <i>to</i> state of the transition
-	 */
-	default void stateEntered(RequestContext context, StateDefinition previousState, StateDefinition state) {
-	}
+    /**
+     * Called when a state transitions, after the transition occurred.
+     *
+     * @param context       the current flow request context
+     * @param previousState <i>from</i> state of the transition
+     * @param state         <i>to</i> state of the transition
+     */
+    default void stateEntered(RequestContext context, StateDefinition previousState, StateDefinition state) {
+    }
 
-	/**
-	 * Called when a view is about to render in a view-state, before any render actions are executed.
-	 * @param context the current flow request context
-	 * @param view the view that is about to render
-	 * @param viewState the current view state
-	 */
-	default void viewRendering(RequestContext context, View view, StateDefinition viewState) {
-	}
+    /**
+     * Called when a view is about to render in a view-state, before any render actions are executed.
+     *
+     * @param context   the current flow request context
+     * @param view      the view that is about to render
+     * @param viewState the current view state
+     */
+    default void viewRendering(RequestContext context, View view, StateDefinition viewState) {
+    }
 
-	/**
-	 * Called after a view has completed rendering.
-	 * @param context the current flow request context
-	 * @param view the view that rendered
-	 * @param viewState the current view state
-	 */
-	default void viewRendered(RequestContext context, View view, StateDefinition viewState) {
-	}
+    /**
+     * Called after a view has completed rendering.
+     *
+     * @param context   the current flow request context
+     * @param view      the view that rendered
+     * @param viewState the current view state
+     */
+    default void viewRendered(RequestContext context, View view, StateDefinition viewState) {
+    }
 
-	/**
-	 * Called when a flow execution is paused, for instance when it is waiting for user input (after event processing).
-	 * @param context the current flow request context
-	 */
-	default void paused(RequestContext context) {
-	}
+    /**
+     * Called when a flow execution is paused, for instance when it is waiting for user input (after event processing).
+     *
+     * @param context the current flow request context
+     */
+    default void paused(RequestContext context) {
+    }
 
-	/**
-	 * Called after a flow execution is successfully reactivated after pause (but before event processing).
-	 * @param context the current flow request context
-	 */
-	default void resuming(RequestContext context) {
-	}
+    /**
+     * Called after a flow execution is successfully reactivated after pause (but before event processing).
+     *
+     * @param context the current flow request context
+     */
+    default void resuming(RequestContext context) {
+    }
 
-	/**
-	 * Called when the active flow execution session has been asked to end but before it has ended.
-	 * @param context the current flow request context
-	 * @param session the current active session that is ending
-	 * @param outcome the outcome reached by the ending session, generally the id of the terminating end-state
-	 * @param output the flow output produced by the ending session, this map may be modified by this listener to affect
-	 * the output returned
-	 */
-	default void sessionEnding(RequestContext context, FlowSession session, String outcome, MutableAttributeMap<?> output) {
-	}
+    /**
+     * Called when the active flow execution session has been asked to end but before it has ended.
+     *
+     * @param context the current flow request context
+     * @param session the current active session that is ending
+     * @param outcome the outcome reached by the ending session, generally the id of the terminating end-state
+     * @param output  the flow output produced by the ending session, this map may be modified by this listener to affect
+     *                the output returned
+     */
+    default void sessionEnding(RequestContext context, FlowSession session, String outcome, MutableAttributeMap<?> output) {
+    }
 
-	/**
-	 * Called when a flow execution session ends. If the ended session was the root session of the flow execution, the
-	 * entire flow execution also ends.
-	 * @param context the current flow request context
-	 * @param session ending flow session
-	 * @param outcome the outcome reached by the ended session, generally the id of the terminating end-state
-	 * @param output the flow output returned by the ending session
-	 */
-	default void sessionEnded(RequestContext context, FlowSession session, String outcome, AttributeMap<?> output) {
-	}
+    /**
+     * Called when a flow execution session ends. If the ended session was the root session of the flow execution, the
+     * entire flow execution also ends.
+     *
+     * @param context the current flow request context
+     * @param session ending flow session
+     * @param outcome the outcome reached by the ended session, generally the id of the terminating end-state
+     * @param output  the flow output returned by the ending session
+     */
+    default void sessionEnded(RequestContext context, FlowSession session, String outcome, AttributeMap<?> output) {
+    }
 
-	/**
-	 * Called when an exception is thrown during a flow execution, before the exception is handled by any registered
-	 * {@link FlowExecutionExceptionHandler handler}.
-	 * @param context the current flow request context
-	 * @param exception the exception that occurred
-	 */
-	default void exceptionThrown(RequestContext context, FlowExecutionException exception) {
-	}
+    /**
+     * Called when an exception is thrown during a flow execution, before the exception is handled by any registered
+     * {@link FlowExecutionExceptionHandler handler}.
+     *
+     * @param context   the current flow request context
+     * @param exception the exception that occurred
+     */
+    default void exceptionThrown(RequestContext context, FlowExecutionException exception) {
+    }
 
 }

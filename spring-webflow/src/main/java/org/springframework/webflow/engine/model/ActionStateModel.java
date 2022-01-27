@@ -15,65 +15,67 @@
  */
 package org.springframework.webflow.engine.model;
 
-import java.util.LinkedList;
-
 import org.springframework.util.ObjectUtils;
+
+import java.util.LinkedList;
 
 /**
  * Model support for action states.
+ *
  * @author Scott Andrews
  */
 public class ActionStateModel extends AbstractTransitionableStateModel {
 
-	private LinkedList<AbstractActionModel> actions;
+    private LinkedList<AbstractActionModel> actions;
 
-	/**
-	 * Create an action state model
-	 * @param id the state identifier
-	 */
-	public ActionStateModel(String id) {
-		super(id);
-	}
+    /**
+     * Create an action state model
+     *
+     * @param id the state identifier
+     */
+    public ActionStateModel(String id) {
+        super(id);
+    }
 
-	public boolean isMergeableWith(Model model) {
-		if (!(model instanceof ActionStateModel)) {
-			return false;
-		}
-		ActionStateModel state = (ActionStateModel) model;
-		return ObjectUtils.nullSafeEquals(getId(), state.getId());
-	}
+    public boolean isMergeableWith(Model model) {
+        if (!(model instanceof ActionStateModel)) {
+            return false;
+        }
+        ActionStateModel state = (ActionStateModel) model;
+        return ObjectUtils.nullSafeEquals(getId(), state.getId());
+    }
 
-	public void merge(Model model) {
-		ActionStateModel state = (ActionStateModel) model;
-		setParent(null);
-		setAttributes(merge(getAttributes(), state.getAttributes()));
-		setSecured((SecuredModel) merge(getSecured(), state.getSecured()));
-		setOnEntryActions(merge(getOnEntryActions(), state.getOnEntryActions(), false));
-		setExceptionHandlers(merge(getExceptionHandlers(), state.getExceptionHandlers()));
-		setTransitions(merge(getTransitions(), state.getTransitions()));
-		setOnExitActions(merge(getOnExitActions(), state.getOnExitActions(), false));
-		setActions(merge(getActions(), state.getActions(), false));
-	}
+    public void merge(Model model) {
+        ActionStateModel state = (ActionStateModel) model;
+        setParent(null);
+        setAttributes(merge(getAttributes(), state.getAttributes()));
+        setSecured((SecuredModel) merge(getSecured(), state.getSecured()));
+        setOnEntryActions(merge(getOnEntryActions(), state.getOnEntryActions(), false));
+        setExceptionHandlers(merge(getExceptionHandlers(), state.getExceptionHandlers()));
+        setTransitions(merge(getTransitions(), state.getTransitions()));
+        setOnExitActions(merge(getOnExitActions(), state.getOnExitActions(), false));
+        setActions(merge(getActions(), state.getActions(), false));
+    }
 
-	public Model createCopy() {
-		ActionStateModel copy = new ActionStateModel(getId());
-		super.fillCopy(copy);
-		copy.setActions(copyList(actions));
-		return copy;
-	}
+    public Model createCopy() {
+        ActionStateModel copy = new ActionStateModel(getId());
+        super.fillCopy(copy);
+        copy.setActions(copyList(actions));
+        return copy;
+    }
 
-	/**
-	 * @return the actions
-	 */
-	public LinkedList<AbstractActionModel> getActions() {
-		return actions;
-	}
+    /**
+     * @return the actions
+     */
+    public LinkedList<AbstractActionModel> getActions() {
+        return actions;
+    }
 
-	/**
-	 * @param actions the actions to set
-	 */
-	public void setActions(LinkedList<AbstractActionModel> actions) {
-		this.actions = actions;
-	}
+    /**
+     * @param actions the actions to set
+     */
+    public void setActions(LinkedList<AbstractActionModel> actions) {
+        this.actions = actions;
+    }
 
 }

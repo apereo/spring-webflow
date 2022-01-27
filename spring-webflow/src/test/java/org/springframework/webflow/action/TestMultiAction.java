@@ -20,28 +20,28 @@ import org.springframework.webflow.execution.RequestContext;
 
 /**
  * Simple multi-action implementation used by the unit tests.
- * 
+ *
  * @author Erwin Vervaet
  */
 public class TestMultiAction extends MultiAction {
 
-	int counter = 0;
+    int counter = 0;
 
-	public Event increment(RequestContext context) {
-		counter++;
-		return success();
-	}
+    public Event increment(RequestContext context) {
+        counter++;
+        return success();
+    }
 
-	public Event decrement(RequestContext context) {
-		counter--;
-		return success();
-	}
+    public Event decrement(RequestContext context) {
+        counter--;
+        return success();
+    }
 
-	public int getCounter() {
-		return counter;
-	}
+    public int getCounter() {
+        return counter;
+    }
 
-	public void setCounter(int counter) {
-		this.counter = counter;
-	}
+    public void setCounter(int counter) {
+        this.counter = counter;
+    }
 }

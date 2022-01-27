@@ -29,174 +29,182 @@ import org.springframework.webflow.execution.FlowSession;
 
 /**
  * Mock implementation of the {@link FlowSession} interface.
- * 
- * @see FlowSession
- * 
+ *
  * @author Erwin Vervaet
+ * @see FlowSession
  */
 public class MockFlowSession implements FlowSession {
 
-	private static final String VIEW_MAP_ATTRIBUTE = "flowViewMap";
+    private static final String VIEW_MAP_ATTRIBUTE = "flowViewMap";
 
-	private static final String EMBEDDED_MODE_ATTRIBUTE = "embeddedMode";
+    private static final String EMBEDDED_MODE_ATTRIBUTE = "embeddedMode";
 
-	private Flow definition;
+    private Flow definition;
 
-	private State state;
+    private State state;
 
-	private MutableAttributeMap<Object> scope = new LocalAttributeMap<>();
+    private MutableAttributeMap<Object> scope = new LocalAttributeMap<>();
 
-	private FlowSession parent;
+    private FlowSession parent;
 
-	/**
-	 * Creates a new mock flow session that sets a flow with id "mockFlow" as the 'active flow' in state "mockState".
-	 */
-	public MockFlowSession() {
-		setDefinition(new Flow("mockFlow"));
-		State state = new TransitionableState(definition, "mockState") {
-			protected void doEnter(RequestControlContext context) throws FlowExecutionException {
-				// nothing to do
-			}
-		};
-		setState(state);
-	}
+    /**
+     * Creates a new mock flow session that sets a flow with id "mockFlow" as the 'active flow' in state "mockState".
+     */
+    public MockFlowSession() {
+        setDefinition(new Flow("mockFlow"));
+        State state = new TransitionableState(definition, "mockState") {
+            protected void doEnter(RequestControlContext context) throws FlowExecutionException {
+                // nothing to do
+            }
+        };
+        setState(state);
+    }
 
-	/**
-	 * Creates a new mock session in a created state for the specified flow definition.
+    /**
+     * Creates a new mock session in a created state for the specified flow definition.
+     *
      * @param flow
      * @param flow
      */
-	public MockFlowSession(Flow flow) {
-		setDefinition(flow);
-	}
+    public MockFlowSession(Flow flow) {
+        setDefinition(flow);
+    }
 
-	/**
-	 * Creates a new mock session for the specified flow definition.
-	 * @param flow the flow definition for the session
-	 * @param input initial contents of 'flow scope'
-	 */
-	public MockFlowSession(Flow flow, AttributeMap<?> input) {
-		setDefinition(flow);
-		scope.putAll(input);
-	}
+    /**
+     * Creates a new mock session for the specified flow definition.
+     *
+     * @param flow  the flow definition for the session
+     * @param input initial contents of 'flow scope'
+     */
+    public MockFlowSession(Flow flow, AttributeMap<?> input) {
+        setDefinition(flow);
+        scope.putAll(input);
+    }
 
-	// implementing FlowSession
+    // implementing FlowSession
 
-	public FlowDefinition getDefinition() {
-		return definition;
-	}
+    public FlowDefinition getDefinition() {
+        return definition;
+    }
 
-	public StateDefinition getState() {
-		return state;
-	}
-
-	public MutableAttributeMap<Object> getScope() {
-		return scope;
-	}
-
-	@SuppressWarnings("unchecked")
-	public MutableAttributeMap<Object> getViewScope() throws IllegalStateException {
-		if (state == null) {
-			throw new IllegalStateException("The current state of this flow '" + definition.getId()
-					+ "' is [null] - cannot access view scope");
-		}
-		if (!state.isViewState()) {
-			throw new IllegalStateException("The current state '" + state.getId() + "' of this flow '"
-					+ definition.getId() + "' is not a view state - view scope not accessible");
-		}
-		return (MutableAttributeMap<Object>) scope.get(VIEW_MAP_ATTRIBUTE);
-	}
-
-	public boolean isEmbeddedMode() {
-		return (Boolean) scope.get(EMBEDDED_MODE_ATTRIBUTE, false);
-	}
-
-	public FlowSession getParent() {
-		return parent;
-	}
-
-	public boolean isRoot() {
-		return parent == null;
-	}
-
-	// mutators
-
-	/**
-	 * Set the flow associated with this flow session.
+    /**
+     * Set the flow associated with this flow session.
+     *
      * @param flow
      * @param flow
      */
-	public void setDefinition(Flow flow) {
-		this.definition = flow;
-	}
+    public void setDefinition(Flow flow) {
+        this.definition = flow;
+    }
 
-	/**
-	 * Set the currently active state.
+    public StateDefinition getState() {
+        return state;
+    }
+
+    /**
+     * Set the currently active state.
+     *
      * @param state
      * @param state
      */
-	public void setState(State state) {
-		if (this.state != null && this.state.isViewState()) {
-			destroyViewScope();
-		}
-		this.state = state;
-		if (this.state != null && this.state.isViewState()) {
-			initViewScope();
-		}
-	}
+    public void setState(State state) {
+        if (this.state != null && this.state.isViewState()) {
+            destroyViewScope();
+        }
+        this.state = state;
+        if (this.state != null && this.state.isViewState()) {
+            initViewScope();
+        }
+    }
 
-	/**
-	 * Set the scope data maintained by this flow session. This will be the flow scope data of the ongoing flow
-	 * execution.
+    public MutableAttributeMap<Object> getScope() {
+        return scope;
+    }
+
+    /**
+     * Set the scope data maintained by this flow session. This will be the flow scope data of the ongoing flow
+     * execution.
+     *
      * @param scope
      * @param scope
      */
-	public void setScope(MutableAttributeMap<Object> scope) {
-		this.scope = scope;
-	}
+    public void setScope(MutableAttributeMap<Object> scope) {
+        this.scope = scope;
+    }
 
-	/**
-	 * Set the parent flow session of this flow session in the ongoing flow execution.
+    @SuppressWarnings("unchecked")
+    public MutableAttributeMap<Object> getViewScope() throws IllegalStateException {
+        if (state == null) {
+            throw new IllegalStateException("The current state of this flow '" + definition.getId()
+                                            + "' is [null] - cannot access view scope");
+        }
+        if (!state.isViewState()) {
+            throw new IllegalStateException("The current state '" + state.getId() + "' of this flow '"
+                                            + definition.getId() + "' is not a view state - view scope not accessible");
+        }
+        return (MutableAttributeMap<Object>) scope.get(VIEW_MAP_ATTRIBUTE);
+    }
+
+    // mutators
+
+    public boolean isEmbeddedMode() {
+        return (Boolean) scope.get(EMBEDDED_MODE_ATTRIBUTE, false);
+    }
+
+    public FlowSession getParent() {
+        return parent;
+    }
+
+    /**
+     * Set the parent flow session of this flow session in the ongoing flow execution.
+     *
      * @param parent
      * @param parent
      */
-	public void setParent(FlowSession parent) {
-		this.parent = parent;
-	}
+    public void setParent(FlowSession parent) {
+        this.parent = parent;
+    }
 
-	// convenience accessors
+    public boolean isRoot() {
+        return parent == null;
+    }
 
-	/**
-	 * Returns the flow definition of this session.
+    // convenience accessors
+
+    /**
+     * Returns the flow definition of this session.
+     *
      * @return
      */
-	public Flow getDefinitionInternal() {
-		return definition;
-	}
+    public Flow getDefinitionInternal() {
+        return definition;
+    }
 
-	/**
-	 * Returns the current state of this session.
+    /**
+     * Returns the current state of this session.
+     *
      * @return
      */
-	public State getStateInternal() {
-		return state;
-	}
+    public State getStateInternal() {
+        return state;
+    }
 
-	/**
-	 * Set a flow session attribute to indicate the current session should execute in embedded mode.
-	 * @see FlowSession#isEmbeddedMode()
-	 */
-	void setEmbeddedMode() {
-		this.scope.put(EMBEDDED_MODE_ATTRIBUTE, true);
-	}
+    /**
+     * Set a flow session attribute to indicate the current session should execute in embedded mode.
+     *
+     * @see FlowSession#isEmbeddedMode()
+     */
+    void setEmbeddedMode() {
+        this.scope.put(EMBEDDED_MODE_ATTRIBUTE, true);
+    }
 
-	// internal helpers
+    // internal helpers
 
-	private void initViewScope() {
-		scope.put(VIEW_MAP_ATTRIBUTE, new LocalAttributeMap<>());
-	}
+    private void initViewScope() {
+        scope.put(VIEW_MAP_ATTRIBUTE, new LocalAttributeMap<>());
+    }
 
-	private void destroyViewScope() {
-		scope.remove(VIEW_MAP_ATTRIBUTE);
-	}
+    private void destroyViewScope() {
+        scope.remove(VIEW_MAP_ATTRIBUTE);
+    }
 }

@@ -20,18 +20,19 @@ import org.springframework.webflow.engine.model.FlowModel;
 /**
  * A runtime service locator interface for retrieving flow definitions by <code>id</code>. Flow locators are needed by
  * flow executors at runtime to retrieve flow models to support loading flow definitions.
- * 
+ *
  * @author Keith Donald
  * @author Erwin Vervaet
  * @author Scott Andrews
  */
 public interface FlowModelLocator {
 
-	/**
-	 * Lookup the flow model with the specified id.
-	 * @param id the flow model identifier
-	 * @return the flow mode
-	 * @throws NoSuchFlowModelException when the flow model with the specified id does not exist
-	 */
-	FlowModel getFlowModel(String id) throws NoSuchFlowModelException;
+    /**
+     * Lookup the flow model with the specified id.
+     *
+     * @param id the flow model identifier
+     * @return the flow mode
+     * @throws NoSuchFlowModelException when the flow model with the specified id does not exist
+     */
+    FlowModel getFlowModel(String id) throws NoSuchFlowModelException;
 }

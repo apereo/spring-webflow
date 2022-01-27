@@ -15,54 +15,54 @@
  */
 package org.springframework.webflow.engine.builder.support;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-
 import org.junit.jupiter.api.Test;
 import org.springframework.webflow.engine.TargetStateResolver;
 import org.springframework.webflow.engine.Transition;
 import org.springframework.webflow.test.MockFlowBuilderContext;
 import org.springframework.webflow.test.MockRequestContext;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 public class TextToTargetStateResolverTests {
 
-	private MockFlowBuilderContext serviceLocator = new MockFlowBuilderContext("flowId");
-	private TextToTargetStateResolver converter = new TextToTargetStateResolver(serviceLocator);
+    private MockFlowBuilderContext serviceLocator = new MockFlowBuilderContext("flowId");
 
-	@Test
-	public void testStatic() throws Exception {
-		String expression = "mockState";
-		TargetStateResolver resolver = (TargetStateResolver) converter.convertSourceToTargetClass(expression,
-				TargetStateResolver.class);
-		MockRequestContext context = new MockRequestContext();
-		Transition transition = new Transition();
-		assertEquals("mockState", resolver.resolveTargetState(transition, null, context).getId());
-	}
+    private TextToTargetStateResolver converter = new TextToTargetStateResolver(serviceLocator);
 
-	@Test
-	public void testDynamic() throws Exception {
-		String expression = "#{flowScope.lastState}";
-		TargetStateResolver resolver = (TargetStateResolver) converter.convertSourceToTargetClass(expression,
-				TargetStateResolver.class);
-		MockRequestContext context = new MockRequestContext();
-		context.getFlowScope().put("lastState", "mockState");
-		Transition transition = new Transition();
-		assertEquals("mockState", resolver.resolveTargetState(transition, null, context).getId());
-	}
+    @Test
+    public void testStatic() throws Exception {
+        String expression = "mockState";
+        TargetStateResolver resolver = (TargetStateResolver) converter.convertSourceToTargetClass(expression,
+            TargetStateResolver.class);
+        MockRequestContext context = new MockRequestContext();
+        Transition transition = new Transition();
+        assertEquals("mockState", resolver.resolveTargetState(transition, null, context).getId());
+    }
 
-	@Test
-	public void testNull() throws Exception {
-		String expression = null;
-		TargetStateResolver resolver = (TargetStateResolver) converter.convertSourceToTargetClass(expression,
-				TargetStateResolver.class);
-		assertNull(resolver);
-	}
+    @Test
+    public void testDynamic() throws Exception {
+        String expression = "#{flowScope.lastState}";
+        TargetStateResolver resolver = (TargetStateResolver) converter.convertSourceToTargetClass(expression,
+            TargetStateResolver.class);
+        MockRequestContext context = new MockRequestContext();
+        context.getFlowScope().put("lastState", "mockState");
+        Transition transition = new Transition();
+        assertEquals("mockState", resolver.resolveTargetState(transition, null, context).getId());
+    }
 
-	@Test
-	public void testEmpty() throws Exception {
-		String expression = "";
-		TargetStateResolver resolver = (TargetStateResolver) converter.convertSourceToTargetClass(expression,
-				TargetStateResolver.class);
-		assertNull(resolver);
-	}
+    @Test
+    public void testNull() throws Exception {
+        String expression = null;
+        TargetStateResolver resolver = (TargetStateResolver) converter.convertSourceToTargetClass(expression,
+            TargetStateResolver.class);
+        assertNull(resolver);
+    }
+
+    @Test
+    public void testEmpty() throws Exception {
+        String expression = "";
+        TargetStateResolver resolver = (TargetStateResolver) converter.convertSourceToTargetClass(expression,
+            TargetStateResolver.class);
+        assertNull(resolver);
+    }
 }

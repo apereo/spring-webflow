@@ -15,14 +15,8 @@
  */
 package org.springframework.webflow.context.web;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertSame;
-
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -30,53 +24,58 @@ import org.springframework.webflow.context.servlet.HttpSessionMap;
 import org.springframework.webflow.core.collection.AttributeMapBindingEvent;
 import org.springframework.webflow.core.collection.AttributeMapBindingListener;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 /**
  * Unit tests for {@link HttpSessionMapBindingListener}.
- * 
+ *
  * @author Erwin Vervaet
  */
 public class HttpSessionMapBindingListenerTests {
 
-	private HttpServletRequest request;
-	private HttpSession session;
-	private TestAttributeMapBindingListener value;
+    private HttpServletRequest request;
 
-	@BeforeEach
-	public void setUp() throws Exception {
-		request = new MockHttpServletRequest();
-		session = request.getSession(true);
-		value = new TestAttributeMapBindingListener();
-	}
+    private HttpSession session;
 
-	@Test
-	public void testValueBoundUnBound() {
-		value.valueBoundEvent = null;
-		value.valueUnboundEvent = null;
-		session.setAttribute("key", new HttpSessionMapBindingListener(value, new HttpSessionMap(request)));
-		assertNotNull(value.valueBoundEvent);
-		assertNull(value.valueUnboundEvent);
-		value.valueBoundEvent = null;
-		value.valueUnboundEvent = null;
-		session.removeAttribute("key");
-		assertNull(value.valueBoundEvent);
-		assertNotNull(value.valueUnboundEvent);
-	}
+    private TestAttributeMapBindingListener value;
 
-	private static class TestAttributeMapBindingListener implements AttributeMapBindingListener {
+    @BeforeEach
+    public void setUp() throws Exception {
+        request = new MockHttpServletRequest();
+        session = request.getSession(true);
+        value = new TestAttributeMapBindingListener();
+    }
 
-		public AttributeMapBindingEvent valueBoundEvent;
-		public AttributeMapBindingEvent valueUnboundEvent;
+    @Test
+    public void testValueBoundUnBound() {
+        value.valueBoundEvent = null;
+        value.valueUnboundEvent = null;
+        session.setAttribute("key", new HttpSessionMapBindingListener(value, new HttpSessionMap(request)));
+        assertNotNull(value.valueBoundEvent);
+        assertNull(value.valueUnboundEvent);
+        value.valueBoundEvent = null;
+        value.valueUnboundEvent = null;
+        session.removeAttribute("key");
+        assertNull(value.valueBoundEvent);
+        assertNotNull(value.valueUnboundEvent);
+    }
 
-		public void valueBound(AttributeMapBindingEvent event) {
-			this.valueBoundEvent = event;
-			assertEquals("key", event.getAttributeName());
-			assertSame(event.getAttributeValue(), this);
-		}
+    private static class TestAttributeMapBindingListener implements AttributeMapBindingListener {
 
-		public void valueUnbound(AttributeMapBindingEvent event) {
-			this.valueUnboundEvent = event;
-			assertEquals("key", event.getAttributeName());
-			assertSame(event.getAttributeValue(), this);
-		}
-	}
+        public AttributeMapBindingEvent valueBoundEvent;
+
+        public AttributeMapBindingEvent valueUnboundEvent;
+
+        public void valueBound(AttributeMapBindingEvent event) {
+            this.valueBoundEvent = event;
+            assertEquals("key", event.getAttributeName());
+            assertSame(event.getAttributeValue(), this);
+        }
+
+        public void valueUnbound(AttributeMapBindingEvent event) {
+            this.valueUnboundEvent = event;
+            assertEquals("key", event.getAttributeName());
+            assertSame(event.getAttributeValue(), this);
+        }
+    }
 }

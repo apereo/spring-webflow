@@ -63,134 +63,137 @@ import org.springframework.webflow.execution.repository.FlowExecutionRepository;
  * </tr>
  * </table>
  *
- * @see FlowDefinitionLocator
- * @see FlowExecutionFactory
- * @see FlowExecutionRepository
- * 
  * @author Keith Donald
  * @author Erwin Vervaet
  * @author Colin Sampaleanu
+ * @see FlowDefinitionLocator
+ * @see FlowExecutionFactory
+ * @see FlowExecutionRepository
  */
 public class FlowExecutorImpl implements FlowExecutor {
 
-	private static final Log logger = LogFactory.getLog(FlowExecutorImpl.class);
+    private static final Log logger = LogFactory.getLog(FlowExecutorImpl.class);
 
-	/**
-	 * The locator to access flow definitions registered in a central registry.
-	 */
-	private FlowDefinitionLocator definitionLocator;
+    /**
+     * The locator to access flow definitions registered in a central registry.
+     */
+    private FlowDefinitionLocator definitionLocator;
 
-	/**
-	 * The abstract factory for creating a new execution of a flow definition.
-	 */
-	private FlowExecutionFactory executionFactory;
+    /**
+     * The abstract factory for creating a new execution of a flow definition.
+     */
+    private FlowExecutionFactory executionFactory;
 
-	/**
-	 * The repository used to save, update, and load existing flow executions to/from a persistent store.
-	 */
-	private FlowExecutionRepository executionRepository;
+    /**
+     * The repository used to save, update, and load existing flow executions to/from a persistent store.
+     */
+    private FlowExecutionRepository executionRepository;
 
-	/**
-	 * Create a new flow executor.
-	 * @param definitionLocator the locator for accessing flow definitions to execute
-	 * @param executionFactory the factory for creating executions of flow definitions
-	 * @param executionRepository the repository for persisting paused flow executions
-	 */
-	public FlowExecutorImpl(FlowDefinitionLocator definitionLocator, FlowExecutionFactory executionFactory,
-			FlowExecutionRepository executionRepository) {
-		Assert.notNull(definitionLocator, "The locator for accessing flow definitions is required");
-		Assert.notNull(executionFactory, "The execution factory for creating new flow executions is required");
-		Assert.notNull(executionRepository, "The repository for persisting flow executions is required");
-		this.definitionLocator = definitionLocator;
-		this.executionFactory = executionFactory;
-		this.executionRepository = executionRepository;
-	}
+    /**
+     * Create a new flow executor.
+     *
+     * @param definitionLocator   the locator for accessing flow definitions to execute
+     * @param executionFactory    the factory for creating executions of flow definitions
+     * @param executionRepository the repository for persisting paused flow executions
+     */
+    public FlowExecutorImpl(FlowDefinitionLocator definitionLocator, FlowExecutionFactory executionFactory,
+                            FlowExecutionRepository executionRepository) {
+        Assert.notNull(definitionLocator, "The locator for accessing flow definitions is required");
+        Assert.notNull(executionFactory, "The execution factory for creating new flow executions is required");
+        Assert.notNull(executionRepository, "The repository for persisting flow executions is required");
+        this.definitionLocator = definitionLocator;
+        this.executionFactory = executionFactory;
+        this.executionRepository = executionRepository;
+    }
 
-	/**
-	 * Returns the locator to load flow definitions to execute.
+    /**
+     * Returns the locator to load flow definitions to execute.
+     *
      * @return
      */
-	public FlowDefinitionLocator getDefinitionLocator() {
-		return definitionLocator;
-	}
+    public FlowDefinitionLocator getDefinitionLocator() {
+        return definitionLocator;
+    }
 
-	/**
-	 * Returns the abstract factory used to create new executions of a flow.
+    /**
+     * Returns the abstract factory used to create new executions of a flow.
+     *
      * @return
      */
-	public FlowExecutionFactory getExecutionFactory() {
-		return executionFactory;
-	}
+    public FlowExecutionFactory getExecutionFactory() {
+        return executionFactory;
+    }
 
-	/**
-	 * Returns the repository used to save, update, and load existing flow executions to/from a persistent store.
+    /**
+     * Returns the repository used to save, update, and load existing flow executions to/from a persistent store.
+     *
      * @return
      */
-	public FlowExecutionRepository getExecutionRepository() {
-		return executionRepository;
-	}
+    public FlowExecutionRepository getExecutionRepository() {
+        return executionRepository;
+    }
 
-	public FlowExecutionResult launchExecution(String flowId, MutableAttributeMap<?> input, ExternalContext context)
-			throws FlowException {
-		try {
-			if (logger.isDebugEnabled()) {
-				logger.debug("Launching new execution of flow '" + flowId + "' with input " + input);
-			}
-			ExternalContextHolder.setExternalContext(context);
-			FlowDefinition flowDefinition = definitionLocator.getFlowDefinition(flowId);
-			FlowExecution flowExecution = executionFactory.createFlowExecution(flowDefinition);
-			flowExecution.start(input, context);
-			if (!flowExecution.hasEnded()) {
-				FlowExecutionLock lock = executionRepository.getLock(flowExecution.getKey());
-				lock.lock();
-				try {
-					executionRepository.putFlowExecution(flowExecution);
-				} finally {
-					lock.unlock();
-				}
-				return createPausedResult(flowExecution);
-			} else {
-				return createEndResult(flowExecution);
-			}
-		} finally {
-			ExternalContextHolder.setExternalContext(null);
-		}
-	}
+    public FlowExecutionResult launchExecution(String flowId, MutableAttributeMap<?> input, ExternalContext context)
+        throws FlowException {
+        try {
+            if (logger.isDebugEnabled()) {
+                logger.debug("Launching new execution of flow '" + flowId + "' with input " + input);
+            }
+            ExternalContextHolder.setExternalContext(context);
+            FlowDefinition flowDefinition = definitionLocator.getFlowDefinition(flowId);
+            FlowExecution flowExecution = executionFactory.createFlowExecution(flowDefinition);
+            flowExecution.start(input, context);
+            if (!flowExecution.hasEnded()) {
+                FlowExecutionLock lock = executionRepository.getLock(flowExecution.getKey());
+                lock.lock();
+                try {
+                    executionRepository.putFlowExecution(flowExecution);
+                } finally {
+                    lock.unlock();
+                }
+                return createPausedResult(flowExecution);
+            } else {
+                return createEndResult(flowExecution);
+            }
+        } finally {
+            ExternalContextHolder.setExternalContext(null);
+        }
+    }
 
-	public FlowExecutionResult resumeExecution(String flowExecutionKey, ExternalContext context) throws FlowException {
-		try {
-			if (logger.isDebugEnabled()) {
-				logger.debug("Resuming flow execution with key '" + flowExecutionKey);
-			}
-			ExternalContextHolder.setExternalContext(context);
-			FlowExecutionKey key = executionRepository.parseFlowExecutionKey(flowExecutionKey);
-			FlowExecutionLock lock = executionRepository.getLock(key);
-			lock.lock();
-			try {
-				FlowExecution flowExecution = executionRepository.getFlowExecution(key);
-				flowExecution.resume(context);
-				if (!flowExecution.hasEnded()) {
-					executionRepository.putFlowExecution(flowExecution);
-					return createPausedResult(flowExecution);
-				} else {
-					executionRepository.removeFlowExecution(flowExecution);
-					return createEndResult(flowExecution);
-				}
-			} finally {
-				lock.unlock();
-			}
-		} finally {
-			ExternalContextHolder.setExternalContext(null);
-		}
-	}
+    public FlowExecutionResult resumeExecution(String flowExecutionKey, ExternalContext context) throws FlowException {
+        try {
+            if (logger.isDebugEnabled()) {
+                logger.debug("Resuming flow execution with key '" + flowExecutionKey);
+            }
+            ExternalContextHolder.setExternalContext(context);
+            FlowExecutionKey key = executionRepository.parseFlowExecutionKey(flowExecutionKey);
+            FlowExecutionLock lock = executionRepository.getLock(key);
+            lock.lock();
+            try {
+                FlowExecution flowExecution = executionRepository.getFlowExecution(key);
+                flowExecution.resume(context);
+                if (!flowExecution.hasEnded()) {
+                    executionRepository.putFlowExecution(flowExecution);
+                    return createPausedResult(flowExecution);
+                } else {
+                    executionRepository.removeFlowExecution(flowExecution);
+                    return createEndResult(flowExecution);
+                }
+            } finally {
+                lock.unlock();
+            }
+        } finally {
+            ExternalContextHolder.setExternalContext(null);
+        }
+    }
 
-	private FlowExecutionResult createEndResult(FlowExecution flowExecution) {
-		return FlowExecutionResult.createEndedResult(flowExecution.getDefinition().getId(), flowExecution.getOutcome());
-	}
+    private FlowExecutionResult createEndResult(FlowExecution flowExecution) {
+        return FlowExecutionResult.createEndedResult(flowExecution.getDefinition().getId(), flowExecution.getOutcome());
+    }
 
-	private FlowExecutionResult createPausedResult(FlowExecution flowExecution) {
-		return FlowExecutionResult.createPausedResult(flowExecution.getDefinition().getId(), flowExecution.getKey()
-				.toString());
-	}
+    private FlowExecutionResult createPausedResult(FlowExecution flowExecution) {
+        return FlowExecutionResult.createPausedResult(flowExecution.getDefinition().getId(), flowExecution.getKey()
+            .toString());
+    }
 
 }

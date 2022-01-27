@@ -15,19 +15,19 @@
  */
 package org.springframework.webflow.engine.model;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit tests for {@link ExceptionHandlerModel}.
  */
 public class ExceptionHandlerModelTests {
 
-	@Test
-	public void testNotMergeable() {
-		ExceptionHandlerModel child = new ExceptionHandlerModel("child");
-		assertFalse(child.isMergeableWith(child));
-	}
+    @Test
+    public void testNotMergeable() {
+        ExceptionHandlerModel child = new ExceptionHandlerModel("child");
+        assertFalse(child.isMergeableWith(child));
+    }
 
 }

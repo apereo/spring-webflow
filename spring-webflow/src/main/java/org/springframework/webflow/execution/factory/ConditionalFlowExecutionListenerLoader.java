@@ -15,9 +15,6 @@
  */
 package org.springframework.webflow.execution.factory;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.core.style.StylerUtils;
@@ -25,83 +22,88 @@ import org.springframework.util.Assert;
 import org.springframework.webflow.definition.FlowDefinition;
 import org.springframework.webflow.execution.FlowExecutionListener;
 
+import java.util.LinkedList;
+import java.util.List;
+
 /**
  * A flow execution listener loader that stores listeners in a list-backed data structure and allows for configuration
  * of which listeners should apply to which flow definitions. For trivial listener loading, see
  * {@link StaticFlowExecutionListenerLoader}.
- * 
+ *
+ * @author Keith Donald
  * @see FlowExecutionListenerCriteria
  * @see StaticFlowExecutionListenerLoader
- * 
- * @author Keith Donald
  */
 public class ConditionalFlowExecutionListenerLoader implements FlowExecutionListenerLoader {
 
-	private final Log logger = LogFactory.getLog(ConditionalFlowExecutionListenerLoader.class);
+    private final Log logger = LogFactory.getLog(ConditionalFlowExecutionListenerLoader.class);
 
-	/**
-	 * The list of flow execution listeners containing {@link ConditionalFlowExecutionListenerHolder} objects. The list
-	 * determines the conditions in which a single flow execution listener applies.
-	 */
-	private List<ConditionalFlowExecutionListenerHolder> listeners = new LinkedList<>();
+    /**
+     * The list of flow execution listeners containing {@link ConditionalFlowExecutionListenerHolder} objects. The list
+     * determines the conditions in which a single flow execution listener applies.
+     */
+    private List<ConditionalFlowExecutionListenerHolder> listeners = new LinkedList<>();
 
-	/**
-	 * Add a listener that will listen to executions to flows matching the specified criteria.
-	 * @param listener the listener
-	 * @param criteria the listener criteria
-	 */
-	public void addListener(FlowExecutionListener listener, FlowExecutionListenerCriteria criteria) {
-		if (listener == null) {
-			throw new IllegalArgumentException("The flow execution listener cannot be null");
-		}
-		if (logger.isDebugEnabled()) {
-			logger.debug("Adding flow execution listener " + listener + " with criteria " + criteria);
-		}
-		ConditionalFlowExecutionListenerHolder conditional = getHolder(listener);
-		if (conditional == null) {
-			conditional = new ConditionalFlowExecutionListenerHolder(listener);
-			listeners.add(conditional);
-		}
-		if (criteria == null) {
-			criteria = new FlowExecutionListenerCriteriaFactory().allFlows();
-		}
-		conditional.add(criteria);
-	}
+    /**
+     * Add a listener that will listen to executions to flows matching the specified criteria.
+     *
+     * @param listener the listener
+     * @param criteria the listener criteria
+     */
+    public void addListener(FlowExecutionListener listener, FlowExecutionListenerCriteria criteria) {
+        if (listener == null) {
+            throw new IllegalArgumentException("The flow execution listener cannot be null");
+        }
+        if (logger.isDebugEnabled()) {
+            logger.debug("Adding flow execution listener " + listener + " with criteria " + criteria);
+        }
+        ConditionalFlowExecutionListenerHolder conditional = getHolder(listener);
+        if (conditional == null) {
+            conditional = new ConditionalFlowExecutionListenerHolder(listener);
+            listeners.add(conditional);
+        }
+        if (criteria == null) {
+            criteria = new FlowExecutionListenerCriteriaFactory().allFlows();
+        }
+        conditional.add(criteria);
+    }
 
-	/**
-	 * Returns the array of flow execution listeners for specified flow.
-	 * @param flowDefinition the flow definition associated with the execution to be listened to
-	 * @return the flow execution listeners that apply
-	 */
-	public FlowExecutionListener[] getListeners(FlowDefinition flowDefinition) {
-		Assert.notNull(flowDefinition, "The Flow to load listeners for cannot be null");
-		List<FlowExecutionListener> listenersToAttach = new LinkedList<>();
-		for (ConditionalFlowExecutionListenerHolder listenerHolder : listeners) {
-			if (listenerHolder.listenerAppliesTo(flowDefinition)) {
-				listenersToAttach.add(listenerHolder.getListener());
-			}
-		}
-		if (logger.isDebugEnabled()) {
-			logger.debug("Loaded [" + listenersToAttach.size() + "] of possible " + listeners.size()
-					+ " listeners for this execution request for flow '" + flowDefinition.getId()
-					+ "', the listeners to attach are " + StylerUtils.style(listenersToAttach));
-		}
-		return listenersToAttach.toArray(new FlowExecutionListener[listenersToAttach.size()]);
-	}
+    /**
+     * Returns the array of flow execution listeners for specified flow.
+     *
+     * @param flowDefinition the flow definition associated with the execution to be listened to
+     * @return the flow execution listeners that apply
+     */
+    public FlowExecutionListener[] getListeners(FlowDefinition flowDefinition) {
+        Assert.notNull(flowDefinition, "The Flow to load listeners for cannot be null");
+        List<FlowExecutionListener> listenersToAttach = new LinkedList<>();
+        for (ConditionalFlowExecutionListenerHolder listenerHolder : listeners) {
+            if (listenerHolder.listenerAppliesTo(flowDefinition)) {
+                listenersToAttach.add(listenerHolder.getListener());
+            }
+        }
+        if (logger.isDebugEnabled()) {
+            logger.debug("Loaded [" + listenersToAttach.size() + "] of possible " + listeners.size()
+                         + " listeners for this execution request for flow '" + flowDefinition.getId()
+                         + "', the listeners to attach are " + StylerUtils.style(listenersToAttach));
+        }
+        return listenersToAttach.toArray(new FlowExecutionListener[listenersToAttach.size()]);
+    }
 
-	// internal helpers
+    // internal helpers
 
-	/**
-	 * Lookup the listener criteria holder for the listener provided.
-	 * @param listener the listener
-	 * @return the holder, or null if not found
-	 */
-	private ConditionalFlowExecutionListenerHolder getHolder(FlowExecutionListener listener) {
-		for (ConditionalFlowExecutionListenerHolder holder : listeners) {
-			if (holder.getListener().equals(listener)) {
-				return holder;
-			}
-		}
-		return null;
-	}
+    /**
+     * Lookup the listener criteria holder for the listener provided.
+     *
+     * @param listener the listener
+     * @return the holder, or null if not found
+     */
+    private ConditionalFlowExecutionListenerHolder getHolder(FlowExecutionListener listener) {
+        for (ConditionalFlowExecutionListenerHolder holder : listeners) {
+            if (holder.getListener().equals(listener)) {
+                return holder;
+            }
+        }
+        return null;
+    }
 }

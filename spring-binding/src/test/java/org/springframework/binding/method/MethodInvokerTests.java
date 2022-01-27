@@ -15,84 +15,81 @@
  */
 package org.springframework.binding.method;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.binding.expression.support.StaticExpression;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 /**
  * Unit tests for {@link org.springframework.binding.method.MethodInvoker}.
- * 
+ *
  * @author Erwin Vervaet
  * @author Jeremy Grelle
  */
 public class MethodInvokerTests {
 
-	private MethodInvoker methodInvoker;
+    private MethodInvoker methodInvoker;
 
-	@BeforeEach
-	public void setUp() {
-		this.methodInvoker = new MethodInvoker();
-	}
+    @BeforeEach
+    public void setUp() {
+        this.methodInvoker = new MethodInvoker();
+    }
 
-	@Test
-	public void testInvocationTargetException() {
-		try {
-			methodInvoker.invoke(new MethodSignature("test"), new TestObject(), null);
-			fail();
-		} catch (MethodInvocationException e) {
-			assertTrue(e.getTargetException() instanceof IllegalArgumentException);
-			assertEquals("just testing", e.getTargetException().getMessage());
-		}
-	}
+    @Test
+    public void testInvocationTargetException() {
+        try {
+            methodInvoker.invoke(new MethodSignature("test"), new TestObject(), null);
+            fail();
+        } catch (MethodInvocationException e) {
+            assertTrue(e.getTargetException() instanceof IllegalArgumentException);
+            assertEquals("just testing", e.getTargetException().getMessage());
+        }
+    }
 
-	@Test
-	public void testInvalidMethod() {
-		try {
-			methodInvoker.invoke(new MethodSignature("bogus"), new TestObject(), null);
-			fail();
-		} catch (MethodInvocationException e) {
-			assertTrue(e.getTargetException() instanceof InvalidMethodKeyException);
-		}
-	}
+    @Test
+    public void testInvalidMethod() {
+        try {
+            methodInvoker.invoke(new MethodSignature("bogus"), new TestObject(), null);
+            fail();
+        } catch (MethodInvocationException e) {
+            assertTrue(e.getTargetException() instanceof InvalidMethodKeyException);
+        }
+    }
 
-	@Test
-	public void testBeanArg() {
-		Parameters parameters = new Parameters();
-		Bean bean = new Bean();
-		parameters.add(new Parameter(Bean.class, new StaticExpression(bean)));
-		MethodSignature method = new MethodSignature("testBeanArg", parameters);
-		assertSame(bean, methodInvoker.invoke(method, new TestObject(), null));
-	}
+    @Test
+    public void testBeanArg() {
+        Parameters parameters = new Parameters();
+        Bean bean = new Bean();
+        parameters.add(new Parameter(Bean.class, new StaticExpression(bean)));
+        MethodSignature method = new MethodSignature("testBeanArg", parameters);
+        assertSame(bean, methodInvoker.invoke(method, new TestObject(), null));
+    }
 
-	@Test
-	public void testPrimitiveArg() {
-		Parameters parameters = new Parameters();
-		parameters.add(new Parameter(Boolean.class, new StaticExpression(true)));
-		MethodSignature method = new MethodSignature("testPrimitiveArg", parameters);
-		assertEquals(Boolean.TRUE, methodInvoker.invoke(method, new TestObject(), null));
-	}
+    @Test
+    public void testPrimitiveArg() {
+        Parameters parameters = new Parameters();
+        parameters.add(new Parameter(Boolean.class, new StaticExpression(true)));
+        MethodSignature method = new MethodSignature("testPrimitiveArg", parameters);
+        assertEquals(Boolean.TRUE, methodInvoker.invoke(method, new TestObject(), null));
+    }
 
-	static class TestObject {
+    static class TestObject {
 
-		public void test() {
-			throw new IllegalArgumentException("just testing");
-		}
+        public void test() {
+            throw new IllegalArgumentException("just testing");
+        }
 
-		public Object testBeanArg(Bean bean) {
-			return bean;
-		}
+        public Object testBeanArg(Bean bean) {
+            return bean;
+        }
 
-		public boolean testPrimitiveArg(boolean primitive) {
-			return primitive;
-		}
-	}
+        public boolean testPrimitiveArg(boolean primitive) {
+            return primitive;
+        }
+    }
 
-	static class Bean {
-		String value;
-	}
+    static class Bean {
+        String value;
+    }
 }

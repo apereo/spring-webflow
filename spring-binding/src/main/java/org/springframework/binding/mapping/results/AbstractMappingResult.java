@@ -21,45 +21,46 @@ import org.springframework.core.style.ToStringCreator;
 
 /**
  * Convenient base class for {@link MappingResult} implementations.
- * 
+ *
  * @author Keith Donald
  */
 public abstract class AbstractMappingResult implements MappingResult {
 
-	private transient Mapping mapping;
+    private transient Mapping mapping;
 
 
-	/**
-	 * Creates a new mapping result.
-	 * @param mapping the mapping this result is for.
-	 */
-	public AbstractMappingResult(Mapping mapping) {
-		this.mapping = mapping;
-	}
+    /**
+     * Creates a new mapping result.
+     *
+     * @param mapping the mapping this result is for.
+     */
+    public AbstractMappingResult(Mapping mapping) {
+        this.mapping = mapping;
+    }
 
-	public Mapping getMapping() {
-		return mapping;
-	}
+    public Mapping getMapping() {
+        return mapping;
+    }
 
-	public abstract String getCode();
+    public abstract String getCode();
 
-	public abstract boolean isError();
+    public abstract boolean isError();
 
-	public abstract Throwable getErrorCause();
+    public abstract Throwable getErrorCause();
 
-	public abstract Object getOriginalValue();
+    public abstract Object getOriginalValue();
 
-	public abstract Object getMappedValue();
+    public abstract Object getMappedValue();
 
-	public String toString() {
-		ToStringCreator creator = new ToStringCreator(this).append("mapping", mapping).append("code", getCode())
-				.append("error", isError());
-		if (isError()) {
-			creator.append("errorCause", getErrorCause());
-		}
-		creator.append("originalValue", getOriginalValue());
-		creator.append("mappedValue", getMappedValue());
-		return creator.toString();
-	}
+    public String toString() {
+        ToStringCreator creator = new ToStringCreator(this).append("mapping", mapping).append("code", getCode())
+            .append("error", isError());
+        if (isError()) {
+            creator.append("errorCause", getErrorCause());
+        }
+        creator.append("originalValue", getOriginalValue());
+        creator.append("mappedValue", getMappedValue());
+        return creator.toString();
+    }
 
 }

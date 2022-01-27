@@ -15,72 +15,75 @@
  */
 package org.springframework.webflow.test;
 
-import java.util.HashMap;
-import java.util.List;
-
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.webflow.core.collection.LocalParameterMap;
 import org.springframework.webflow.core.collection.ParameterMap;
 
+import java.util.HashMap;
+import java.util.List;
+
 /**
  * A extension of parameter map that allows for mutation of parameters. Useful as a stub for testing.
  *
- * @see ParameterMap
- *
  * @author Keith Donald
+ * @see ParameterMap
  */
 @SuppressWarnings("serial")
 public class MockParameterMap extends LocalParameterMap {
 
-	/**
-	 * Creates a new parameter map, initially empty.
-	 */
-	public MockParameterMap() {
-		super(new HashMap<>());
-	}
+    /**
+     * Creates a new parameter map, initially empty.
+     */
+    public MockParameterMap() {
+        super(new HashMap<>());
+    }
 
-	/**
-	 * Add a new parameter to this map.
-	 * @param parameterName the parameter name
-	 * @param parameterValue the parameter value
-	 * @return this, to support call chaining
-	 */
-	public MockParameterMap put(String parameterName, String parameterValue) {
-		getMapInternal().put(parameterName, parameterValue);
-		return this;
-	}
+    /**
+     * Add a new parameter to this map.
+     *
+     * @param parameterName  the parameter name
+     * @param parameterValue the parameter value
+     * @return this, to support call chaining
+     */
+    public MockParameterMap put(String parameterName, String parameterValue) {
+        getMapInternal().put(parameterName, parameterValue);
+        return this;
+    }
 
-	/**
-	 * Add a new multi-valued parameter to this map.
-	 * @param parameterName the parameter name
-	 * @param parameterValues the parameter values
-	 * @return this, to support call chaining
-	 */
-	public MockParameterMap put(String parameterName, String[] parameterValues) {
-		getMapInternal().put(parameterName, parameterValues);
-		return this;
-	}
+    /**
+     * Add a new multi-valued parameter to this map.
+     *
+     * @param parameterName   the parameter name
+     * @param parameterValues the parameter values
+     * @return this, to support call chaining
+     */
+    public MockParameterMap put(String parameterName, String[] parameterValues) {
+        getMapInternal().put(parameterName, parameterValues);
+        return this;
+    }
 
-	/**
-	 * Add a new multi-part file parameter to this map.
-	 * @param parameterName the parameter name
-	 * @param parameterValues the parameter values
-	 * @return this, to support call chaining
-	 */
-	public MockParameterMap put(String parameterName, MultipartFile parameterValues) {
-		getMapInternal().put(parameterName, parameterValues);
-		return this;
-	}
+    /**
+     * Add a new multi-part file parameter to this map.
+     *
+     * @param parameterName   the parameter name
+     * @param parameterValues the parameter values
+     * @return this, to support call chaining
+     */
+    public MockParameterMap put(String parameterName, MultipartFile parameterValues) {
+        getMapInternal().put(parameterName, parameterValues);
+        return this;
+    }
 
-	/**
-	 * Add a new multi-valued multi-part file parameter to this map.
-	 * @param parameterName the parameter name
-	 * @param parameterValues the parameter values
-	 * @return this, to support call chaining
-	 */
-	public MockParameterMap put(String parameterName, List<MultipartFile> parameterValues) {
-		getMapInternal().put(parameterName, parameterValues);
-		return this;
-	}
+    /**
+     * Add a new multi-valued multi-part file parameter to this map.
+     *
+     * @param parameterName   the parameter name
+     * @param parameterValues the parameter values
+     * @return this, to support call chaining
+     */
+    public MockParameterMap put(String parameterName, List<MultipartFile> parameterValues) {
+        getMapInternal().put(parameterName, parameterValues);
+        return this;
+    }
 
 }

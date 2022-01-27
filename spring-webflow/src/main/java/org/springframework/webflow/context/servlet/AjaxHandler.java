@@ -15,37 +15,39 @@
  */
 package org.springframework.webflow.context.servlet;
 
-import java.io.IOException;
-
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+
+import java.io.IOException;
 
 /**
  * Strategy interface that encapsulates knowledge about a client-side ajax system and how to communicate with that
  * system.
- * 
+ *
  * @author Keith Donald
  */
 public interface AjaxHandler {
 
-	/**
-	 * Is the current request an Ajax request?
-	 * @param request the current request
-	 * @param response the current response
+    /**
+     * Is the current request an Ajax request?
+     *
+     * @param request  the current request
+     * @param response the current response
      * @return
-	 */
-	boolean isAjaxRequest(HttpServletRequest request, HttpServletResponse response);
+     */
+    boolean isAjaxRequest(HttpServletRequest request, HttpServletResponse response);
 
-	/**
-	 * Send a redirect request to the Ajax client. This should cause the client-side agent to send a new request to the
-	 * specified target url.
-	 * @param request the current request
-	 * @param response the current response
-	 * @param targetUrl the target url to redirect to
-	 * @param popup whether the redirect should be sent from a new popup dialog window
+    /**
+     * Send a redirect request to the Ajax client. This should cause the client-side agent to send a new request to the
+     * specified target url.
+     *
+     * @param request   the current request
+     * @param response  the current response
+     * @param targetUrl the target url to redirect to
+     * @param popup     whether the redirect should be sent from a new popup dialog window
      * @throws IOException
      * @throws IOException
-	 */
-	void sendAjaxRedirect(String targetUrl, HttpServletRequest request, HttpServletResponse response,
-			boolean popup) throws IOException;
+     */
+    void sendAjaxRedirect(String targetUrl, HttpServletRequest request, HttpServletResponse response,
+                          boolean popup) throws IOException;
 }

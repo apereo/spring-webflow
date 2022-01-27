@@ -19,48 +19,49 @@ import org.springframework.binding.mapping.Mapping;
 
 /**
  * Indicates a type conversion occurred during a mapping operation.
- * 
+ *
  * @author Keith Donald
  * @author Scott Andrews
  */
 public class TypeConversionError extends AbstractMappingResult {
 
-	private Object originalValue;
+    private Object originalValue;
 
-	private Exception cause;
+    private Exception cause;
 
-	/**
-	 * Creates a new type conversion error.
-	 * @param mapping
+    /**
+     * Creates a new type conversion error.
+     *
+     * @param mapping
      * @param mapping
      * @param originalValue
      * @param originalValue
-     * @param cause the underlying type conversion exception
-	 */
-	public TypeConversionError(Mapping mapping, Object originalValue, Exception cause) {
-		super(mapping);
-		this.originalValue = originalValue;
-		this.cause = cause;
-	}
+     * @param cause         the underlying type conversion exception
+     */
+    public TypeConversionError(Mapping mapping, Object originalValue, Exception cause) {
+        super(mapping);
+        this.originalValue = originalValue;
+        this.cause = cause;
+    }
 
-	public String getCode() {
-		return "typeMismatch";
-	}
+    public String getCode() {
+        return "typeMismatch";
+    }
 
-	public boolean isError() {
-		return true;
-	}
+    public boolean isError() {
+        return true;
+    }
 
-	public Throwable getErrorCause() {
-		return cause;
-	}
+    public Throwable getErrorCause() {
+        return cause;
+    }
 
-	public Object getOriginalValue() {
-		return originalValue;
-	}
+    public Object getOriginalValue() {
+        return originalValue;
+    }
 
-	public Object getMappedValue() {
-		return null;
-	}
+    public Object getMappedValue() {
+        return null;
+    }
 
 }

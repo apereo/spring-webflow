@@ -15,62 +15,63 @@
  */
 package org.springframework.binding.message;
 
-import java.util.Locale;
-
 import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceResolvable;
 import org.springframework.core.style.ToStringCreator;
 
+import java.util.Locale;
+
 public class DefaultMessageResolver implements MessageResolver, MessageSourceResolvable {
 
-	private Object source;
+    private Object source;
 
-	private String[] codes;
+    private String[] codes;
 
-	private Severity severity;
+    private Severity severity;
 
-	private Object[] args;
+    private Object[] args;
 
-	private String defaultText;
+    private String defaultText;
 
-	public DefaultMessageResolver(Object source, String[] codes, Severity severity, Object[] args, String defaultText) {
-		this.source = source;
-		this.codes = codes;
-		this.severity = severity;
-		this.args = args;
-		this.defaultText = defaultText;
-	}
+    public DefaultMessageResolver(Object source, String[] codes, Severity severity, Object[] args, String defaultText) {
+        this.source = source;
+        this.codes = codes;
+        this.severity = severity;
+        this.args = args;
+        this.defaultText = defaultText;
+    }
 
-	public Message resolveMessage(MessageSource messageSource, Locale locale) {
-		return new Message(source, postProcessMessageText(messageSource.getMessage(this, locale)), severity);
-	}
+    public Message resolveMessage(MessageSource messageSource, Locale locale) {
+        return new Message(source, postProcessMessageText(messageSource.getMessage(this, locale)), severity);
+    }
 
-	/**
-	 * Subclasses may override to perform special post-processing of the returned message text; for example, running it
-	 * through an Expression evaluator.
-	 * @param text the resolved message text
-	 * @return the post processeed message text
-	 */
-	protected String postProcessMessageText(String text) {
-		return text;
-	}
+    public String[] getCodes() {
+        return codes;
+    }
 
-	// implementing MessageSourceResolver
+    // implementing MessageSourceResolver
 
-	public String[] getCodes() {
-		return codes;
-	}
+    public Object[] getArguments() {
+        return args;
+    }
 
-	public Object[] getArguments() {
-		return args;
-	}
+    public String getDefaultMessage() {
+        return defaultText;
+    }
 
-	public String getDefaultMessage() {
-		return defaultText;
-	}
+    public String toString() {
+        return new ToStringCreator(this).append("source", source).append("severity", severity).append("codes", codes)
+            .append("args", args).append("defaultText", defaultText).toString();
+    }
 
-	public String toString() {
-		return new ToStringCreator(this).append("source", source).append("severity", severity).append("codes", codes)
-				.append("args", args).append("defaultText", defaultText).toString();
-	}
+    /**
+     * Subclasses may override to perform special post-processing of the returned message text; for example, running it
+     * through an Expression evaluator.
+     *
+     * @param text the resolved message text
+     * @return the post processeed message text
+     */
+    protected String postProcessMessageText(String text) {
+        return text;
+    }
 }

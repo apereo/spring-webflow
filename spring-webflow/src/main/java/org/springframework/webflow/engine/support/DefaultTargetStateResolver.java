@@ -27,43 +27,45 @@ import org.springframework.webflow.execution.RequestContext;
 /**
  * A transition target state resolver that evaluates an expression to resolve the target state. The default
  * implementation.
- * 
+ *
  * @author Keith Donald
  */
 public class DefaultTargetStateResolver implements TargetStateResolver {
 
-	/**
-	 * The expression for the target state identifier.
-	 */
-	private Expression targetStateIdExpression;
+    /**
+     * The expression for the target state identifier.
+     */
+    private Expression targetStateIdExpression;
 
-	/**
-	 * Creates a new target state resolver that always returns the same target state id.
-	 * @param targetStateId a static target target state
-	 */
-	public DefaultTargetStateResolver(String targetStateId) {
-		this(new StaticExpression(targetStateId));
-	}
+    /**
+     * Creates a new target state resolver that always returns the same target state id.
+     *
+     * @param targetStateId a static target target state
+     */
+    public DefaultTargetStateResolver(String targetStateId) {
+        this(new StaticExpression(targetStateId));
+    }
 
-	/**
-	 * Creates a new target state resolver.
-	 * @param targetStateIdExpression the target state expression
-	 */
-	public DefaultTargetStateResolver(Expression targetStateIdExpression) {
-		Assert.notNull(targetStateIdExpression, "The target state id expression is required");
-		this.targetStateIdExpression = targetStateIdExpression;
-	}
+    /**
+     * Creates a new target state resolver.
+     *
+     * @param targetStateIdExpression the target state expression
+     */
+    public DefaultTargetStateResolver(Expression targetStateIdExpression) {
+        Assert.notNull(targetStateIdExpression, "The target state id expression is required");
+        this.targetStateIdExpression = targetStateIdExpression;
+    }
 
-	public State resolveTargetState(Transition transition, State sourceState, RequestContext context) {
-		String targetStateId = (String) targetStateIdExpression.getValue(context);
-		if (targetStateId != null) {
-			return ((Flow) context.getActiveFlow()).getStateInstance(targetStateId);
-		} else {
-			return null;
-		}
-	}
+    public State resolveTargetState(Transition transition, State sourceState, RequestContext context) {
+        String targetStateId = (String) targetStateIdExpression.getValue(context);
+        if (targetStateId != null) {
+            return ((Flow) context.getActiveFlow()).getStateInstance(targetStateId);
+        } else {
+            return null;
+        }
+    }
 
-	public String toString() {
-		return targetStateIdExpression.toString();
-	}
+    public String toString() {
+        return targetStateIdExpression.toString();
+    }
 }

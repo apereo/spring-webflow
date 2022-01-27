@@ -23,34 +23,35 @@ import org.springframework.core.NamedThreadLocal;
  * <p>
  * Used as a central holder for the current ExternalContext in Spring Web Flow, wherever necessary. Often used by
  * artifacts needing access to the current application session.
- * 
- * @see ExternalContext
- * 
+ *
  * @author Keith Donald
+ * @see ExternalContext
  */
 public final class ExternalContextHolder {
 
-	private static final ThreadLocal<ExternalContext> externalContextHolder = new NamedThreadLocal<>(
-			"Flow ExternalContext");
+    private static final ThreadLocal<ExternalContext> externalContextHolder = new NamedThreadLocal<>(
+        "Flow ExternalContext");
 
-	/**
-	 * Associate the given ExternalContext with the current thread.
-	 * @param externalContext the current ExternalContext, or <code>null</code> to reset the thread-bound context
-	 */
-	public static void setExternalContext(ExternalContext externalContext) {
-		externalContextHolder.set(externalContext);
-	}
+    // not instantiable
+    private ExternalContextHolder() {
+    }
 
-	/**
-	 * Return the ExternalContext associated with the current thread, if any.
-	 * @return the current ExternalContext
-	 */
-	public static ExternalContext getExternalContext() {
-		return externalContextHolder.get();
-	}
+    /**
+     * Return the ExternalContext associated with the current thread, if any.
+     *
+     * @return the current ExternalContext
+     */
+    public static ExternalContext getExternalContext() {
+        return externalContextHolder.get();
+    }
 
-	// not instantiable
-	private ExternalContextHolder() {
-	}
+    /**
+     * Associate the given ExternalContext with the current thread.
+     *
+     * @param externalContext the current ExternalContext, or <code>null</code> to reset the thread-bound context
+     */
+    public static void setExternalContext(ExternalContext externalContext) {
+        externalContextHolder.set(externalContext);
+    }
 
 }

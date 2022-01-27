@@ -22,8 +22,8 @@ import org.springframework.validation.Errors;
  */
 public class StubModelErrors {
 
-	public void validateMockState(Object model, Errors errors) {
-		errors.rejectValue("errors-external", "test", "test");
-	}
+    public void validateMockState(Object model, Errors errors) {
+        errors.rejectValue("errors-external", "test", "test");
+    }
 
 }

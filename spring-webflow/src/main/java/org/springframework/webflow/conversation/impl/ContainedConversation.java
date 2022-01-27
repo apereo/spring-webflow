@@ -15,10 +15,6 @@
  */
 package org.springframework.webflow.conversation.impl;
 
-import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.webflow.context.ExternalContextHolder;
@@ -26,110 +22,115 @@ import org.springframework.webflow.conversation.Conversation;
 import org.springframework.webflow.conversation.ConversationId;
 import org.springframework.webflow.core.collection.SharedAttributeMap;
 
+import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Internal {@link Conversation} implementation used by the conversation container.
  * <p>
  * This is an internal helper class of the {@link SessionBindingConversationManager}.
- * 
+ *
  * @author Erwin Vervaet
  */
 public class ContainedConversation implements Conversation, Serializable {
 
-	private static final Log logger = LogFactory.getLog(SessionBindingConversationManager.class);
+    private static final Log logger = LogFactory.getLog(SessionBindingConversationManager.class);
 
-	private ConversationContainer container;
+    private ConversationContainer container;
 
-	private ConversationId id;
+    private ConversationId id;
 
-	private ConversationLock lock;
+    private ConversationLock lock;
 
-	private Map<Object, Object> attributes;
+    private Map<Object, Object> attributes;
 
-	/**
-	 * Create a new contained conversation.
-	 * @param container the container containing the conversation
-	 * @param id the unique id assigned to the conversation
-	 * @param lock the conversation lock
-	 */
-	public ContainedConversation(ConversationContainer container, ConversationId id, ConversationLock lock) {
-		this.container = container;
-		this.id = id;
-		this.lock = lock;
-		this.attributes = new HashMap<>();
-	}
+    /**
+     * Create a new contained conversation.
+     *
+     * @param container the container containing the conversation
+     * @param id        the unique id assigned to the conversation
+     * @param lock      the conversation lock
+     */
+    public ContainedConversation(ConversationContainer container, ConversationId id, ConversationLock lock) {
+        this.container = container;
+        this.id = id;
+        this.lock = lock;
+        this.attributes = new HashMap<>();
+    }
 
-	protected void setContainer(ConversationContainer container) {
-		this.container = container;
-	}
+    public ConversationId getId() {
+        return this.id;
+    }
 
-	public ConversationId getId() {
-		return this.id;
-	}
+    protected void setId(ConversationId id) {
+        this.id = id;
+    }
 
-	protected void setId(ConversationId id) {
-		this.id = id;
-	}
+    public void lock() {
+        if (logger.isDebugEnabled()) {
+            logger.debug("Locking conversation " + this.id);
+        }
+        this.lock.lock();
+    }
 
-	public void lock() {
-		if (logger.isDebugEnabled()) {
-			logger.debug("Locking conversation " + this.id);
-		}
-		this.lock.lock();
-	}
+    public Object getAttribute(Object name) {
+        return this.attributes.get(name);
+    }
 
-	public Object getAttribute(Object name) {
-		return this.attributes.get(name);
-	}
+    public void putAttribute(Object name, Object value) {
+        if (logger.isDebugEnabled()) {
+            logger.debug("Putting conversation attribute '" + name + "' with value " + value);
+        }
+        this.attributes.put(name, value);
+    }
 
-	public void putAttribute(Object name, Object value) {
-		if (logger.isDebugEnabled()) {
-			logger.debug("Putting conversation attribute '" + name + "' with value " + value);
-		}
-		this.attributes.put(name, value);
-	}
+    public void removeAttribute(Object name) {
+        if (logger.isDebugEnabled()) {
+            logger.debug("Removing conversation attribute '" + name + "'");
+        }
+        this.attributes.remove(name);
+    }
 
-	public void removeAttribute(Object name) {
-		if (logger.isDebugEnabled()) {
-			logger.debug("Removing conversation attribute '" + name + "'");
-		}
-		this.attributes.remove(name);
-	}
+    public void end() {
+        if (logger.isDebugEnabled()) {
+            logger.debug("Ending conversation " + this.id);
+        }
+        this.container.removeConversation(getId());
+    }
 
-	public void end() {
-		if (logger.isDebugEnabled()) {
-			logger.debug("Ending conversation " + this.id);
-		}
-		this.container.removeConversation(getId());
-	}
+    public void unlock() {
+        if (logger.isDebugEnabled()) {
+            logger.debug("Unlocking conversation " + this.id);
+        }
+        this.lock.unlock();
+        // re-bind the conversation container in the session
+        // this is required to make session replication work correctly in
+        // a clustered environment
+        // we do this after releasing the lock since we're no longer
+        // manipulating the contents of the conversation
+        SharedAttributeMap<Object> sessionMap = ExternalContextHolder.getExternalContext().getSessionMap();
+        synchronized (sessionMap.getMutex()) {
+            sessionMap.put(this.container.getSessionKey(), this.container);
+        }
+    }
 
-	public void unlock() {
-		if (logger.isDebugEnabled()) {
-			logger.debug("Unlocking conversation " + this.id);
-		}
-		this.lock.unlock();
-		// re-bind the conversation container in the session
-		// this is required to make session replication work correctly in
-		// a clustered environment
-		// we do this after releasing the lock since we're no longer
-		// manipulating the contents of the conversation
-		SharedAttributeMap<Object> sessionMap = ExternalContextHolder.getExternalContext().getSessionMap();
-		synchronized (sessionMap.getMutex()) {
-			sessionMap.put(this.container.getSessionKey(), this.container);
-		}
-	}
+    public String toString() {
+        return getId().toString();
+    }
 
-	public String toString() {
-		return getId().toString();
-	}
+    public boolean equals(Object obj) {
+        return obj instanceof ContainedConversation && this.id.equals(((ContainedConversation) obj).id);
+    }
 
-	// id based equality
+    // id based equality
 
-	public boolean equals(Object obj) {
-		return obj instanceof ContainedConversation && this.id.equals(((ContainedConversation) obj).id);
-	}
+    public int hashCode() {
+        return this.id.hashCode();
+    }
 
-	public int hashCode() {
-		return this.id.hashCode();
-	}
+    protected void setContainer(ConversationContainer container) {
+        this.container = container;
+    }
 
 }

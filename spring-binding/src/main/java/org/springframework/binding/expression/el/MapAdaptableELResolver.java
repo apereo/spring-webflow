@@ -15,96 +15,97 @@
  */
 package org.springframework.binding.expression.el;
 
-import java.beans.FeatureDescriptor;
-import java.util.Iterator;
-import java.util.Map;
 import jakarta.el.ELContext;
 import jakarta.el.ELException;
 import jakarta.el.ELResolver;
 import jakarta.el.PropertyNotWritableException;
-
 import org.springframework.binding.collection.MapAdaptable;
+
+import java.beans.FeatureDescriptor;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * An {@link ELResolver} for properly resolving variables in an instance of {@link MapAdaptable}
+ *
  * @author Jeremy Grelle
  */
 public class MapAdaptableELResolver extends ELResolver {
 
-	public Class<?> getCommonPropertyType(ELContext context, Object base) {
-		if (base instanceof MapAdaptable) {
-			return Object.class;
-		}
-		return null;
-	}
+    public Class<?> getCommonPropertyType(ELContext context, Object base) {
+        if (base instanceof MapAdaptable) {
+            return Object.class;
+        }
+        return null;
+    }
 
-	public Iterator<FeatureDescriptor> getFeatureDescriptors(ELContext context, Object base) {
-		return null;
-	}
+    public Iterator<FeatureDescriptor> getFeatureDescriptors(ELContext context, Object base) {
+        return null;
+    }
 
-	public Class<?> getType(ELContext context, Object base, Object property) throws NullPointerException,
-			ELException {
-		if (context == null) {
-			throw new NullPointerException("The ELContext is null.");
-		}
+    public Class<?> getType(ELContext context, Object base, Object property) throws NullPointerException,
+        ELException {
+        if (context == null) {
+            throw new NullPointerException("The ELContext is null.");
+        }
 
-		if (base instanceof MapAdaptable) {
-			context.setPropertyResolved(true);
-			Object obj = adapt(base).get(property);
-			return (obj != null) ? obj.getClass() : null;
-		}
+        if (base instanceof MapAdaptable) {
+            context.setPropertyResolved(true);
+            Object obj = adapt(base).get(property);
+            return (obj != null) ? obj.getClass() : null;
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	public Object getValue(ELContext context, Object base, Object property) throws NullPointerException,
-			ELException {
-		if (context == null) {
-			throw new NullPointerException("The ELContext is null.");
-		}
+    public Object getValue(ELContext context, Object base, Object property) throws NullPointerException,
+        ELException {
+        if (context == null) {
+            throw new NullPointerException("The ELContext is null.");
+        }
 
-		if (base instanceof MapAdaptable) {
-			context.setPropertyResolved(true);
-			return adapt(base).get(property);
-		}
+        if (base instanceof MapAdaptable) {
+            context.setPropertyResolved(true);
+            return adapt(base).get(property);
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	public boolean isReadOnly(ELContext context, Object base, Object property) throws NullPointerException,
-			ELException {
-		if (context == null) {
-			throw new NullPointerException("The ELContext is null.");
-		}
+    public boolean isReadOnly(ELContext context, Object base, Object property) throws NullPointerException,
+        ELException {
+        if (context == null) {
+            throw new NullPointerException("The ELContext is null.");
+        }
 
-		if (base instanceof MapAdaptable) {
-			context.setPropertyResolved(true);
-		}
+        if (base instanceof MapAdaptable) {
+            context.setPropertyResolved(true);
+        }
 
-		return false;
-	}
+        return false;
+    }
 
-	public void setValue(ELContext context, Object base, Object property, Object value) throws NullPointerException,
-			ELException {
-		if (context == null) {
-			throw new NullPointerException("The ELContext is null.");
-		}
+    public void setValue(ELContext context, Object base, Object property, Object value) throws NullPointerException,
+        ELException {
+        if (context == null) {
+            throw new NullPointerException("The ELContext is null.");
+        }
 
-		if (base instanceof MapAdaptable) {
-			context.setPropertyResolved(true);
+        if (base instanceof MapAdaptable) {
+            context.setPropertyResolved(true);
 
-			try {
-				adapt(base).put(property, value);
-			} catch (UnsupportedOperationException e) {
-				throw new PropertyNotWritableException(e);
-			}
-		}
-	}
+            try {
+                adapt(base).put(property, value);
+            } catch (UnsupportedOperationException e) {
+                throw new PropertyNotWritableException(e);
+            }
+        }
+    }
 
-	@SuppressWarnings("unchecked")
-	private Map<Object, Object> adapt(Object base) {
-		MapAdaptable<Object, Object> adaptable = (MapAdaptable<Object, Object>) base;
-		return adaptable.asMap();
-	}
+    @SuppressWarnings("unchecked")
+    private Map<Object, Object> adapt(Object base) {
+        MapAdaptable<Object, Object> adaptable = (MapAdaptable<Object, Object>) base;
+        return adaptable.asMap();
+    }
 
 }

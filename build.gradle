@@ -97,7 +97,7 @@ subprojects { subproject ->
         archives sourcesJar
         archives javadocJar
     }
-    
+
     publishing {
         publications {
             "$project.name"(MavenPublication) {
@@ -138,8 +138,10 @@ subprojects { subproject ->
             }
         }
 
-        signing {
-            sign publishing.publications
+        if (project.hasProperty("publishReleases")) {
+            signing {
+                sign publishing.publications
+            }
         }
 
         repositories {

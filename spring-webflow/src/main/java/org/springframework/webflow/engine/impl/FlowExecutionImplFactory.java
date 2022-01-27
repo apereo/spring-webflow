@@ -15,8 +15,6 @@
  */
 package org.springframework.webflow.engine.impl;
 
-import java.util.Iterator;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.util.Assert;
@@ -34,144 +32,150 @@ import org.springframework.webflow.execution.FlowExecutionKeyFactory;
 import org.springframework.webflow.execution.factory.FlowExecutionListenerLoader;
 import org.springframework.webflow.execution.factory.StaticFlowExecutionListenerLoader;
 
+import java.util.Iterator;
+
 /**
  * A factory for instances of the {@link FlowExecutionImpl default flow execution} implementation.
+ *
  * @author Keith Donald
  */
 public class FlowExecutionImplFactory implements FlowExecutionFactory {
 
-	private static final Log logger = LogFactory.getLog(FlowExecutionImplFactory.class);
+    private static final Log logger = LogFactory.getLog(FlowExecutionImplFactory.class);
 
-	private AttributeMap<Object> executionAttributes = CollectionUtils.EMPTY_ATTRIBUTE_MAP;
+    private AttributeMap<Object> executionAttributes = CollectionUtils.EMPTY_ATTRIBUTE_MAP;
 
-	private FlowExecutionListenerLoader executionListenerLoader = StaticFlowExecutionListenerLoader.EMPTY_INSTANCE;
+    private FlowExecutionListenerLoader executionListenerLoader = StaticFlowExecutionListenerLoader.EMPTY_INSTANCE;
 
-	private FlowExecutionKeyFactory executionKeyFactory = new SimpleFlowExecutionKeyFactory();
+    private FlowExecutionKeyFactory executionKeyFactory = new SimpleFlowExecutionKeyFactory();
 
-	/**
-	 * Sets the attributes to apply to flow executions created by this factory. Execution attributes may affect flow
-	 * execution behavior.
-	 * @param executionAttributes flow execution system attributes
-	 */
-	public void setExecutionAttributes(AttributeMap<Object> executionAttributes) {
-		this.executionAttributes = executionAttributes;
-	}
+    /**
+     * Sets the attributes to apply to flow executions created by this factory. Execution attributes may affect flow
+     * execution behavior.
+     *
+     * @param executionAttributes flow execution system attributes
+     */
+    public void setExecutionAttributes(AttributeMap<Object> executionAttributes) {
+        this.executionAttributes = executionAttributes;
+    }
 
-	/**
-	 * Sets the strategy for loading listeners that should observe executions of a flow definition. Allows full control
-	 * over what listeners should apply for executions of a flow definition.
+    /**
+     * Sets the strategy for loading listeners that should observe executions of a flow definition. Allows full control
+     * over what listeners should apply for executions of a flow definition.
+     *
      * @param executionListenerLoader
      * @param executionListenerLoader
      */
-	public void setExecutionListenerLoader(FlowExecutionListenerLoader executionListenerLoader) {
-		this.executionListenerLoader = executionListenerLoader;
-	}
+    public void setExecutionListenerLoader(FlowExecutionListenerLoader executionListenerLoader) {
+        this.executionListenerLoader = executionListenerLoader;
+    }
 
-	/**
-	 * Sets the strategy for generating flow execution keys for persistent flow executions.
+    /**
+     * Sets the strategy for generating flow execution keys for persistent flow executions.
+     *
      * @param executionKeyFactory
      * @param executionKeyFactory
      */
-	public void setExecutionKeyFactory(FlowExecutionKeyFactory executionKeyFactory) {
-		this.executionKeyFactory = executionKeyFactory;
-	}
+    public void setExecutionKeyFactory(FlowExecutionKeyFactory executionKeyFactory) {
+        this.executionKeyFactory = executionKeyFactory;
+    }
 
-	public FlowExecution createFlowExecution(FlowDefinition flowDefinition) {
-		Assert.isInstanceOf(Flow.class, flowDefinition, "FlowDefinition is of the wrong type: ");
-		if (logger.isDebugEnabled()) {
-			logger.debug("Creating new execution of '" + flowDefinition.getId() + "'");
-		}
-		FlowExecutionImpl execution = new FlowExecutionImpl((Flow) flowDefinition);
-		execution.setAttributes(executionAttributes);
-		execution.setListeners(executionListenerLoader.getListeners(execution.getDefinition()));
-		execution.setKeyFactory(executionKeyFactory);
-		return execution;
-	}
+    public FlowExecution createFlowExecution(FlowDefinition flowDefinition) {
+        Assert.isInstanceOf(Flow.class, flowDefinition, "FlowDefinition is of the wrong type: ");
+        if (logger.isDebugEnabled()) {
+            logger.debug("Creating new execution of '" + flowDefinition.getId() + "'");
+        }
+        FlowExecutionImpl execution = new FlowExecutionImpl((Flow) flowDefinition);
+        execution.setAttributes(executionAttributes);
+        execution.setListeners(executionListenerLoader.getListeners(execution.getDefinition()));
+        execution.setKeyFactory(executionKeyFactory);
+        return execution;
+    }
 
-	public FlowExecution restoreFlowExecution(FlowExecution flowExecution, FlowDefinition flowDefinition,
-			FlowExecutionKey flowExecutionKey, MutableAttributeMap<Object> conversationScope,
-			FlowDefinitionLocator subflowDefinitionLocator) {
-		Assert.isInstanceOf(FlowExecutionImpl.class, flowExecution, "FlowExecution is of the wrong type: ");
-		Assert.isInstanceOf(Flow.class, flowDefinition, "FlowDefinition is of the wrong type: ");
-		FlowExecutionImpl execution = (FlowExecutionImpl) flowExecution;
-		Flow flow = (Flow) flowDefinition;
-		execution.setFlow(flow);
-		if (execution.hasSessions()) {
-			FlowSessionImpl rootSession = execution.getRootSession();
-			rootSession.setFlow(flow);
-			rootSession.setState(flow.getStateInstance(rootSession.getStateId()));
-			if (execution.hasSubflowSessions()) {
-				for (Iterator<FlowSessionImpl> it = execution.getSubflowSessionIterator(); it.hasNext();) {
-					FlowSessionImpl subflowSession = it.next();
-					Flow subflowDef = (Flow) subflowDefinitionLocator.getFlowDefinition(subflowSession.getFlowId());
-					subflowSession.setFlow(subflowDef);
-					subflowSession.setState(subflowDef.getStateInstance(subflowSession.getStateId()));
-				}
-			}
-		}
-		execution.setKey(flowExecutionKey);
-		if (conversationScope == null) {
-			conversationScope = new LocalAttributeMap<>();
-		}
-		execution.setConversationScope(conversationScope);
-		execution.setAttributes(executionAttributes);
-		execution.setListeners(executionListenerLoader.getListeners(execution.getDefinition()));
-		execution.setKeyFactory(executionKeyFactory);
-		return execution;
-	}
+    public FlowExecution restoreFlowExecution(FlowExecution flowExecution, FlowDefinition flowDefinition,
+                                              FlowExecutionKey flowExecutionKey, MutableAttributeMap<Object> conversationScope,
+                                              FlowDefinitionLocator subflowDefinitionLocator) {
+        Assert.isInstanceOf(FlowExecutionImpl.class, flowExecution, "FlowExecution is of the wrong type: ");
+        Assert.isInstanceOf(Flow.class, flowDefinition, "FlowDefinition is of the wrong type: ");
+        FlowExecutionImpl execution = (FlowExecutionImpl) flowExecution;
+        Flow flow = (Flow) flowDefinition;
+        execution.setFlow(flow);
+        if (execution.hasSessions()) {
+            FlowSessionImpl rootSession = execution.getRootSession();
+            rootSession.setFlow(flow);
+            rootSession.setState(flow.getStateInstance(rootSession.getStateId()));
+            if (execution.hasSubflowSessions()) {
+                for (Iterator<FlowSessionImpl> it = execution.getSubflowSessionIterator(); it.hasNext(); ) {
+                    FlowSessionImpl subflowSession = it.next();
+                    Flow subflowDef = (Flow) subflowDefinitionLocator.getFlowDefinition(subflowSession.getFlowId());
+                    subflowSession.setFlow(subflowDef);
+                    subflowSession.setState(subflowDef.getStateInstance(subflowSession.getStateId()));
+                }
+            }
+        }
+        execution.setKey(flowExecutionKey);
+        if (conversationScope == null) {
+            conversationScope = new LocalAttributeMap<>();
+        }
+        execution.setConversationScope(conversationScope);
+        execution.setAttributes(executionAttributes);
+        execution.setListeners(executionListenerLoader.getListeners(execution.getDefinition()));
+        execution.setKeyFactory(executionKeyFactory);
+        return execution;
+    }
 
-	/**
-	 * Simple key factory suitable for standalone usage and testing. Not expected to be used in a web environment.
-	 */
-	private static class SimpleFlowExecutionKeyFactory implements FlowExecutionKeyFactory {
+    /**
+     * Simple key factory suitable for standalone usage and testing. Not expected to be used in a web environment.
+     */
+    private static class SimpleFlowExecutionKeyFactory implements FlowExecutionKeyFactory {
 
-		private int sequence;
+        private int sequence;
 
-		public FlowExecutionKey getKey(FlowExecution execution) {
-			if (execution.getKey() == null) {
-				return new SimpleFlowExecutionKey(nextSequence());
-			} else {
-				// keep the same key
-				return execution.getKey();
-			}
-		}
+        public FlowExecutionKey getKey(FlowExecution execution) {
+            if (execution.getKey() == null) {
+                return new SimpleFlowExecutionKey(nextSequence());
+            } else {
+                // keep the same key
+                return execution.getKey();
+            }
+        }
 
-		public void removeAllFlowExecutionSnapshots(FlowExecution execution) {
-		}
+        public void removeAllFlowExecutionSnapshots(FlowExecution execution) {
+        }
 
-		public void removeFlowExecutionSnapshot(FlowExecution execution) {
-		}
+        public void removeFlowExecutionSnapshot(FlowExecution execution) {
+        }
 
-		public void updateFlowExecutionSnapshot(FlowExecution execution) {
-		}
+        public void updateFlowExecutionSnapshot(FlowExecution execution) {
+        }
 
-		private synchronized int nextSequence() {
-			return ++sequence;
-		}
+        private static class SimpleFlowExecutionKey extends FlowExecutionKey {
 
-		private static class SimpleFlowExecutionKey extends FlowExecutionKey {
+            private int value;
 
-			private int value;
+            public SimpleFlowExecutionKey(int value) {
+                this.value = value;
+            }
 
-			public SimpleFlowExecutionKey(int value) {
-				this.value = value;
-			}
+            public boolean equals(Object o) {
+                if (!(o instanceof SimpleFlowExecutionKey)) {
+                    SimpleFlowExecutionKey key = (SimpleFlowExecutionKey) o;
+                    return value == key.value;
+                }
+                return false;
+            }
 
-			public boolean equals(Object o) {
-				if (!(o instanceof SimpleFlowExecutionKey)) {
-					SimpleFlowExecutionKey key = (SimpleFlowExecutionKey) o;
-					return value == key.value;
-				}
-				return false;
-			}
+            public int hashCode() {
+                return value;
+            }
 
-			public int hashCode() {
-				return value;
-			}
+            public String toString() {
+                return String.valueOf(value);
+            }
+        }
 
-			public String toString() {
-				return String.valueOf(value);
-			}
-		}
-	}
+        private synchronized int nextSequence() {
+            return ++sequence;
+        }
+    }
 }

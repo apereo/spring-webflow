@@ -15,46 +15,46 @@
  */
 package org.springframework.webflow.mvc.view;
 
-import java.io.Serializable;
-
 import org.springframework.binding.mapping.MappingResults;
 import org.springframework.core.style.ToStringCreator;
 
+import java.io.Serializable;
+
 /**
  * Holder class for passing Spring MVC view action state through a redirect.
- * 
+ *
  * @author Scott Andrews
  */
 public class ViewActionStateHolder implements Serializable {
 
-	public static final String KEY = "webflowViewActionStateHolder";
+    public static final String KEY = "webflowViewActionStateHolder";
 
-	private String eventId;
+    private String eventId;
 
-	private boolean userEventProcessed;
+    private boolean userEventProcessed;
 
-	private transient MappingResults mappingResults;
+    private transient MappingResults mappingResults;
 
-	public ViewActionStateHolder(String eventId, boolean userEventProcessed, MappingResults mappingResults) {
-		this.eventId = eventId;
-		this.userEventProcessed = userEventProcessed;
-		this.mappingResults = mappingResults;
-	}
+    public ViewActionStateHolder(String eventId, boolean userEventProcessed, MappingResults mappingResults) {
+        this.eventId = eventId;
+        this.userEventProcessed = userEventProcessed;
+        this.mappingResults = mappingResults;
+    }
 
-	public String getEventId() {
-		return eventId;
-	}
+    public String getEventId() {
+        return eventId;
+    }
 
-	public boolean getUserEventProcessed() {
-		return userEventProcessed;
-	}
+    public boolean getUserEventProcessed() {
+        return userEventProcessed;
+    }
 
-	public MappingResults getMappingResults() {
-		return mappingResults;
-	}
+    public MappingResults getMappingResults() {
+        return mappingResults;
+    }
 
-	public String toString() {
-		return new ToStringCreator(this).append("eventId", eventId).append("mappingResults", mappingResults).toString();
-	}
+    public String toString() {
+        return new ToStringCreator(this).append("eventId", eventId).append("mappingResults", mappingResults).toString();
+    }
 
 }

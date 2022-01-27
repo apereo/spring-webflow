@@ -24,16 +24,16 @@ import org.junit.jupiter.api.Test;
  */
 class UnitTestTemplate {
 
-	@BeforeEach
-	void setUp() throws Exception {
-	}
+    @BeforeEach
+    void setUp() throws Exception {
+    }
 
-	@Test
-	void scenario1() {
-	}
+    @Test
+    void scenario1() {
+    }
 
-	@Test
-	void scenario2() {
-	}
+    @Test
+    void scenario2() {
+    }
 
 }

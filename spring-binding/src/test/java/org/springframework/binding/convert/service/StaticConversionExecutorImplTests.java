@@ -15,56 +15,53 @@
  */
 package org.springframework.binding.convert.service;
 
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
-
-import java.util.Date;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.binding.convert.ConversionExecutionException;
 import org.springframework.binding.convert.converters.StringToDate;
 
+import java.util.Date;
+
+import static org.junit.jupiter.api.Assertions.*;
+
 public class StaticConversionExecutorImplTests {
 
-	private StaticConversionExecutor conversionExecutor;
+    private StaticConversionExecutor conversionExecutor;
 
-	@BeforeEach
-	public void setUp() {
-		StringToDate stringToDate = new StringToDate();
-		conversionExecutor = new StaticConversionExecutor(String.class, Date.class, stringToDate);
-	}
+    @BeforeEach
+    public void setUp() {
+        StringToDate stringToDate = new StringToDate();
+        conversionExecutor = new StaticConversionExecutor(String.class, Date.class, stringToDate);
+    }
 
-	@Test
-	public void testTypeConversion() {
-		assertTrue(conversionExecutor.execute("2008-10-10").getClass().equals(Date.class));
-	}
+    @Test
+    public void testTypeConversion() {
+        assertTrue(conversionExecutor.execute("2008-10-10").getClass().equals(Date.class));
+    }
 
-	@Test
-	public void testAssignmentCompatibleTypeConversion() {
-		java.sql.Date date = new java.sql.Date(123L);
-		try {
-			assertSame(date, conversionExecutor.execute(date));
-			fail("Should have failed");
-		} catch (ConversionExecutionException e) {
+    @Test
+    public void testAssignmentCompatibleTypeConversion() {
+        java.sql.Date date = new java.sql.Date(123L);
+        try {
+            assertSame(date, conversionExecutor.execute(date));
+            fail("Should have failed");
+        } catch (ConversionExecutionException e) {
 
-		}
-	}
+        }
+    }
 
-	@Test
-	public void testConvertNull() {
-		assertNull(conversionExecutor.execute(null));
-	}
+    @Test
+    public void testConvertNull() {
+        assertNull(conversionExecutor.execute(null));
+    }
 
-	@Test
-	public void testIllegalType() {
-		try {
-			conversionExecutor.execute(new StringBuilder());
-			fail();
-		} catch (ConversionExecutionException e) {
-			// expected
-		}
-	}
+    @Test
+    public void testIllegalType() {
+        try {
+            conversionExecutor.execute(new StringBuilder());
+            fail();
+        } catch (ConversionExecutionException e) {
+            // expected
+        }
+    }
 }

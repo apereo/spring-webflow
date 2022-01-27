@@ -24,39 +24,40 @@ import org.springframework.webflow.execution.RequestContext;
  * Transition criteria that tests the value of an expression. The expression is used to express a condition that guards
  * transition execution in a web flow. Expressions will be evaluated against the request context. Boolean, string, and
  * custom TransitonCriteria evaluation results are supported.
- * 
+ *
  * @author Keith Donald
  * @author Erwin Vervaet
  */
 public class DefaultTransitionCriteria implements TransitionCriteria {
 
-	/**
-	 * The expression evaluator to use.
-	 */
-	private Expression expression;
+    /**
+     * The expression evaluator to use.
+     */
+    private Expression expression;
 
-	/**
-	 * Create a new expression based transition criteria object.
-	 * @param expression the expression evaluator testing the criteria
-	 */
-	public DefaultTransitionCriteria(Expression expression) {
-		Assert.notNull(expression, "The transition criteria expression to test is required");
-		this.expression = expression;
-	}
+    /**
+     * Create a new expression based transition criteria object.
+     *
+     * @param expression the expression evaluator testing the criteria
+     */
+    public DefaultTransitionCriteria(Expression expression) {
+        Assert.notNull(expression, "The transition criteria expression to test is required");
+        this.expression = expression;
+    }
 
-	public boolean test(RequestContext context) {
-		Object result = expression.getValue(context);
-		if (result == null) {
-			return false;
-		} else if (result instanceof Boolean) {
-			return (Boolean) result;
-		} else {
-			String eventId = String.valueOf(result);
-			return context.getCurrentEvent().getId().equals(eventId);
-		}
-	}
+    public boolean test(RequestContext context) {
+        Object result = expression.getValue(context);
+        if (result == null) {
+            return false;
+        } else if (result instanceof Boolean) {
+            return (Boolean) result;
+        } else {
+            String eventId = String.valueOf(result);
+            return context.getCurrentEvent().getId().equals(eventId);
+        }
+    }
 
-	public String toString() {
-		return expression.toString();
-	}
+    public String toString() {
+        return expression.toString();
+    }
 }

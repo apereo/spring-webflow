@@ -29,129 +29,130 @@ import org.springframework.webflow.execution.View;
 /**
  * Mock implementation of the {@link RequestControlContext} interface to facilitate standalone Flow and State unit
  * tests.
- * 
+ *
+ * @author Keith Donald
  * @see org.springframework.webflow.execution.RequestContext
  * @see org.springframework.webflow.execution.FlowSession
  * @see org.springframework.webflow.engine.State
- * 
- * @author Keith Donald
  */
 public class MockRequestControlContext extends MockRequestContext implements RequestControlContext {
 
-	/**
-	 * Creates a new mock request control context.
-	 */
-	public MockRequestControlContext() {
-	}
+    /**
+     * Creates a new mock request control context.
+     */
+    public MockRequestControlContext() {
+    }
 
-	/**
-	 * Creates a new mock request control context for controlling a mock execution of the provided flow definition.
-	 * @param flow the flow definition
-	 */
-	public MockRequestControlContext(Flow flow) {
-		super(flow);
-	}
+    /**
+     * Creates a new mock request control context for controlling a mock execution of the provided flow definition.
+     *
+     * @param flow the flow definition
+     */
+    public MockRequestControlContext(Flow flow) {
+        super(flow);
+    }
 
-	/**
-	 * Creates a new mock request control context for controlling a flow execution.
-	 * @param flowExecutionContext the flow execution context
-	 */
-	public MockRequestControlContext(FlowExecutionContext flowExecutionContext) {
-		super(flowExecutionContext);
-	}
+    /**
+     * Creates a new mock request control context for controlling a flow execution.
+     *
+     * @param flowExecutionContext the flow execution context
+     */
+    public MockRequestControlContext(FlowExecutionContext flowExecutionContext) {
+        super(flowExecutionContext);
+    }
 
-	// implementing RequestControlContext
+    // implementing RequestControlContext
 
-	public void setCurrentState(State state) {
-		getMockFlowExecutionContext().getMockActiveSession().setState(state);
-	}
+    public void setCurrentState(State state) {
+        getMockFlowExecutionContext().getMockActiveSession().setState(state);
+    }
 
-	public FlowExecutionKey assignFlowExecutionKey() {
-		GeneratedFlowExecutionKey key = new GeneratedFlowExecutionKey();
-		getMockFlowExecutionContext().setKey(key);
-		return key;
-	}
+    public FlowExecutionKey assignFlowExecutionKey() {
+        GeneratedFlowExecutionKey key = new GeneratedFlowExecutionKey();
+        getMockFlowExecutionContext().setKey(key);
+        return key;
+    }
 
-	public void viewRendering(View view) {
-	}
+    public void viewRendering(View view) {
+    }
 
-	public void viewRendered(View view) {
-	}
+    public void viewRendered(View view) {
+    }
 
-	public boolean handleEvent(Event event) {
-		setCurrentEvent(event);
-		return ((Flow) getActiveFlow()).handleEvent(this);
-	}
+    public boolean handleEvent(Event event) {
+        setCurrentEvent(event);
+        return ((Flow) getActiveFlow()).handleEvent(this);
+    }
 
-	public boolean execute(Transition transition) {
-		return transition.execute((TransitionableState) getCurrentState(), this);
-	}
+    public boolean execute(Transition transition) {
+        return transition.execute((TransitionableState) getCurrentState(), this);
+    }
 
-	public void removeAllFlowExecutionSnapshots() {
+    public void removeAllFlowExecutionSnapshots() {
 
-	}
+    }
 
-	public void removeCurrentFlowExecutionSnapshot() {
+    public void removeCurrentFlowExecutionSnapshot() {
 
-	}
+    }
 
-	public void updateCurrentFlowExecutionSnapshot() {
+    public void updateCurrentFlowExecutionSnapshot() {
 
-	}
+    }
 
-	public void start(Flow flow, MutableAttributeMap<?> input) throws IllegalStateException {
-		MockFlowSession session = new MockFlowSession(flow, input);
-		if (getFlowExecutionContext().isActive()) {
-			session.setParent(getFlowExecutionContext().getActiveSession());
-		}
-		getMockFlowExecutionContext().setActiveSession(session);
-		flow.start(this, input);
-	}
+    public void start(Flow flow, MutableAttributeMap<?> input) throws IllegalStateException {
+        MockFlowSession session = new MockFlowSession(flow, input);
+        if (getFlowExecutionContext().isActive()) {
+            session.setParent(getFlowExecutionContext().getActiveSession());
+        }
+        getMockFlowExecutionContext().setActiveSession(session);
+        flow.start(this, input);
+    }
 
-	public void endActiveFlowSession(String outcome, MutableAttributeMap<Object> output) throws IllegalStateException {
-		MockFlowSession endingSession = getMockFlowExecutionContext().getMockActiveSession();
-		endingSession.getDefinitionInternal().end(this, outcome, output);
-		getMockFlowExecutionContext().setActiveSession(endingSession.getParent());
-		if (!getMockFlowExecutionContext().hasEnded()) {
-			handleEvent(new Event(endingSession.getState(), outcome, output));
-		}
-	}
+    public void endActiveFlowSession(String outcome, MutableAttributeMap<Object> output) throws IllegalStateException {
+        MockFlowSession endingSession = getMockFlowExecutionContext().getMockActiveSession();
+        endingSession.getDefinitionInternal().end(this, outcome, output);
+        getMockFlowExecutionContext().setActiveSession(endingSession.getParent());
+        if (!getMockFlowExecutionContext().hasEnded()) {
+            handleEvent(new Event(endingSession.getState(), outcome, output));
+        }
+    }
 
-	public boolean getRedirectOnPause() {
-		if (!getExternalContext().isResponseAllowed()) {
-			return true;
-		}
-		Boolean redirectOnPause = getMockFlowExecutionContext().getAttributes().getBoolean("alwaysRedirectOnPause");
-		return redirectOnPause == null ? false : redirectOnPause;
-	}
+    public boolean getRedirectOnPause() {
+        if (!getExternalContext().isResponseAllowed()) {
+            return true;
+        }
+        Boolean redirectOnPause = getMockFlowExecutionContext().getAttributes().getBoolean("alwaysRedirectOnPause");
+        return redirectOnPause == null ? false : redirectOnPause;
+    }
 
-	public boolean getRedirectInSameState() {
-		if (!getExternalContext().isResponseAllowed()) {
-			return true;
-		}
-		Boolean redirectInSameState = getMockFlowExecutionContext().getAttributes().getBoolean("redirectInSameState");
-		if (redirectInSameState != null) {
-			return redirectInSameState;
-		} else {
-			return getRedirectOnPause();
-		}
-	}
+    public boolean getRedirectInSameState() {
+        if (!getExternalContext().isResponseAllowed()) {
+            return true;
+        }
+        Boolean redirectInSameState = getMockFlowExecutionContext().getAttributes().getBoolean("redirectInSameState");
+        if (redirectInSameState != null) {
+            return redirectInSameState;
+        } else {
+            return getRedirectOnPause();
+        }
+    }
 
-	public boolean getEmbeddedMode() {
-		return getMockFlowExecutionContext().getMockActiveSession().isEmbeddedMode();
-	}
+    public void setRedirectInSameState(boolean redirectInSameState) {
+        getMockFlowExecutionContext().getAttributeMap().put("redirectInSameState", redirectInSameState);
+    }
 
-	// implementation specific accessors for testing
+    // implementation specific accessors for testing
 
-	public void setAlwaysRedirectOnPause(boolean alwaysRedirectOnPause) {
-		getMockFlowExecutionContext().getAttributeMap().put("alwaysRedirectOnPause", alwaysRedirectOnPause);
-	}
+    public boolean getEmbeddedMode() {
+        return getMockFlowExecutionContext().getMockActiveSession().isEmbeddedMode();
+    }
 
-	public void setRedirectInSameState(boolean redirectInSameState) {
-		getMockFlowExecutionContext().getAttributeMap().put("redirectInSameState", redirectInSameState);
-	}
+    public void setAlwaysRedirectOnPause(boolean alwaysRedirectOnPause) {
+        getMockFlowExecutionContext().getAttributeMap().put("alwaysRedirectOnPause", alwaysRedirectOnPause);
+    }
 
-	public void setEmbeddedMode() {
-		getMockFlowExecutionContext().getMockActiveSession().setEmbeddedMode();
-	}
+    public void setEmbeddedMode() {
+        getMockFlowExecutionContext().getMockActiveSession().setEmbeddedMode();
+    }
 }

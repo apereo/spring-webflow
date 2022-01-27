@@ -15,9 +15,9 @@
  */
 package org.springframework.webflow.engine.model;
 
-import java.util.LinkedList;
-
 import org.springframework.util.StringUtils;
+
+import java.util.LinkedList;
 
 /**
  * Model support for flows.
@@ -40,329 +40,330 @@ import org.springframework.util.StringUtils;
  * <li>Import one or more local bean definition files defining custom flow artifacts (such as actions, exception
  * handlers, view factories, transition criteria, etc). (See {@link BeanImportModel})
  * </ul>
- * 
+ *
  * @author Scott Andrews
  */
 public class FlowModel extends AbstractModel {
 
-	private String abztract;
+    private String abztract;
 
-	private String parent;
+    private String parent;
 
-	private String startStateId;
+    private String startStateId;
 
-	private LinkedList<AttributeModel> attributes;
+    private LinkedList<AttributeModel> attributes;
 
-	private SecuredModel secured;
+    private SecuredModel secured;
 
-	private PersistenceContextModel persistenceContext;
+    private PersistenceContextModel persistenceContext;
 
-	private LinkedList<VarModel> vars;
+    private LinkedList<VarModel> vars;
 
-	private LinkedList<InputModel> inputs;
+    private LinkedList<InputModel> inputs;
 
-	private LinkedList<OutputModel> outputs;
+    private LinkedList<OutputModel> outputs;
 
-	private LinkedList<AbstractActionModel> onStartActions;
+    private LinkedList<AbstractActionModel> onStartActions;
 
-	private LinkedList<AbstractStateModel> states;
+    private LinkedList<AbstractStateModel> states;
 
-	private LinkedList<TransitionModel> globalTransitions;
+    private LinkedList<TransitionModel> globalTransitions;
 
-	private LinkedList<AbstractActionModel> onEndActions;
+    private LinkedList<AbstractActionModel> onEndActions;
 
-	private LinkedList<ExceptionHandlerModel> exceptionHandlers;
+    private LinkedList<ExceptionHandlerModel> exceptionHandlers;
 
-	private LinkedList<BeanImportModel> beanImports;
+    private LinkedList<BeanImportModel> beanImports;
 
-	/**
-	 * Create a flow model
-	 */
-	public FlowModel() {
-	}
+    /**
+     * Create a flow model
+     */
+    public FlowModel() {
+    }
 
-	public boolean isMergeableWith(Model model) {
-		if ((model instanceof FlowModel)) {
-			return true;
-		} else {
-			return false;
-		}
-	}
+    public boolean isMergeableWith(Model model) {
+        if ((model instanceof FlowModel)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
-	public void merge(Model model) {
-		FlowModel flow = (FlowModel) model;
-		setParent(null);
-		setStartStateId(merge(getStartStateId(), flow.getStartStateId()));
-		setAttributes(merge(getAttributes(), flow.getAttributes()));
-		setSecured((SecuredModel) merge(getSecured(), flow.getSecured()));
-		setPersistenceContext((PersistenceContextModel) merge(getPersistenceContext(), flow.getPersistenceContext()));
-		setVars(merge(getVars(), flow.getVars(), false));
-		setInputs(merge(getInputs(), flow.getInputs()));
-		setOutputs(merge(getOutputs(), flow.getOutputs()));
-		setOnStartActions(merge(getOnStartActions(), flow.getOnStartActions(), false));
-		setStates(merge(getStates(), flow.getStates()));
-		setGlobalTransitions(merge(getGlobalTransitions(), flow.getGlobalTransitions()));
-		setOnEndActions(merge(getOnEndActions(), flow.getOnEndActions(), false));
-		setExceptionHandlers(merge(getExceptionHandlers(), flow.getExceptionHandlers()));
-		setBeanImports(merge(getBeanImports(), flow.getBeanImports()));
-	}
+    public void merge(Model model) {
+        FlowModel flow = (FlowModel) model;
+        setParent(null);
+        setStartStateId(merge(getStartStateId(), flow.getStartStateId()));
+        setAttributes(merge(getAttributes(), flow.getAttributes()));
+        setSecured((SecuredModel) merge(getSecured(), flow.getSecured()));
+        setPersistenceContext((PersistenceContextModel) merge(getPersistenceContext(), flow.getPersistenceContext()));
+        setVars(merge(getVars(), flow.getVars(), false));
+        setInputs(merge(getInputs(), flow.getInputs()));
+        setOutputs(merge(getOutputs(), flow.getOutputs()));
+        setOnStartActions(merge(getOnStartActions(), flow.getOnStartActions(), false));
+        setStates(merge(getStates(), flow.getStates()));
+        setGlobalTransitions(merge(getGlobalTransitions(), flow.getGlobalTransitions()));
+        setOnEndActions(merge(getOnEndActions(), flow.getOnEndActions(), false));
+        setExceptionHandlers(merge(getExceptionHandlers(), flow.getExceptionHandlers()));
+        setBeanImports(merge(getBeanImports(), flow.getBeanImports()));
+    }
 
-	public Model createCopy() {
-		FlowModel copy = new FlowModel();
-		copy.setAbstract(abztract);
-		copy.setParent(parent);
-		copy.setStartStateId(startStateId);
-		copy.setAttributes(copyList(attributes));
-		copy.setSecured((SecuredModel) copy(secured));
-		copy.setPersistenceContext((PersistenceContextModel) copy(persistenceContext));
-		copy.setVars(copyList(vars));
-		copy.setInputs(copyList(inputs));
-		copy.setOutputs(copyList(outputs));
-		copy.setOnStartActions(copyList(onStartActions));
-		copy.setStates(copyList(states));
-		copy.setGlobalTransitions(copyList(globalTransitions));
-		copy.setOnEndActions(copyList(onEndActions));
-		copy.setExceptionHandlers(copyList(exceptionHandlers));
-		copy.setBeanImports(copyList(beanImports));
-		return copy;
-	}
+    public Model createCopy() {
+        FlowModel copy = new FlowModel();
+        copy.setAbstract(abztract);
+        copy.setParent(parent);
+        copy.setStartStateId(startStateId);
+        copy.setAttributes(copyList(attributes));
+        copy.setSecured((SecuredModel) copy(secured));
+        copy.setPersistenceContext((PersistenceContextModel) copy(persistenceContext));
+        copy.setVars(copyList(vars));
+        copy.setInputs(copyList(inputs));
+        copy.setOutputs(copyList(outputs));
+        copy.setOnStartActions(copyList(onStartActions));
+        copy.setStates(copyList(states));
+        copy.setGlobalTransitions(copyList(globalTransitions));
+        copy.setOnEndActions(copyList(onEndActions));
+        copy.setExceptionHandlers(copyList(exceptionHandlers));
+        copy.setBeanImports(copyList(beanImports));
+        return copy;
+    }
 
-	/**
-	 * @return the abstract
-	 */
-	public String getAbstract() {
-		return abztract;
-	}
+    /**
+     * @return the abstract
+     */
+    public String getAbstract() {
+        return abztract;
+    }
 
-	/**
-	 * @param abztract the abstract to set
-	 */
-	public void setAbstract(String abztract) {
-		if (StringUtils.hasText(abztract)) {
-			this.abztract = abztract;
-		} else {
-			this.abztract = null;
-		}
-	}
+    /**
+     * @param abztract the abstract to set
+     */
+    public void setAbstract(String abztract) {
+        if (StringUtils.hasText(abztract)) {
+            this.abztract = abztract;
+        } else {
+            this.abztract = null;
+        }
+    }
 
-	/**
-	 * @return the parent
-	 */
-	public String getParent() {
-		return parent;
-	}
+    /**
+     * @return the parent
+     */
+    public String getParent() {
+        return parent;
+    }
 
-	/**
-	 * @param parent the parent to set
-	 */
-	public void setParent(String parent) {
-		if (StringUtils.hasText(parent)) {
-			this.parent = parent;
-		} else {
-			this.parent = null;
-		}
-	}
+    /**
+     * @param parent the parent to set
+     */
+    public void setParent(String parent) {
+        if (StringUtils.hasText(parent)) {
+            this.parent = parent;
+        } else {
+            this.parent = null;
+        }
+    }
 
-	/**
-	 * @return the id of the flow's start state
-	 */
-	public String getStartStateId() {
-		return startStateId;
-	}
+    /**
+     * @return the id of the flow's start state
+     */
+    public String getStartStateId() {
+        return startStateId;
+    }
 
-	/**
-	 * @param startStateId the id of the flow's start state to set
-	 */
-	public void setStartStateId(String startStateId) {
-		if (StringUtils.hasText(startStateId)) {
-			this.startStateId = startStateId;
-		} else {
-			this.startStateId = null;
-		}
-	}
+    /**
+     * @param startStateId the id of the flow's start state to set
+     */
+    public void setStartStateId(String startStateId) {
+        if (StringUtils.hasText(startStateId)) {
+            this.startStateId = startStateId;
+        } else {
+            this.startStateId = null;
+        }
+    }
 
-	/**
-	 * @return the attributes
-	 */
-	public LinkedList<AttributeModel> getAttributes() {
-		return attributes;
-	}
+    /**
+     * @return the attributes
+     */
+    public LinkedList<AttributeModel> getAttributes() {
+        return attributes;
+    }
 
-	/**
-	 * @param attributes the attributes to set
-	 */
-	public void setAttributes(LinkedList<AttributeModel> attributes) {
-		this.attributes = attributes;
-	}
+    /**
+     * @param attributes the attributes to set
+     */
+    public void setAttributes(LinkedList<AttributeModel> attributes) {
+        this.attributes = attributes;
+    }
 
-	/**
-	 * @return the secured
-	 */
-	public SecuredModel getSecured() {
-		return secured;
-	}
+    /**
+     * @return the secured
+     */
+    public SecuredModel getSecured() {
+        return secured;
+    }
 
-	/**
-	 * @param secured the secured to set
-	 */
-	public void setSecured(SecuredModel secured) {
-		this.secured = secured;
-	}
+    /**
+     * @param secured the secured to set
+     */
+    public void setSecured(SecuredModel secured) {
+        this.secured = secured;
+    }
 
-	/**
-	 * @return the persistence context
-	 */
-	public PersistenceContextModel getPersistenceContext() {
-		return persistenceContext;
-	}
+    /**
+     * @return the persistence context
+     */
+    public PersistenceContextModel getPersistenceContext() {
+        return persistenceContext;
+    }
 
-	/**
-	 * @param persistenceContext the persistence context to set
-	 */
-	public void setPersistenceContext(PersistenceContextModel persistenceContext) {
-		this.persistenceContext = persistenceContext;
-	}
+    /**
+     * @param persistenceContext the persistence context to set
+     */
+    public void setPersistenceContext(PersistenceContextModel persistenceContext) {
+        this.persistenceContext = persistenceContext;
+    }
 
-	/**
-	 * @return the vars
-	 */
-	public LinkedList<VarModel> getVars() {
-		return vars;
-	}
+    /**
+     * @return the vars
+     */
+    public LinkedList<VarModel> getVars() {
+        return vars;
+    }
 
-	/**
-	 * @param vars the vars to set
-	 */
-	public void setVars(LinkedList<VarModel> vars) {
-		this.vars = vars;
-	}
+    /**
+     * @param vars the vars to set
+     */
+    public void setVars(LinkedList<VarModel> vars) {
+        this.vars = vars;
+    }
 
-	/**
-	 * @return the input mappings
-	 */
-	public LinkedList<InputModel> getInputs() {
-		return inputs;
-	}
+    /**
+     * @return the input mappings
+     */
+    public LinkedList<InputModel> getInputs() {
+        return inputs;
+    }
 
-	/**
-	 * @param inputs the input mappings to set
-	 */
-	public void setInputs(LinkedList<InputModel> inputs) {
-		this.inputs = inputs;
-	}
+    /**
+     * @param inputs the input mappings to set
+     */
+    public void setInputs(LinkedList<InputModel> inputs) {
+        this.inputs = inputs;
+    }
 
-	/**
-	 * @return the output mappings
-	 */
-	public LinkedList<OutputModel> getOutputs() {
-		return outputs;
-	}
+    /**
+     * @return the output mappings
+     */
+    public LinkedList<OutputModel> getOutputs() {
+        return outputs;
+    }
 
-	/**
-	 * @param outputs the output mappings to set
-	 */
-	public void setOutputs(LinkedList<OutputModel> outputs) {
-		this.outputs = outputs;
-	}
+    /**
+     * @param outputs the output mappings to set
+     */
+    public void setOutputs(LinkedList<OutputModel> outputs) {
+        this.outputs = outputs;
+    }
 
-	/**
-	 * @return the on start actions
-	 */
-	public LinkedList<AbstractActionModel> getOnStartActions() {
-		return onStartActions;
-	}
+    /**
+     * @return the on start actions
+     */
+    public LinkedList<AbstractActionModel> getOnStartActions() {
+        return onStartActions;
+    }
 
-	/**
-	 * @param onStartActions the on start actions to set
-	 */
-	public void setOnStartActions(LinkedList<AbstractActionModel> onStartActions) {
-		this.onStartActions = onStartActions;
-	}
+    /**
+     * @param onStartActions the on start actions to set
+     */
+    public void setOnStartActions(LinkedList<AbstractActionModel> onStartActions) {
+        this.onStartActions = onStartActions;
+    }
 
-	/**
-	 * @return the states
-	 */
-	public LinkedList<AbstractStateModel> getStates() {
-		return states;
-	}
+    /**
+     * @return the states
+     */
+    public LinkedList<AbstractStateModel> getStates() {
+        return states;
+    }
 
-	/**
-	 * Get the state model for an identifier
-	 * @param id the state identifier to find
-	 * @return the state or null if the identifier was not found
-	 */
-	public AbstractStateModel getStateById(String id) {
-		if (states != null) {
-			for (AbstractStateModel state : states) {
-				if (id.equals(state.getId())) {
-					return state;
-				}
-			}
-		}
-		return null;
-	}
+    /**
+     * @param states the states to set
+     */
+    public void setStates(LinkedList<AbstractStateModel> states) {
+        this.states = states;
+    }
 
-	/**
-	 * @param states the states to set
-	 */
-	public void setStates(LinkedList<AbstractStateModel> states) {
-		this.states = states;
-	}
+    /**
+     * Get the state model for an identifier
+     *
+     * @param id the state identifier to find
+     * @return the state or null if the identifier was not found
+     */
+    public AbstractStateModel getStateById(String id) {
+        if (states != null) {
+            for (AbstractStateModel state : states) {
+                if (id.equals(state.getId())) {
+                    return state;
+                }
+            }
+        }
+        return null;
+    }
 
-	/**
-	 * @return the global transitions
-	 */
-	public LinkedList<TransitionModel> getGlobalTransitions() {
-		return globalTransitions;
-	}
+    /**
+     * @return the global transitions
+     */
+    public LinkedList<TransitionModel> getGlobalTransitions() {
+        return globalTransitions;
+    }
 
-	/**
-	 * @param globalTransitions the global transitions to set
-	 */
-	public void setGlobalTransitions(LinkedList<TransitionModel> globalTransitions) {
-		this.globalTransitions = globalTransitions;
-	}
+    /**
+     * @param globalTransitions the global transitions to set
+     */
+    public void setGlobalTransitions(LinkedList<TransitionModel> globalTransitions) {
+        this.globalTransitions = globalTransitions;
+    }
 
-	/**
-	 * @return the on end actions
-	 */
-	public LinkedList<AbstractActionModel> getOnEndActions() {
-		return onEndActions;
-	}
+    /**
+     * @return the on end actions
+     */
+    public LinkedList<AbstractActionModel> getOnEndActions() {
+        return onEndActions;
+    }
 
-	/**
-	 * @param onEndActions the on end actions to set
-	 */
-	public void setOnEndActions(LinkedList<AbstractActionModel> onEndActions) {
-		this.onEndActions = onEndActions;
-	}
+    /**
+     * @param onEndActions the on end actions to set
+     */
+    public void setOnEndActions(LinkedList<AbstractActionModel> onEndActions) {
+        this.onEndActions = onEndActions;
+    }
 
-	/**
-	 * @return the exception handlers
-	 */
-	public LinkedList<ExceptionHandlerModel> getExceptionHandlers() {
-		return exceptionHandlers;
-	}
+    /**
+     * @return the exception handlers
+     */
+    public LinkedList<ExceptionHandlerModel> getExceptionHandlers() {
+        return exceptionHandlers;
+    }
 
-	/**
-	 * @param exceptionHandlers the exception handlers to set
-	 */
-	public void setExceptionHandlers(LinkedList<ExceptionHandlerModel> exceptionHandlers) {
-		this.exceptionHandlers = exceptionHandlers;
-	}
+    /**
+     * @param exceptionHandlers the exception handlers to set
+     */
+    public void setExceptionHandlers(LinkedList<ExceptionHandlerModel> exceptionHandlers) {
+        this.exceptionHandlers = exceptionHandlers;
+    }
 
-	/**
-	 * @return the bean imports
-	 */
-	public LinkedList<BeanImportModel> getBeanImports() {
-		return beanImports;
-	}
+    /**
+     * @return the bean imports
+     */
+    public LinkedList<BeanImportModel> getBeanImports() {
+        return beanImports;
+    }
 
-	/**
-	 * @param beanImports the bean imports to set
-	 */
-	public void setBeanImports(LinkedList<BeanImportModel> beanImports) {
-		this.beanImports = beanImports;
-	}
+    /**
+     * @param beanImports the bean imports to set
+     */
+    public void setBeanImports(LinkedList<BeanImportModel> beanImports) {
+        this.beanImports = beanImports;
+    }
 
 }

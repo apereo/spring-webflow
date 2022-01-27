@@ -26,7 +26,7 @@ package org.springframework.webflow.conversation;
  * A conversation needs to be {@link #lock() locked} to obtain exclusive access to it before it can be manipulated. Once
  * manipulation is finished, you need to {@link #unlock() unlock} the conversation. So code interacting with a
  * conversation always looks like this:
- * 
+ *
  * <pre>
  * Conversation conv = ...;
  * conv.lock();
@@ -38,60 +38,65 @@ package org.springframework.webflow.conversation;
  *    conv.unlock();
  * }
  * </pre>
- * 
+ *
  * <p>
  * Note that the attributes associated with a conversation are not "conversation scope" as defined for a flow execution.
  * They can be any attributes, possibly technical in nature, associated with the conversation.
- * 
+ *
  * @author Keith Donald
  * @author Erwin Vervaet
  */
 public interface Conversation {
 
-	/**
-	 * Returns the unique id assigned to this conversation. This id remains the same throughout the life of the
-	 * conversation. This method can be safely called without owning the lock of this conversation.
-	 * @return the conversation id
-	 */
-	ConversationId getId();
+    /**
+     * Returns the unique id assigned to this conversation. This id remains the same throughout the life of the
+     * conversation. This method can be safely called without owning the lock of this conversation.
+     *
+     * @return the conversation id
+     */
+    ConversationId getId();
 
-	/**
-	 * Lock this conversation. May block until the lock is available, if someone else has acquired the lock.
-	 * @throws ConversationLockException if the lock could not be acquired
-	 */
-	void lock() throws ConversationLockException;
+    /**
+     * Lock this conversation. May block until the lock is available, if someone else has acquired the lock.
+     *
+     * @throws ConversationLockException if the lock could not be acquired
+     */
+    void lock() throws ConversationLockException;
 
-	/**
-	 * Returns the conversation attribute with the specified name. You need to acquire the lock on this conversation
-	 * before calling this method.
-	 * @param name the attribute name
-	 * @return the attribute value
-	 */
-	Object getAttribute(Object name);
+    /**
+     * Returns the conversation attribute with the specified name. You need to acquire the lock on this conversation
+     * before calling this method.
+     *
+     * @param name the attribute name
+     * @return the attribute value
+     */
+    Object getAttribute(Object name);
 
-	/**
-	 * Puts a conversation attribute into this context. You need to acquire the lock on this conversation before calling
-	 * this method.
-	 * @param name the attribute name
-	 * @param value the attribute value
-	 */
-	void putAttribute(Object name, Object value);
+    /**
+     * Puts a conversation attribute into this context. You need to acquire the lock on this conversation before calling
+     * this method.
+     *
+     * @param name  the attribute name
+     * @param value the attribute value
+     */
+    void putAttribute(Object name, Object value);
 
-	/**
-	 * Removes a conversation attribute. You need to acquire the lock on this conversation before calling this method.
-	 * @param name the attribute name
-	 */
-	void removeAttribute(Object name);
+    /**
+     * Removes a conversation attribute. You need to acquire the lock on this conversation before calling this method.
+     *
+     * @param name the attribute name
+     */
+    void removeAttribute(Object name);
 
-	/**
-	 * Ends this conversation. This method should only be called once to terminate the conversation and cleanup any
-	 * allocated resources. You need to aquire the lock on this conversation before calling this method.
-	 */
-	void end();
+    /**
+     * Ends this conversation. This method should only be called once to terminate the conversation and cleanup any
+     * allocated resources. You need to aquire the lock on this conversation before calling this method.
+     */
+    void end();
 
-	/**
-	 * Unlock this conversation, making it available to others for manipulation.
-	 */
-	void unlock();
+    /**
+     * Unlock this conversation, making it available to others for manipulation.
+     */
+    void unlock();
 
 }

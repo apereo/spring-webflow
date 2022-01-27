@@ -1,14 +1,5 @@
 package org.springframework.webflow.execution.repository.impl;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNotSame;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.fail;
-
-import java.util.HashMap;
-import java.util.Map;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.webflow.conversation.Conversation;
@@ -35,289 +26,297 @@ import org.springframework.webflow.execution.repository.NoSuchFlowExecutionExcep
 import org.springframework.webflow.execution.repository.snapshot.SerializedFlowExecutionSnapshotFactory;
 import org.springframework.webflow.test.MockExternalContext;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.junit.jupiter.api.Assertions.*;
+
 public class DefaultFlowExecutionRepositoryTests {
-	private Flow flow;
-	private ConversationManager conversationManager;
-	private DefaultFlowExecutionRepository repository;
-	FlowExecutionImplFactory executionFactory = new FlowExecutionImplFactory();
+    FlowExecutionImplFactory executionFactory = new FlowExecutionImplFactory();
 
-	@BeforeEach
-	public void setUp() throws Exception {
-		flow = new Flow("myFlow");
-		ViewState s1 = new ViewState(flow, "state", new StubViewFactory());
-		s1.getTransitionSet().add(new Transition(new DefaultTargetStateResolver("state2")));
-		new ViewState(flow, "state2", new StubViewFactory());
+    private Flow flow;
 
-		conversationManager = new StubConversationManager();
-		FlowDefinitionLocator locator = flowId -> flow;
-		SerializedFlowExecutionSnapshotFactory snapshotFactory = new SerializedFlowExecutionSnapshotFactory(
-				executionFactory, locator);
-		repository = new DefaultFlowExecutionRepository(conversationManager, snapshotFactory);
-		executionFactory.setExecutionKeyFactory(repository);
-	}
+    private ConversationManager conversationManager;
 
-	@Test
-	public void testParseFlowExecutionKey() {
-		String key = "e12345s54321";
-		FlowExecutionKey k = repository.parseFlowExecutionKey(key);
-		assertEquals(key, k.toString());
-	}
+    private DefaultFlowExecutionRepository repository;
 
-	@Test
-	public void testParseBadlyFormattedFlowExecutionKey() {
-		String key = "e12345";
-		try {
-			repository.parseFlowExecutionKey(key);
-			fail("Should have failed");
-		} catch (BadlyFormattedFlowExecutionKeyException e) {
-			assertEquals("e12345", e.getInvalidKey());
-			assertNotNull(e.getFormat());
-		}
-	}
+    @BeforeEach
+    public void setUp() throws Exception {
+        flow = new Flow("myFlow");
+        ViewState s1 = new ViewState(flow, "state", new StubViewFactory());
+        s1.getTransitionSet().add(new Transition(new DefaultTargetStateResolver("state2")));
+        new ViewState(flow, "state2", new StubViewFactory());
 
-	@Test
-	public void testParseBadlyFormattedFlowExecutionKeyBadContinuationId() {
-		String key = "c12345vaaaa";
-		try {
-			repository.parseFlowExecutionKey(key);
-			fail("Should have failed");
-		} catch (BadlyFormattedFlowExecutionKeyException e) {
-			assertEquals("c12345vaaaa", e.getInvalidKey());
-			assertNotNull(e.getFormat());
-		}
-	}
+        conversationManager = new StubConversationManager();
+        FlowDefinitionLocator locator = flowId -> flow;
+        SerializedFlowExecutionSnapshotFactory snapshotFactory = new SerializedFlowExecutionSnapshotFactory(
+            executionFactory, locator);
+        repository = new DefaultFlowExecutionRepository(conversationManager, snapshotFactory);
+        executionFactory.setExecutionKeyFactory(repository);
+    }
 
-	@Test
-	public void testGetLock() {
-		FlowExecutionKey key = repository.parseFlowExecutionKey("e12345s54321");
-		FlowExecutionLock lock = repository.getLock(key);
-		assertNotNull(lock);
-		lock.unlock();
-	}
+    @Test
+    public void testParseFlowExecutionKey() {
+        String key = "e12345s54321";
+        FlowExecutionKey k = repository.parseFlowExecutionKey(key);
+        assertEquals(key, k.toString());
+    }
 
-	@Test
-	public void testGetLockNoSuchFlowExecution() {
-		FlowExecutionKey key = repository.parseFlowExecutionKey("e99999s54321");
-		try {
-			repository.getLock(key);
-			fail("should have failed");
-		} catch (NoSuchFlowExecutionException e) {
-			e.printStackTrace();
-		}
-	}
+    @Test
+    public void testParseBadlyFormattedFlowExecutionKey() {
+        String key = "e12345";
+        try {
+            repository.parseFlowExecutionKey(key);
+            fail("Should have failed");
+        } catch (BadlyFormattedFlowExecutionKeyException e) {
+            assertEquals("e12345", e.getInvalidKey());
+            assertNotNull(e.getFormat());
+        }
+    }
 
-	@Test
-	public void testPutFlowExecution() {
-		FlowExecution execution = executionFactory.createFlowExecution(flow);
-		execution.start(null, new MockExternalContext());
-		assertNotNull(execution.getKey());
-		repository.putFlowExecution(execution);
-		String key = execution.getKey().toString();
-		FlowExecutionKey parsedKey = repository.parseFlowExecutionKey(key);
-		FlowExecution execution2 = repository.getFlowExecution(parsedKey);
-		assertSame(execution.getDefinition(), execution2.getDefinition());
-		assertEquals(execution.getActiveSession().getState().getId(), execution2.getActiveSession().getState().getId());
-	}
+    @Test
+    public void testParseBadlyFormattedFlowExecutionKeyBadContinuationId() {
+        String key = "c12345vaaaa";
+        try {
+            repository.parseFlowExecutionKey(key);
+            fail("Should have failed");
+        } catch (BadlyFormattedFlowExecutionKeyException e) {
+            assertEquals("c12345vaaaa", e.getInvalidKey());
+            assertNotNull(e.getFormat());
+        }
+    }
 
-	@Test
-	public void testPutFlowExecutionNextSnapshotId() {
-		FlowExecution execution = executionFactory.createFlowExecution(flow);
-		execution.start(null, new MockExternalContext());
-		assertNotNull(execution.getKey());
-		repository.putFlowExecution(execution);
-		String key = execution.getKey().toString();
-		FlowExecutionKey parsedKey = repository.parseFlowExecutionKey(key);
-		FlowExecution execution2 = repository.getFlowExecution(parsedKey);
-		assertSame(execution.getDefinition(), execution2.getDefinition());
-		assertEquals(execution.getActiveSession().getState().getId(), execution2.getActiveSession().getState().getId());
-		MockExternalContext context = new MockExternalContext();
-		context.setEventId("foo");
-		execution2.resume(context);
-		repository.putFlowExecution(execution2);
-		assertNotSame(execution.getKey(), execution2.getKey());
-	}
+    @Test
+    public void testGetLock() {
+        FlowExecutionKey key = repository.parseFlowExecutionKey("e12345s54321");
+        FlowExecutionLock lock = repository.getLock(key);
+        assertNotNull(lock);
+        lock.unlock();
+    }
 
-	@Test
-	public void testPutFlowExecutionNoKeyAssigned() {
-		FlowExecution execution = executionFactory.createFlowExecution(flow);
-		try {
-			repository.putFlowExecution(execution);
-			fail("Should have failed");
-		} catch (IllegalStateException e) {
+    @Test
+    public void testGetLockNoSuchFlowExecution() {
+        FlowExecutionKey key = repository.parseFlowExecutionKey("e99999s54321");
+        try {
+            repository.getLock(key);
+            fail("should have failed");
+        } catch (NoSuchFlowExecutionException e) {
+            e.printStackTrace();
+        }
+    }
 
-		}
-	}
+    @Test
+    public void testPutFlowExecution() {
+        FlowExecution execution = executionFactory.createFlowExecution(flow);
+        execution.start(null, new MockExternalContext());
+        assertNotNull(execution.getKey());
+        repository.putFlowExecution(execution);
+        String key = execution.getKey().toString();
+        FlowExecutionKey parsedKey = repository.parseFlowExecutionKey(key);
+        FlowExecution execution2 = repository.getFlowExecution(parsedKey);
+        assertSame(execution.getDefinition(), execution2.getDefinition());
+        assertEquals(execution.getActiveSession().getState().getId(), execution2.getActiveSession().getState().getId());
+    }
 
-	@Test
-	public void testRemoveFlowExecution() {
-		FlowExecution execution = executionFactory.createFlowExecution(flow);
-		execution.start(null, new MockExternalContext());
-		assertNotNull(execution.getKey());
-		repository.putFlowExecution(execution);
-		repository.removeFlowExecution(execution);
-		try {
-			repository.getFlowExecution(execution.getKey());
-			fail("Should have failed");
-		} catch (NoSuchFlowExecutionException e) {
+    @Test
+    public void testPutFlowExecutionNextSnapshotId() {
+        FlowExecution execution = executionFactory.createFlowExecution(flow);
+        execution.start(null, new MockExternalContext());
+        assertNotNull(execution.getKey());
+        repository.putFlowExecution(execution);
+        String key = execution.getKey().toString();
+        FlowExecutionKey parsedKey = repository.parseFlowExecutionKey(key);
+        FlowExecution execution2 = repository.getFlowExecution(parsedKey);
+        assertSame(execution.getDefinition(), execution2.getDefinition());
+        assertEquals(execution.getActiveSession().getState().getId(), execution2.getActiveSession().getState().getId());
+        MockExternalContext context = new MockExternalContext();
+        context.setEventId("foo");
+        execution2.resume(context);
+        repository.putFlowExecution(execution2);
+        assertNotSame(execution.getKey(), execution2.getKey());
+    }
 
-		}
-	}
+    @Test
+    public void testPutFlowExecutionNoKeyAssigned() {
+        FlowExecution execution = executionFactory.createFlowExecution(flow);
+        try {
+            repository.putFlowExecution(execution);
+            fail("Should have failed");
+        } catch (IllegalStateException e) {
 
-	@Test
-	public void testRemoveKeyNotSet() {
-		FlowExecution execution = executionFactory.createFlowExecution(flow);
-		try {
-			repository.removeFlowExecution(execution);
-			fail("Should have failed");
-		} catch (IllegalStateException e) {
+        }
+    }
 
-		}
-	}
+    @Test
+    public void testRemoveFlowExecution() {
+        FlowExecution execution = executionFactory.createFlowExecution(flow);
+        execution.start(null, new MockExternalContext());
+        assertNotNull(execution.getKey());
+        repository.putFlowExecution(execution);
+        repository.removeFlowExecution(execution);
+        try {
+            repository.getFlowExecution(execution.getKey());
+            fail("Should have failed");
+        } catch (NoSuchFlowExecutionException e) {
 
-	@Test
-	public void testRemoveNoSuchFlowExecution() {
-		FlowExecution execution = executionFactory.createFlowExecution(flow);
-		execution.start(null, new MockExternalContext());
-		try {
-			repository.removeFlowExecution(execution);
-			repository.removeFlowExecution(execution);
-			fail("Should have failed");
-		} catch (NoSuchFlowExecutionException e) {
+        }
+    }
 
-		}
-	}
+    @Test
+    public void testRemoveKeyNotSet() {
+        FlowExecution execution = executionFactory.createFlowExecution(flow);
+        try {
+            repository.removeFlowExecution(execution);
+            fail("Should have failed");
+        } catch (IllegalStateException e) {
 
-	@Test
-	public void testGetKey() {
-		FlowExecution execution = executionFactory.createFlowExecution(flow);
-		assertEquals("e12345s1", repository.getKey(execution).toString());
-		assertEquals("e12345s2", repository.getKey(execution).toString());
-		assertEquals("e12345s3", repository.getKey(execution).toString());
-	}
+        }
+    }
 
-	@Test
-	public void testUpdate() {
-		FlowExecution execution = executionFactory.createFlowExecution(flow);
-		execution.start(null, new MockExternalContext());
-		repository.putFlowExecution(execution);
-		execution.getActiveSession().getScope().put("foo", "bar");
-		repository.updateFlowExecutionSnapshot(execution);
-		FlowExecution execution2 = repository.getFlowExecution(execution.getKey());
-		assertEquals("bar", execution2.getActiveSession().getScope().get("foo"));
-	}
+    @Test
+    public void testRemoveNoSuchFlowExecution() {
+        FlowExecution execution = executionFactory.createFlowExecution(flow);
+        execution.start(null, new MockExternalContext());
+        try {
+            repository.removeFlowExecution(execution);
+            repository.removeFlowExecution(execution);
+            fail("Should have failed");
+        } catch (NoSuchFlowExecutionException e) {
 
-	@Test
-	public void testRemove() {
-		FlowExecution execution = executionFactory.createFlowExecution(flow);
-		execution.start(null, new MockExternalContext());
-		repository.putFlowExecution(execution);
-		repository.removeFlowExecutionSnapshot(execution);
-		try {
-			repository.getFlowExecution(execution.getKey());
-			fail("Should have failed");
-		} catch (FlowExecutionRestorationFailureException e) {
+        }
+    }
 
-		}
-	}
+    @Test
+    public void testGetKey() {
+        FlowExecution execution = executionFactory.createFlowExecution(flow);
+        assertEquals("e12345s1", repository.getKey(execution).toString());
+        assertEquals("e12345s2", repository.getKey(execution).toString());
+        assertEquals("e12345s3", repository.getKey(execution).toString());
+    }
 
-	@Test
-	public void testRemoveAll() {
-		FlowExecution execution = executionFactory.createFlowExecution(flow);
-		execution.start(null, new MockExternalContext());
-		repository.putFlowExecution(execution);
-		repository.removeAllFlowExecutionSnapshots(execution);
-		try {
-			repository.getFlowExecution(execution.getKey());
-			fail("Should have failed");
-		} catch (FlowExecutionRestorationFailureException e) {
+    @Test
+    public void testUpdate() {
+        FlowExecution execution = executionFactory.createFlowExecution(flow);
+        execution.start(null, new MockExternalContext());
+        repository.putFlowExecution(execution);
+        execution.getActiveSession().getScope().put("foo", "bar");
+        repository.updateFlowExecutionSnapshot(execution);
+        FlowExecution execution2 = repository.getFlowExecution(execution.getKey());
+        assertEquals("bar", execution2.getActiveSession().getScope().get("foo"));
+    }
 
-		}
+    @Test
+    public void testRemove() {
+        FlowExecution execution = executionFactory.createFlowExecution(flow);
+        execution.start(null, new MockExternalContext());
+        repository.putFlowExecution(execution);
+        repository.removeFlowExecutionSnapshot(execution);
+        try {
+            repository.getFlowExecution(execution.getKey());
+            fail("Should have failed");
+        } catch (FlowExecutionRestorationFailureException e) {
 
-	}
+        }
+    }
 
-	@Test
-	public void testUpdateNothingToDo() {
-		FlowExecution execution = executionFactory.createFlowExecution(flow);
-		repository.updateFlowExecutionSnapshot(execution);
-	}
+    @Test
+    public void testRemoveAll() {
+        FlowExecution execution = executionFactory.createFlowExecution(flow);
+        execution.start(null, new MockExternalContext());
+        repository.putFlowExecution(execution);
+        repository.removeAllFlowExecutionSnapshots(execution);
+        try {
+            repository.getFlowExecution(execution.getKey());
+            fail("Should have failed");
+        } catch (FlowExecutionRestorationFailureException e) {
 
-	@Test
-	public void testRemoveNothingToDo() {
-		FlowExecution execution = executionFactory.createFlowExecution(flow);
-		repository.removeFlowExecutionSnapshot(execution);
-	}
+        }
 
-	@Test
-	public void testRemoveAllSnapshotsNothingToDo() {
-		FlowExecution execution = executionFactory.createFlowExecution(flow);
-		repository.removeAllFlowExecutionSnapshots(execution);
-	}
+    }
 
-	public static class StubConversationManager implements ConversationManager {
+    @Test
+    public void testUpdateNothingToDo() {
+        FlowExecution execution = executionFactory.createFlowExecution(flow);
+        repository.updateFlowExecutionSnapshot(execution);
+    }
 
-		/**
-		 * The single conversation managed by the manager.
-		 */
-		private final StubConversation INSTANCE = new StubConversation();
+    @Test
+    public void testRemoveNothingToDo() {
+        FlowExecution execution = executionFactory.createFlowExecution(flow);
+        repository.removeFlowExecutionSnapshot(execution);
+    }
 
-		public Conversation beginConversation(ConversationParameters conversationParameters)
-				throws ConversationException {
-			return INSTANCE;
-		}
+    @Test
+    public void testRemoveAllSnapshotsNothingToDo() {
+        FlowExecution execution = executionFactory.createFlowExecution(flow);
+        repository.removeAllFlowExecutionSnapshots(execution);
+    }
 
-		public Conversation getConversation(ConversationId id) throws ConversationException {
-			if (id.equals(INSTANCE.getId()) && !INSTANCE.hasEnded()) {
-				return INSTANCE;
-			} else {
-				throw new NoSuchConversationException(id);
-			}
-		}
+    public static class StubConversationManager implements ConversationManager {
 
-		public ConversationId parseConversationId(String encodedId) throws ConversationException {
-			try {
-				return new SimpleConversationId(Integer.parseInt(encodedId));
-			} catch (NumberFormatException e) {
-				throw new BadlyFormattedConversationIdException(encodedId, e);
-			}
-		}
+        /**
+         * The single conversation managed by the manager.
+         */
+        private final StubConversation INSTANCE = new StubConversation();
 
-		private static class StubConversation implements Conversation {
+        public Conversation beginConversation(ConversationParameters conversationParameters)
+            throws ConversationException {
+            return INSTANCE;
+        }
 
-			private final ConversationId ID = new SimpleConversationId(12345);
+        public Conversation getConversation(ConversationId id) throws ConversationException {
+            if (id.equals(INSTANCE.getId()) && !INSTANCE.hasEnded()) {
+                return INSTANCE;
+            } else {
+                throw new NoSuchConversationException(id);
+            }
+        }
 
-			private boolean ended;
+        public ConversationId parseConversationId(String encodedId) throws ConversationException {
+            try {
+                return new SimpleConversationId(Integer.parseInt(encodedId));
+            } catch (NumberFormatException e) {
+                throw new BadlyFormattedConversationIdException(encodedId, e);
+            }
+        }
 
-			private Map<Object, Object> attributes = new HashMap<>();
+        private static class StubConversation implements Conversation {
 
-			public boolean hasEnded() {
-				return ended;
-			}
+            private final ConversationId ID = new SimpleConversationId(12345);
 
-			public ConversationId getId() {
-				return ID;
-			}
+            private boolean ended;
 
-			public void lock() {
-			}
+            private Map<Object, Object> attributes = new HashMap<>();
 
-			public Object getAttribute(Object name) {
-				return attributes.get(name);
-			}
+            public boolean hasEnded() {
+                return ended;
+            }
 
-			public void putAttribute(Object name, Object value) {
-				attributes.put(name, value);
-			}
+            public ConversationId getId() {
+                return ID;
+            }
 
-			public void removeAttribute(Object name) {
-				attributes.remove(name);
-			}
+            public void lock() {
+            }
 
-			public void end() {
-				ended = true;
-			}
+            public Object getAttribute(Object name) {
+                return attributes.get(name);
+            }
 
-			public void unlock() {
-			}
-		}
-	}
+            public void putAttribute(Object name, Object value) {
+                attributes.put(name, value);
+            }
+
+            public void removeAttribute(Object name) {
+                attributes.remove(name);
+            }
+
+            public void end() {
+                ended = true;
+            }
+
+            public void unlock() {
+            }
+        }
+    }
 }

@@ -19,11 +19,11 @@ import jakarta.el.ELContext;
 
 /**
  * A factory for a DefaultELContext.
- * 
+ *
  * @author Keith Donald
  */
 public class DefaultElContextFactory implements ELContextFactory {
-	public ELContext getELContext(Object target) {
-		return new DefaultELContext(new DefaultELResolver(target, null), null, null);
-	}
+    public ELContext getELContext(Object target) {
+        return new DefaultELContext(new DefaultELResolver(target, null), null, null);
+    }
 }

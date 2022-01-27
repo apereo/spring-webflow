@@ -15,8 +15,6 @@
  */
 package org.springframework.webflow.expression.spel;
 
-import java.util.Locale;
-
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.expression.AccessException;
@@ -26,51 +24,53 @@ import org.springframework.expression.TypedValue;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.RequestContextHolder;
 
+import java.util.Locale;
+
 /**
  * <p>
  * Spring EL PropertyAccessor that resolves messages from the {@link MessageSource} of the active Flow. The message
  * source itself is accessible through the "resourceBundle" variable (see {@link FlowVariablePropertyAccessor}). To
  * access a specific message use its key in one of the following ways:
  * </p>
- * 
+ *
  * <pre>
  * resourceBundle.myErrorCode
  * resourceBundle['myErrorCode']
  * </pre>
- * 
+ *
  * @author Rossen Stoyanchev
  * @since 2.1
  */
 public class MessageSourcePropertyAccessor implements PropertyAccessor {
 
-	public Class<?>[] getSpecificTargetClasses() {
-		return new Class[] { MessageSource.class };
-	}
+    public Class<?>[] getSpecificTargetClasses() {
+        return new Class[]{MessageSource.class};
+    }
 
-	public boolean canRead(EvaluationContext context, Object target, String name) {
-		return (getMessage(target, name) != null);
-	}
+    public boolean canRead(EvaluationContext context, Object target, String name) {
+        return (getMessage(target, name) != null);
+    }
 
-	public TypedValue read(EvaluationContext context, Object target, String name) {
-		return new TypedValue(getMessage(target, name));
-	}
+    public TypedValue read(EvaluationContext context, Object target, String name) {
+        return new TypedValue(getMessage(target, name));
+    }
 
-	public boolean canWrite(EvaluationContext context, Object target, String name) {
-		return false;
-	}
+    public boolean canWrite(EvaluationContext context, Object target, String name) {
+        return false;
+    }
 
-	public void write(EvaluationContext context, Object target, String name, Object newValue) throws AccessException {
-		throw new AccessException("The flow MessageSource is not writable.");
-	}
+    public void write(EvaluationContext context, Object target, String name, Object newValue) throws AccessException {
+        throw new AccessException("The flow MessageSource is not writable.");
+    }
 
-	private String getMessage(Object target, String name) {
-		return ((MessageSource) target).getMessage(name, null, null, getLocale());
-	}
+    private String getMessage(Object target, String name) {
+        return ((MessageSource) target).getMessage(name, null, null, getLocale());
+    }
 
-	private Locale getLocale() {
-		RequestContext requestContext = RequestContextHolder.getRequestContext();
-		return (requestContext != null) ? requestContext.getExternalContext().getLocale() : LocaleContextHolder
-				.getLocale();
-	}
+    private Locale getLocale() {
+        RequestContext requestContext = RequestContextHolder.getRequestContext();
+        return (requestContext != null) ? requestContext.getExternalContext().getLocale() : LocaleContextHolder
+            .getLocale();
+    }
 
 }

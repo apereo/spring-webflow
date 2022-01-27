@@ -29,60 +29,66 @@ import org.springframework.webflow.definition.StateDefinition;
  * <p>
  * Note that a flow <i>session</i> is in no way linked to an HTTP session. It just uses the familiar "session" naming
  * convention to denote a stateful object.
- * 
- * @see FlowDefinition
- * @see FlowExecution
- * 
+ *
  * @author Keith Donald
  * @author Erwin Vervaet
+ * @see FlowDefinition
+ * @see FlowExecution
  */
 public interface FlowSession {
 
-	/**
-	 * Returns the flow definition backing this session.
+    /**
+     * Returns the flow definition backing this session.
+     *
      * @return
      */
-	FlowDefinition getDefinition();
+    FlowDefinition getDefinition();
 
-	/**
-	 * Returns the current state of this flow session. This value changes as the flow executes.
+    /**
+     * Returns the current state of this flow session. This value changes as the flow executes.
+     *
      * @return
      */
-	StateDefinition getState();
+    StateDefinition getState();
 
-	/**
-	 * Return this session's local attributes; the basis for "flow scope" (flow session scope).
-	 * @return the flow scope attributes
-	 */
-	MutableAttributeMap<Object> getScope();
+    /**
+     * Return this session's local attributes; the basis for "flow scope" (flow session scope).
+     *
+     * @return the flow scope attributes
+     */
+    MutableAttributeMap<Object> getScope();
 
-	/**
-	 * Returns a mutable map for data held in "view scope". Attributes in this map are cleared out when the current view
-	 * state exits.
-	 * @return view scope
-	 * @throws IllegalStateException if this flow session is not currently in a view state
-	 */
-	MutableAttributeMap<Object> getViewScope() throws IllegalStateException;
+    /**
+     * Returns a mutable map for data held in "view scope". Attributes in this map are cleared out when the current view
+     * state exits.
+     *
+     * @return view scope
+     * @throws IllegalStateException if this flow session is not currently in a view state
+     */
+    MutableAttributeMap<Object> getViewScope() throws IllegalStateException;
 
-	/**
-	 * Returns true if the flow session was started in embedded page mode. An embedded flow can make different
-	 * assumptions with regards to whether redirect after post is necessary.
+    /**
+     * Returns true if the flow session was started in embedded page mode. An embedded flow can make different
+     * assumptions with regards to whether redirect after post is necessary.
+     *
      * @return
      */
-	boolean isEmbeddedMode();
+    boolean isEmbeddedMode();
 
-	/**
-	 * Returns the parent flow session in the current flow execution, or <code>null</code> if there is no parent flow
-	 * session.
+    /**
+     * Returns the parent flow session in the current flow execution, or <code>null</code> if there is no parent flow
+     * session.
+     *
      * @return
      */
-	FlowSession getParent();
+    FlowSession getParent();
 
-	/**
-	 * Returns whether this flow session is the root flow session in the ongoing flow execution. The root flow session
-	 * does not have a parent flow session.
+    /**
+     * Returns whether this flow session is the root flow session in the ongoing flow execution. The root flow session
+     * does not have a parent flow session.
+     *
      * @return
      */
-	boolean isRoot();
+    boolean isRoot();
 
 }

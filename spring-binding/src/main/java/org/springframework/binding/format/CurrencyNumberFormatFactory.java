@@ -20,12 +20,12 @@ import java.util.Locale;
 
 /**
  * Produces NumberFormat instances that format currency values.
- * 
- * @see NumberFormat
+ *
  * @author Keith Donald
+ * @see NumberFormat
  */
 public class CurrencyNumberFormatFactory extends AbstractNumberFormatFactory {
-	protected NumberFormat getNumberFormat(Locale locale) {
-		return NumberFormat.getCurrencyInstance(locale);
-	}
+    protected NumberFormat getNumberFormat(Locale locale) {
+        return NumberFormat.getCurrencyInstance(locale);
+    }
 }

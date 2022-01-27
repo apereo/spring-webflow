@@ -22,24 +22,24 @@ import java.util.Map;
  * <p>
  * Expected to be implemented by Maps that are backed by shared objects that require synchronization between multiple
  * threads. An example would be the HTTP session map.
- * 
+ *
  * @author Keith Donald
  */
 public interface SharedMap<K, V> extends Map<K, V> {
 
-	/**
-	 * Returns the shared mutex that may be synchronized on using a synchronized block. The returned mutex is guaranteed
-	 * to be non-null.
-	 * 
-	 * Example usage:
-	 * 
-	 * <pre>
-	 * synchronized (sharedMap.getMutex()) {
-	 * 	// do synchronized work
-	 * }
-	 * </pre>
-	 * 
-	 * @return the mutex
-	 */
-	Object getMutex();
+    /**
+     * Returns the shared mutex that may be synchronized on using a synchronized block. The returned mutex is guaranteed
+     * to be non-null.
+     * <p>
+     * Example usage:
+     *
+     * <pre>
+     * synchronized (sharedMap.getMutex()) {
+     * 	// do synchronized work
+     * }
+     * </pre>
+     *
+     * @return the mutex
+     */
+    Object getMutex();
 }

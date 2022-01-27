@@ -31,56 +31,61 @@ import org.springframework.webflow.engine.model.FlowModel;
  * <code>XmlFlowModelBuilder</code>, for building flows from an XML-definition.
  * <p>
  * This is a good example of the classic GoF builder pattern.
- * 
- * @see FlowModel
- * 
+ *
  * @author Keith Donald
  * @author Erwin Vervaet
  * @author Scott Andrews
+ * @see FlowModel
  */
 public interface FlowModelBuilder {
 
-	/**
-	 * Initialize this builder. This could cause the builder to open a stream to an externalized resource representing
-	 * the flow definition, for example.
-	 * @throws FlowModelBuilderException an exception occurred building the flow
-	 */
-	void init() throws FlowModelBuilderException;
+    /**
+     * Initialize this builder. This could cause the builder to open a stream to an externalized resource representing
+     * the flow definition, for example.
+     *
+     * @throws FlowModelBuilderException an exception occurred building the flow
+     */
+    void init() throws FlowModelBuilderException;
 
-	/**
-	 * Builds any variables initialized by the flow when it starts.
-	 * @throws FlowModelBuilderException an exception occurred building the flow
-	 */
-	void build() throws FlowModelBuilderException;
+    /**
+     * Builds any variables initialized by the flow when it starts.
+     *
+     * @throws FlowModelBuilderException an exception occurred building the flow
+     */
+    void build() throws FlowModelBuilderException;
 
-	/**
-	 * Get the fully constructed flow model. Called by the builder's assembler (director) after assembly. When this
-	 * method is called by the assembler, it is expected flow construction has completed and the returned flow model is
-	 * ready for use.
-	 * @throws FlowModelBuilderException an exception occurred building this flow
+    /**
+     * Get the fully constructed flow model. Called by the builder's assembler (director) after assembly. When this
+     * method is called by the assembler, it is expected flow construction has completed and the returned flow model is
+     * ready for use.
+     *
      * @return
-	 */
-	FlowModel getFlowModel() throws FlowModelBuilderException;
+     * @throws FlowModelBuilderException an exception occurred building this flow
+     */
+    FlowModel getFlowModel() throws FlowModelBuilderException;
 
-	/**
-	 * Shutdown the builder, releasing any resources it holds. A new flow construction process should start with another
-	 * call to the {@link #init()} method.
-	 * @throws FlowModelBuilderException an exception occurred disposing this flow
-	 */
-	void dispose() throws FlowModelBuilderException;
+    /**
+     * Shutdown the builder, releasing any resources it holds. A new flow construction process should start with another
+     * call to the {@link #init()} method.
+     *
+     * @throws FlowModelBuilderException an exception occurred disposing this flow
+     */
+    void dispose() throws FlowModelBuilderException;
 
-	/**
-	 * Get the underlying flow model resource accessed to build this flow model. Returns null if this builder does not
-	 * construct the flow model from a resource.
-	 * @return the flow model resource
-	 */
-	Resource getFlowModelResource();
+    /**
+     * Get the underlying flow model resource accessed to build this flow model. Returns null if this builder does not
+     * construct the flow model from a resource.
+     *
+     * @return the flow model resource
+     */
+    Resource getFlowModelResource();
 
-	/**
-	 * Returns true if the underlying flow model resource has changed since the last call to {@link #init()}. Always
-	 * returns false if the flow model is not build from a resource.
-	 * @return true if the resource backing the flow model has changed
-	 */
-	boolean hasFlowModelResourceChanged();
+    /**
+     * Returns true if the underlying flow model resource has changed since the last call to {@link #init()}. Always
+     * returns false if the flow model is not build from a resource.
+     *
+     * @return true if the resource backing the flow model has changed
+     */
+    boolean hasFlowModelResourceChanged();
 
 }

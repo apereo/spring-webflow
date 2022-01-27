@@ -20,34 +20,36 @@ import org.springframework.webflow.core.collection.MutableAttributeMap;
 
 /**
  * An execution of a flow definition. This is the central interface for manipulating a instance of a flow definition.
- * 
+ *
  * @author Keith Donald
  * @author Erwin Vervaet
  */
 public interface FlowExecution extends FlowExecutionContext {
 
-	/**
-	 * Start this flow execution. This method should only be called once.
-	 * <p>
-	 * When this method returns, execution status is either "paused" or "ended". If ended, the flow execution cannot be
-	 * used again. If "paused", the flow execution may be {@link #resume(ExternalContext) resumed}.
-	 * @param input flow execution input
-	 * @param context the external context representing the calling environment
-	 * @throws FlowExecutionException if an exception was thrown within a state of the flow execution during request
-	 * processing
-	 */
-	void start(MutableAttributeMap<?> input, ExternalContext context) throws FlowExecutionException;
+    /**
+     * Start this flow execution. This method should only be called once.
+     * <p>
+     * When this method returns, execution status is either "paused" or "ended". If ended, the flow execution cannot be
+     * used again. If "paused", the flow execution may be {@link #resume(ExternalContext) resumed}.
+     *
+     * @param input   flow execution input
+     * @param context the external context representing the calling environment
+     * @throws FlowExecutionException if an exception was thrown within a state of the flow execution during request
+     *                                processing
+     */
+    void start(MutableAttributeMap<?> input, ExternalContext context) throws FlowExecutionException;
 
-	/**
-	 * Resume this flow execution. May be called when the flow execution is paused.
-	 * 
-	 * When this method returns, execution status is either "paused" or "ended". If ended, the flow execution cannot be
-	 * used again. If "paused", the flow execution may be resumed again.
-	 * @param context the external context, representing the calling environment, where something happened this flow
-	 * execution should respond to
-	 * @throws FlowExecutionException if an exception was thrown within a state of the resumed flow execution during
-	 * event processing
-	 */
-	void resume(ExternalContext context) throws FlowExecutionException;
+    /**
+     * Resume this flow execution. May be called when the flow execution is paused.
+     * <p>
+     * When this method returns, execution status is either "paused" or "ended". If ended, the flow execution cannot be
+     * used again. If "paused", the flow execution may be resumed again.
+     *
+     * @param context the external context, representing the calling environment, where something happened this flow
+     *                execution should respond to
+     * @throws FlowExecutionException if an exception was thrown within a state of the resumed flow execution during
+     *                                event processing
+     */
+    void resume(ExternalContext context) throws FlowExecutionException;
 
 }

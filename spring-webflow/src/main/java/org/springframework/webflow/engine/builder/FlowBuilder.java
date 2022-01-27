@@ -44,99 +44,111 @@ import org.springframework.webflow.engine.Flow;
  * call init, followed by the build* methods, getFlow, and dispose completely in that order.
  * <p>
  * This is a good example of the classic GoF builder pattern.
- * 
+ *
+ * @author Keith Donald
+ * @author Erwin Vervaet
  * @see Flow
  * @see FlowBuilderContext
  * @see FlowAssembler
- * 
- * @author Keith Donald
- * @author Erwin Vervaet
  */
 public interface FlowBuilder {
 
-	/**
-	 * Initialize this builder. This could cause the builder to open a stream to an externalized resource representing
-	 * the flow definition, for example.
-	 * @param context the flow builder context
-	 * @throws FlowBuilderException an exception occurred building the flow
-	 */
-	void init(FlowBuilderContext context) throws FlowBuilderException;
+    /**
+     * Initialize this builder. This could cause the builder to open a stream to an externalized resource representing
+     * the flow definition, for example.
+     *
+     * @param context the flow builder context
+     * @throws FlowBuilderException an exception occurred building the flow
+     */
+    void init(FlowBuilderContext context) throws FlowBuilderException;
 
-	/**
-	 * Builds any variables initialized by the flow when it starts.
-	 * @throws FlowBuilderException an exception occurred building the flow
-	 */
-	void buildVariables() throws FlowBuilderException;
+    /**
+     * Builds any variables initialized by the flow when it starts.
+     *
+     * @throws FlowBuilderException an exception occurred building the flow
+     */
+    void buildVariables() throws FlowBuilderException;
 
-	/**
-	 * Builds the input mapper responsible for mapping flow input on start.
-	 * @throws FlowBuilderException an exception occurred building the flow
-	 */
-	void buildInputMapper() throws FlowBuilderException;
+    /**
+     * Builds the input mapper responsible for mapping flow input on start.
+     *
+     * @throws FlowBuilderException an exception occurred building the flow
+     */
+    void buildInputMapper() throws FlowBuilderException;
 
-	/**
-	 * Builds any start actions to execute when the flow starts.
-	 * @throws FlowBuilderException an exception occurred building the flow
-	 */
-	void buildStartActions() throws FlowBuilderException;
+    /**
+     * Builds any start actions to execute when the flow starts.
+     *
+     * @throws FlowBuilderException an exception occurred building the flow
+     */
+    void buildStartActions() throws FlowBuilderException;
 
-	/**
-	 * Builds the states of the flow.
-	 * @throws FlowBuilderException an exception occurred building the flow
-	 */
-	void buildStates() throws FlowBuilderException;
+    /**
+     * Builds the states of the flow.
+     *
+     * @throws FlowBuilderException an exception occurred building the flow
+     */
+    void buildStates() throws FlowBuilderException;
 
-	/**
-	 * Builds any transitions shared by all states of the flow.
-	 * @throws FlowBuilderException an exception occurred building the flow
-	 */
-	void buildGlobalTransitions() throws FlowBuilderException;
+    /**
+     * Builds any transitions shared by all states of the flow.
+     *
+     * @throws FlowBuilderException an exception occurred building the flow
+     */
+    void buildGlobalTransitions() throws FlowBuilderException;
 
-	/**
-	 * Builds any end actions to execute when the flow ends.
-	 * @throws FlowBuilderException an exception occurred building the flow
-	 */
-	void buildEndActions() throws FlowBuilderException;
+    /**
+     * Builds any end actions to execute when the flow ends.
+     *
+     * @throws FlowBuilderException an exception occurred building the flow
+     */
+    void buildEndActions() throws FlowBuilderException;
 
-	/**
-	 * Builds the output mapper responsible for mapping flow output on end.
-	 * @throws FlowBuilderException an exception occurred building the flow
-	 */
-	void buildOutputMapper() throws FlowBuilderException;
+    /**
+     * Builds the output mapper responsible for mapping flow output on end.
+     *
+     * @throws FlowBuilderException an exception occurred building the flow
+     */
+    void buildOutputMapper() throws FlowBuilderException;
 
-	/**
-	 * Creates and adds all exception handlers to the flow built by this builder.
-	 * @throws FlowBuilderException an exception occurred building this flow
-	 */
-	void buildExceptionHandlers() throws FlowBuilderException;
+    /**
+     * Creates and adds all exception handlers to the flow built by this builder.
+     *
+     * @throws FlowBuilderException an exception occurred building this flow
+     */
+    void buildExceptionHandlers() throws FlowBuilderException;
 
-	/**
-	 * Get the fully constructed and configured Flow object. Called by the builder's assembler (director) after
-	 * assembly. When this method is called by the assembler, it is expected flow construction has completed and the
-	 * returned flow is fully configured and ready for use.
-	 * @throws FlowBuilderException an exception occurred building this flow
+    /**
+     * Get the fully constructed and configured Flow object. Called by the builder's assembler (director) after
+     * assembly. When this method is called by the assembler, it is expected flow construction has completed and the
+     * returned flow is fully configured and ready for use.
+     *
      * @return
-	 */
-	Flow getFlow() throws FlowBuilderException;
+     * @throws FlowBuilderException an exception occurred building this flow
+     */
+    Flow getFlow() throws FlowBuilderException;
 
-	/**
-	 * Shutdown the builder, releasing any resources it holds. A new flow construction process should start with another
-	 * call to the {@link #init(FlowBuilderContext)} method.
-	 * @throws FlowBuilderException an exception occurred building this flow
-	 */
-	void dispose() throws FlowBuilderException;
+    /**
+     * Shutdown the builder, releasing any resources it holds. A new flow construction process should start with another
+     * call to the {@link #init(FlowBuilderContext)} method.
+     *
+     * @throws FlowBuilderException an exception occurred building this flow
+     */
+    void dispose() throws FlowBuilderException;
 
-	/**
-	 * As the underlying flow managed by this builder changed since the last build occurred?
-	 * @return true if changed, false if not
-	 */
-	boolean hasFlowChanged();
+    /**
+     * As the underlying flow managed by this builder changed since the last build occurred?
+     *
+     * @return true if changed, false if not
+     */
+    boolean hasFlowChanged();
 
-	/**
-	 * Returns a string describing the location of the flow resource; the logical location where the source code can be
-	 * found. Used for informational purposes.
-	 * @return the flow resource string
-	 */
-	String getFlowResourceString();
+    /**
+     * Returns a string describing the location of the flow resource; the logical location where the source code can be
+     * found. Used for informational purposes.
+     *
+     * @return the flow resource string
+     */
+    String getFlowResourceString();
 
 }

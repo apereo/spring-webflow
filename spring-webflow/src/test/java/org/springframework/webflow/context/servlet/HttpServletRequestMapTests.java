@@ -15,73 +15,70 @@
  */
 package org.springframework.webflow.context.servlet;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import java.util.Iterator;
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 
+import java.util.Iterator;
+
+import static org.junit.jupiter.api.Assertions.*;
+
 /**
  * Unit test for the {@link HttpServletRequestMap} class.
- * 
+ *
  * @author Ulrik Sandberg
  */
 public class HttpServletRequestMapTests {
 
-	private HttpServletRequestMap tested;
+    private HttpServletRequestMap tested;
 
-	private MockHttpServletRequest request;
+    private MockHttpServletRequest request;
 
-	@BeforeEach
-	public void setUp() throws Exception {
-		request = new MockHttpServletRequest();
-		tested = new HttpServletRequestMap(request);
-	}
+    @BeforeEach
+    public void setUp() throws Exception {
+        request = new MockHttpServletRequest();
+        tested = new HttpServletRequestMap(request);
+    }
 
-	@AfterEach
-	public void tearDown() throws Exception {
-		request = null;
-		tested = null;
-	}
+    @AfterEach
+    public void tearDown() throws Exception {
+        request = null;
+        tested = null;
+    }
 
-	@Test
-	public void testGetAttribute() {
-		request.setAttribute("Some key", "Some value");
-		// perform test
-		Object result = tested.getAttribute("Some key");
-		assertEquals("Some value", result);
-	}
+    @Test
+    public void testGetAttribute() {
+        request.setAttribute("Some key", "Some value");
+        // perform test
+        Object result = tested.getAttribute("Some key");
+        assertEquals("Some value", result);
+    }
 
-	@Test
-	public void testSetAttribute() {
-		// perform test
-		tested.setAttribute("Some key", "Some value");
-		assertEquals("Some value", request.getAttribute("Some key"));
-	}
+    @Test
+    public void testSetAttribute() {
+        // perform test
+        tested.setAttribute("Some key", "Some value");
+        assertEquals("Some value", request.getAttribute("Some key"));
+    }
 
-	@Test
-	public void testRemoveAttribute() {
-		request.setAttribute("Some key", "Some value");
-		// perform test
-		tested.removeAttribute("Some key");
-		assertNull(request.getAttribute("Some key"));
-	}
+    @Test
+    public void testRemoveAttribute() {
+        request.setAttribute("Some key", "Some value");
+        // perform test
+        tested.removeAttribute("Some key");
+        assertNull(request.getAttribute("Some key"));
+    }
 
-	@Test
-	public void testGetAttributeNames() {
-		request.setAttribute("Some key", "Some value");
-		request.removeAttribute("jakarta.servlet.context.tempdir");
-		// perform test
-		Iterator<String> names = tested.getAttributeNames();
-		assertNotNull(names, "Null result unexpected");
-		assertTrue(names.hasNext(), "More elements");
-		String name = names.next();
-		assertEquals("Some key", name);
-	}
+    @Test
+    public void testGetAttributeNames() {
+        request.setAttribute("Some key", "Some value");
+        request.removeAttribute("jakarta.servlet.context.tempdir");
+        // perform test
+        Iterator<String> names = tested.getAttributeNames();
+        assertNotNull(names, "Null result unexpected");
+        assertTrue(names.hasNext(), "More elements");
+        String name = names.next();
+        assertEquals("Some key", name);
+    }
 }

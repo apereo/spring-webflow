@@ -15,32 +15,31 @@
  */
 package org.springframework.webflow.engine.support;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.fail;
-
 import org.junit.jupiter.api.Test;
 import org.springframework.webflow.engine.WildcardTransitionCriteria;
 import org.springframework.webflow.test.MockRequestContext;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 /**
  * Unit tests for {@link NotTransitionCriteria}.
- * 
+ *
  * @author Erwin Vervaet
  */
 public class NotTransitionCriteriaTests {
 
-	@Test
-	public void testNull() {
-		try {
-			new NotTransitionCriteria(null);
-			fail();
-		} catch (IllegalArgumentException e) {
-		}
-	}
+    @Test
+    public void testNull() {
+        try {
+            new NotTransitionCriteria(null);
+            fail();
+        } catch (IllegalArgumentException e) {
+        }
+    }
 
-	@Test
-	public void testNegation() {
-		assertFalse(new NotTransitionCriteria(WildcardTransitionCriteria.INSTANCE).test(new MockRequestContext()));
-	}
+    @Test
+    public void testNegation() {
+        assertFalse(new NotTransitionCriteria(WildcardTransitionCriteria.INSTANCE).test(new MockRequestContext()));
+    }
 
 }

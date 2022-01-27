@@ -15,17 +15,17 @@
  */
 package org.springframework.binding.expression.spel;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.springframework.binding.expression.Expression;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.expression.EvaluationContext;
 import org.springframework.expression.PropertyAccessor;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.expression.spel.support.StandardTypeConverter;
+
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Creates a {@link StandardEvaluationContext} enabling the full power of SpEL.
@@ -35,45 +35,46 @@ import org.springframework.expression.spel.support.StandardTypeConverter;
  */
 public class StandardEvaluationContextFactory implements EvaluationContextFactory {
 
-	private final List<PropertyAccessor> propertyAccessors;
+    private final List<PropertyAccessor> propertyAccessors;
 
-	private final ConversionService conversionService;
+    private final ConversionService conversionService;
 
-	private final Map<String, Expression> expressionVariables;
-
-
-	public StandardEvaluationContextFactory(List<PropertyAccessor> propertyAccessors,
-			ConversionService conversionService, Map<String, Expression> expressionVariables) {
-
-		this.propertyAccessors = propertyAccessors;
-		this.conversionService = conversionService;
-		this.expressionVariables = expressionVariables;
-	}
+    private final Map<String, Expression> expressionVariables;
 
 
-	@Override
-	public EvaluationContext createContext(Object rootObject) {
-		StandardEvaluationContext context = new StandardEvaluationContext(rootObject);
-		context.setVariables(getVariableValues(rootObject));
-		context.setTypeConverter(new StandardTypeConverter(conversionService));
-		context.getPropertyAccessors().addAll(propertyAccessors);
-		return context;
-	}
+    public StandardEvaluationContextFactory(List<PropertyAccessor> propertyAccessors,
+                                            ConversionService conversionService, Map<String, Expression> expressionVariables) {
 
-	/**
-	 * Turn the map of variable-names-to-expressions into a map of variable-names-to-plain-objects
-	 * by evaluating each object against the input rootObject.
-	 * @param rootObject the Object to evaluate variable expressions against.
-	 * @return a mapping between variables names and plain Object's.
-	 */
-	private Map<String, Object> getVariableValues(Object rootObject) {
-		if (expressionVariables == null) {
-			return Collections.emptyMap();
-		}
-		Map<String, Object> variableValues = new HashMap<>(expressionVariables.size());
-		for (Map.Entry<String, Expression> var : expressionVariables.entrySet()) {
-			variableValues.put(var.getKey(), var.getValue().getValue(rootObject));
-		}
-		return variableValues;
-	}
+        this.propertyAccessors = propertyAccessors;
+        this.conversionService = conversionService;
+        this.expressionVariables = expressionVariables;
+    }
+
+
+    @Override
+    public EvaluationContext createContext(Object rootObject) {
+        StandardEvaluationContext context = new StandardEvaluationContext(rootObject);
+        context.setVariables(getVariableValues(rootObject));
+        context.setTypeConverter(new StandardTypeConverter(conversionService));
+        context.getPropertyAccessors().addAll(propertyAccessors);
+        return context;
+    }
+
+    /**
+     * Turn the map of variable-names-to-expressions into a map of variable-names-to-plain-objects
+     * by evaluating each object against the input rootObject.
+     *
+     * @param rootObject the Object to evaluate variable expressions against.
+     * @return a mapping between variables names and plain Object's.
+     */
+    private Map<String, Object> getVariableValues(Object rootObject) {
+        if (expressionVariables == null) {
+            return Collections.emptyMap();
+        }
+        Map<String, Object> variableValues = new HashMap<>(expressionVariables.size());
+        for (Map.Entry<String, Expression> var : expressionVariables.entrySet()) {
+            variableValues.put(var.getKey(), var.getValue().getValue(rootObject));
+        }
+        return variableValues;
+    }
 }

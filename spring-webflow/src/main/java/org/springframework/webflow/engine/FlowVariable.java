@@ -24,85 +24,90 @@ import org.springframework.webflow.execution.RequestContext;
  * A value object that defines a specification for a flow variable. Such a variable is allocated when a flow starts and
  * destroyed when that flow ends. This class encapsulates information about the variable and the behavior necessary to
  * allocate the variable instance in flow scope.
- * 
+ *
  * @author Keith Donald
  */
 public class FlowVariable extends AnnotatedObject {
 
-	/**
-	 * The variable name.
-	 */
-	private String name;
+    /**
+     * The variable name.
+     */
+    private String name;
 
-	/**
-	 * The value factory that provides this variable's value.
-	 */
-	private VariableValueFactory valueFactory;
+    /**
+     * The value factory that provides this variable's value.
+     */
+    private VariableValueFactory valueFactory;
 
-	/**
-	 * Creates a new flow variable.
-	 * @param name the variable name
+    /**
+     * Creates a new flow variable.
+     *
+     * @param name         the variable name
      * @param valueFactory
      * @param valueFactory
-	 */
-	public FlowVariable(String name, VariableValueFactory valueFactory) {
-		Assert.hasText(name, "The variable name is required");
-		Assert.notNull(valueFactory, "The variable value factory is required");
-		this.name = name;
-		this.valueFactory = valueFactory;
-	}
+     */
+    public FlowVariable(String name, VariableValueFactory valueFactory) {
+        Assert.hasText(name, "The variable name is required");
+        Assert.notNull(valueFactory, "The variable value factory is required");
+        this.name = name;
+        this.valueFactory = valueFactory;
+    }
 
-	/**
-	 * Returns the name of this variable.
+    /**
+     * Returns the name of this variable.
+     *
      * @return
      */
-	public String getName() {
-		return name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	// name and scope based equality
+    // name and scope based equality
 
-	public boolean equals(Object o) {
-		if (!(o instanceof FlowVariable)) {
-			return false;
-		}
-		FlowVariable other = (FlowVariable) o;
-		return name.equals(other.name) && valueFactory.equals(other.valueFactory);
-	}
+    public boolean equals(Object o) {
+        if (!(o instanceof FlowVariable)) {
+            return false;
+        }
+        FlowVariable other = (FlowVariable) o;
+        return name.equals(other.name) && valueFactory.equals(other.valueFactory);
+    }
 
-	public int hashCode() {
-		return name.hashCode() + valueFactory.hashCode();
-	}
+    public int hashCode() {
+        return name.hashCode() + valueFactory.hashCode();
+    }
 
-	/**
-	 * Creates this flow variable. This method allocates the variable's value in the correct flow scope.
-	 * @param context the executing flow
-	 */
-	public void create(RequestContext context) {
-		Object value = valueFactory.createInitialValue(context);
-		context.getFlowScope().put(name, value);
-	}
+    /**
+     * Creates this flow variable. This method allocates the variable's value in the correct flow scope.
+     *
+     * @param context the executing flow
+     */
+    public void create(RequestContext context) {
+        Object value = valueFactory.createInitialValue(context);
+        context.getFlowScope().put(name, value);
+    }
 
-	/**
-	 * Restores this variable's dependencies. This method asks the variable's value factory to restore any references
-	 * the variable has to transient objects.
-	 * @param context the executing flow
-	 */
-	public void restore(RequestContext context) {
-		Object value = context.getFlowScope().get(name);
-		valueFactory.restoreReferences(value, context);
-	}
+    /**
+     * Restores this variable's dependencies. This method asks the variable's value factory to restore any references
+     * the variable has to transient objects.
+     *
+     * @param context the executing flow
+     */
+    public void restore(RequestContext context) {
+        Object value = context.getFlowScope().get(name);
+        valueFactory.restoreReferences(value, context);
+    }
 
-	/**
-	 * Destroys this flow variable. This method removes the variable's value in the correct flow scope.
-	 * @param context the executing flow
+    /**
+     * Destroys this flow variable. This method removes the variable's value in the correct flow scope.
+     *
+     * @param context the executing flow
      * @return
-	 */
-	public Object destroy(RequestContext context) {
-		return context.getFlowScope().remove(name);
-	}
+     */
+    public Object destroy(RequestContext context) {
+        return context.getFlowScope().remove(name);
+    }
 
-	public String toString() {
-		return new ToStringCreator(this).append("name", name).append("valueFactory", valueFactory).toString();
-	}
+    public String toString() {
+        return new ToStringCreator(this).append("name", name).append("valueFactory", valueFactory).toString();
+    }
 }

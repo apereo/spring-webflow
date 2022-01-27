@@ -15,53 +15,53 @@
  */
 package org.springframework.webflow.context.servlet;
 
-import java.util.Iterator;
-
 import jakarta.servlet.ServletContext;
-
 import org.springframework.binding.collection.SharedMap;
 import org.springframework.binding.collection.StringKeyedMapAdapter;
 import org.springframework.webflow.core.collection.CollectionUtils;
 
+import java.util.Iterator;
+
 /**
  * Map backed by the Servlet context for accessing application scoped attributes.
- * 
+ *
  * @author Keith Donald
  */
 public class HttpServletContextMap extends StringKeyedMapAdapter<Object> implements SharedMap<String, Object> {
 
-	/**
-	 * The wrapped servlet context.
-	 */
-	private ServletContext context;
+    /**
+     * The wrapped servlet context.
+     */
+    private ServletContext context;
 
-	/**
-	 * Create a map wrapping given servlet context.
+    /**
+     * Create a map wrapping given servlet context.
+     *
      * @param context
      * @param context
      */
-	public HttpServletContextMap(ServletContext context) {
-		this.context = context;
-	}
+    public HttpServletContextMap(ServletContext context) {
+        this.context = context;
+    }
 
-	protected Object getAttribute(String key) {
-		return context.getAttribute(key);
-	}
+    public Object getMutex() {
+        return context;
+    }
 
-	protected void setAttribute(String key, Object value) {
-		context.setAttribute(key, value);
-	}
+    protected Object getAttribute(String key) {
+        return context.getAttribute(key);
+    }
 
-	protected void removeAttribute(String key) {
-		context.removeAttribute(key);
-	}
+    protected void setAttribute(String key, Object value) {
+        context.setAttribute(key, value);
+    }
 
-	@SuppressWarnings("unchecked")
-	protected Iterator<String> getAttributeNames() {
-		return CollectionUtils.toIterator(context.getAttributeNames());
-	}
+    protected void removeAttribute(String key) {
+        context.removeAttribute(key);
+    }
 
-	public Object getMutex() {
-		return context;
-	}
+    @SuppressWarnings("unchecked")
+    protected Iterator<String> getAttributeNames() {
+        return CollectionUtils.toIterator(context.getAttributeNames());
+    }
 }

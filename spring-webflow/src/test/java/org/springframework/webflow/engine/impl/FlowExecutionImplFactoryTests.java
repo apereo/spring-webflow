@@ -15,13 +15,6 @@
  */
 package org.springframework.webflow.engine.impl;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
@@ -45,164 +38,166 @@ import org.springframework.webflow.execution.factory.StaticFlowExecutionListener
 import org.springframework.webflow.test.MockExternalContext;
 import org.springframework.webflow.test.MockFlowExecutionKey;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 /**
  * Test case for {@link FlowExecutionImplFactory}.
  */
 public class FlowExecutionImplFactoryTests {
 
-	private FlowExecutionImplFactory factory = new FlowExecutionImplFactory();
+    private FlowExecutionImplFactory factory = new FlowExecutionImplFactory();
 
-	private Flow flowDefinition;
+    private Flow flowDefinition;
 
-	private boolean starting;
+    private boolean starting;
 
-	private boolean getKeyCalled;
+    private boolean getKeyCalled;
 
-	private boolean updateSnapshotCalled;
+    private boolean updateSnapshotCalled;
 
-	private boolean removeSnapshotCalled;
+    private boolean removeSnapshotCalled;
 
-	private boolean removeAllSnapshotsCalled;
+    private boolean removeAllSnapshotsCalled;
 
-	@BeforeEach
-	public void setUp() {
-		flowDefinition = new Flow("flow");
-		new EndState(flowDefinition, "end");
-	}
+    @BeforeEach
+    public void setUp() {
+        flowDefinition = new Flow("flow");
+        new EndState(flowDefinition, "end");
+    }
 
-	@Test
-	public void testCreate() {
-		FlowExecution execution = factory.createFlowExecution(flowDefinition);
-		assertSame(flowDefinition, execution.getDefinition());
-		assertFalse(execution.hasStarted());
-		assertFalse(execution.isActive());
-	}
+    @Test
+    public void testCreate() {
+        FlowExecution execution = factory.createFlowExecution(flowDefinition);
+        assertSame(flowDefinition, execution.getDefinition());
+        assertFalse(execution.hasStarted());
+        assertFalse(execution.isActive());
+    }
 
-	@Test
-	public void testCreateNullArgument() {
-		try {
-			factory.createFlowExecution(null);
-			fail("Should've failed");
-		} catch (IllegalArgumentException e) {
+    @Test
+    public void testCreateNullArgument() {
+        try {
+            factory.createFlowExecution(null);
+            fail("Should've failed");
+        } catch (IllegalArgumentException e) {
 
-		}
-	}
+        }
+    }
 
-	@Test
-	public void testCreateWithExecutionAttributes() {
-		MutableAttributeMap<Object> attributes = new LocalAttributeMap<>();
-		attributes.put("foo", "bar");
-		factory.setExecutionAttributes(attributes);
-		FlowExecution execution = factory.createFlowExecution(flowDefinition);
-		assertEquals(attributes, execution.getAttributes());
-		assertSame(attributes.asMap(), execution.getAttributes().asMap(), "Flow execution attributes are global");
-	}
+    @Test
+    public void testCreateWithExecutionAttributes() {
+        MutableAttributeMap<Object> attributes = new LocalAttributeMap<>();
+        attributes.put("foo", "bar");
+        factory.setExecutionAttributes(attributes);
+        FlowExecution execution = factory.createFlowExecution(flowDefinition);
+        assertEquals(attributes, execution.getAttributes());
+        assertSame(attributes.asMap(), execution.getAttributes().asMap(), "Flow execution attributes are global");
+    }
 
-	@Test
-	public void testCreateWithExecutionListener() {
-		FlowExecutionListener listener1 = new FlowExecutionListener() {
-			public void sessionStarting(RequestContext context, FlowSession session, MutableAttributeMap<?> input) {
-				starting = true;
-			}
-		};
-		factory.setExecutionListenerLoader(new StaticFlowExecutionListenerLoader(listener1));
-		FlowExecution execution = factory.createFlowExecution(flowDefinition);
-		assertFalse(execution.isActive());
-		execution.start(null, new MockExternalContext());
-		assertTrue(starting);
-	}
+    @Test
+    public void testCreateWithExecutionListener() {
+        FlowExecutionListener listener1 = new FlowExecutionListener() {
+            public void sessionStarting(RequestContext context, FlowSession session, MutableAttributeMap<?> input) {
+                starting = true;
+            }
+        };
+        factory.setExecutionListenerLoader(new StaticFlowExecutionListenerLoader(listener1));
+        FlowExecution execution = factory.createFlowExecution(flowDefinition);
+        assertFalse(execution.isActive());
+        execution.start(null, new MockExternalContext());
+        assertTrue(starting);
+    }
 
-	@Test
-	public void testCreateWithExecutionKeyFactory() {
-		State state = new State(flowDefinition, "state") {
-			protected void doEnter(RequestControlContext context) throws FlowExecutionException {
-				context.assignFlowExecutionKey();
-				context.updateCurrentFlowExecutionSnapshot();
-				context.removeCurrentFlowExecutionSnapshot();
-				context.removeAllFlowExecutionSnapshots();
-			}
-		};
-		flowDefinition.setStartState(state);
-		factory.setExecutionKeyFactory(new MockFlowExecutionKeyFactory());
-		FlowExecution execution = factory.createFlowExecution(flowDefinition);
-		execution.start(null, new MockExternalContext());
-		assertTrue(getKeyCalled);
-		assertTrue(removeAllSnapshotsCalled);
-		assertTrue(removeSnapshotCalled);
-		assertTrue(updateSnapshotCalled);
-		assertNull(execution.getKey());
-	}
+    @Test
+    public void testCreateWithExecutionKeyFactory() {
+        State state = new State(flowDefinition, "state") {
+            protected void doEnter(RequestControlContext context) throws FlowExecutionException {
+                context.assignFlowExecutionKey();
+                context.updateCurrentFlowExecutionSnapshot();
+                context.removeCurrentFlowExecutionSnapshot();
+                context.removeAllFlowExecutionSnapshots();
+            }
+        };
+        flowDefinition.setStartState(state);
+        factory.setExecutionKeyFactory(new MockFlowExecutionKeyFactory());
+        FlowExecution execution = factory.createFlowExecution(flowDefinition);
+        execution.start(null, new MockExternalContext());
+        assertTrue(getKeyCalled);
+        assertTrue(removeAllSnapshotsCalled);
+        assertTrue(removeSnapshotCalled);
+        assertTrue(updateSnapshotCalled);
+        assertNull(execution.getKey());
+    }
 
-	@Test
-	public void testRestoreExecutionState() {
-		FlowExecutionImpl flowExecution = (FlowExecutionImpl) factory.createFlowExecution(flowDefinition);
-		LocalAttributeMap<Object> executionAttributes = new LocalAttributeMap<>();
-		factory.setExecutionAttributes(executionAttributes);
-		FlowExecutionListener listener = new FlowExecutionListener() {
-		};
-		factory.setExecutionListenerLoader(new StaticFlowExecutionListenerLoader(listener));
-		MockFlowExecutionKeyFactory keyFactory = new MockFlowExecutionKeyFactory();
-		factory.setExecutionKeyFactory(keyFactory);
-		FlowExecutionKey flowExecutionKey = new MockFlowExecutionKey("e1s1");
-		LocalAttributeMap<Object> conversationScope = new LocalAttributeMap<>();
-		SimpleFlowDefinitionLocator locator = new SimpleFlowDefinitionLocator();
-		FlowSessionImpl session1 = new FlowSessionImpl();
-		session1.setFlowId("flow");
-		session1.setStateId("end");
-		FlowSessionImpl session2 = new FlowSessionImpl();
-		session2.setFlowId("child");
-		session2.setStateId("state");
-		flowExecution.getFlowSessions().add(session1);
-		flowExecution.getFlowSessions().add(session2);
-		factory.restoreFlowExecution(flowExecution, flowDefinition, flowExecutionKey, conversationScope, locator);
-		assertSame(flowExecution.getAttributes().asMap(), executionAttributes.asMap(),
-				"Flow execution attributes are global");
-		assertEquals(1, flowExecution.getListeners().length);
-		assertSame(listener, flowExecution.getListeners()[0]);
-		assertSame(flowExecutionKey, flowExecution.getKey());
-		assertSame(keyFactory, flowExecution.getKeyFactory());
-		assertSame(conversationScope, flowExecution.getConversationScope());
-		assertSame(flowExecution.getFlowSessions().get(0).getDefinition(), flowDefinition);
-		assertSame(flowExecution.getFlowSessions().get(0).getDefinition().getState("end"),
-				flowDefinition.getState("end"));
-		assertSame(flowExecution.getFlowSessions().get(1).getDefinition(), locator.child);
-		assertSame(flowExecution.getFlowSessions().get(1).getDefinition().getState("state"),
-				locator.child.getState("state"));
-	}
+    @Test
+    public void testRestoreExecutionState() {
+        FlowExecutionImpl flowExecution = (FlowExecutionImpl) factory.createFlowExecution(flowDefinition);
+        LocalAttributeMap<Object> executionAttributes = new LocalAttributeMap<>();
+        factory.setExecutionAttributes(executionAttributes);
+        FlowExecutionListener listener = new FlowExecutionListener() {
+        };
+        factory.setExecutionListenerLoader(new StaticFlowExecutionListenerLoader(listener));
+        MockFlowExecutionKeyFactory keyFactory = new MockFlowExecutionKeyFactory();
+        factory.setExecutionKeyFactory(keyFactory);
+        FlowExecutionKey flowExecutionKey = new MockFlowExecutionKey("e1s1");
+        LocalAttributeMap<Object> conversationScope = new LocalAttributeMap<>();
+        SimpleFlowDefinitionLocator locator = new SimpleFlowDefinitionLocator();
+        FlowSessionImpl session1 = new FlowSessionImpl();
+        session1.setFlowId("flow");
+        session1.setStateId("end");
+        FlowSessionImpl session2 = new FlowSessionImpl();
+        session2.setFlowId("child");
+        session2.setStateId("state");
+        flowExecution.getFlowSessions().add(session1);
+        flowExecution.getFlowSessions().add(session2);
+        factory.restoreFlowExecution(flowExecution, flowDefinition, flowExecutionKey, conversationScope, locator);
+        assertSame(flowExecution.getAttributes().asMap(), executionAttributes.asMap(),
+            "Flow execution attributes are global");
+        assertEquals(1, flowExecution.getListeners().length);
+        assertSame(listener, flowExecution.getListeners()[0]);
+        assertSame(flowExecutionKey, flowExecution.getKey());
+        assertSame(keyFactory, flowExecution.getKeyFactory());
+        assertSame(conversationScope, flowExecution.getConversationScope());
+        assertSame(flowExecution.getFlowSessions().get(0).getDefinition(), flowDefinition);
+        assertSame(flowExecution.getFlowSessions().get(0).getDefinition().getState("end"),
+            flowDefinition.getState("end"));
+        assertSame(flowExecution.getFlowSessions().get(1).getDefinition(), locator.child);
+        assertSame(flowExecution.getFlowSessions().get(1).getDefinition().getState("state"),
+            locator.child.getState("state"));
+    }
 
-	private class MockFlowExecutionKeyFactory implements FlowExecutionKeyFactory {
-		public FlowExecutionKey getKey(FlowExecution execution) {
-			getKeyCalled = true;
-			return null;
-		}
+    private class MockFlowExecutionKeyFactory implements FlowExecutionKeyFactory {
+        public FlowExecutionKey getKey(FlowExecution execution) {
+            getKeyCalled = true;
+            return null;
+        }
 
-		public void removeAllFlowExecutionSnapshots(FlowExecution execution) {
-			removeAllSnapshotsCalled = true;
-		}
+        public void removeAllFlowExecutionSnapshots(FlowExecution execution) {
+            removeAllSnapshotsCalled = true;
+        }
 
-		public void removeFlowExecutionSnapshot(FlowExecution execution) {
-			removeSnapshotCalled = true;
-		}
+        public void removeFlowExecutionSnapshot(FlowExecution execution) {
+            removeSnapshotCalled = true;
+        }
 
-		public void updateFlowExecutionSnapshot(FlowExecution execution) {
-			updateSnapshotCalled = true;
-		}
-	}
+        public void updateFlowExecutionSnapshot(FlowExecution execution) {
+            updateSnapshotCalled = true;
+        }
+    }
 
-	private class SimpleFlowDefinitionLocator implements FlowDefinitionLocator {
-		Flow child = new Flow("child");
+    private class SimpleFlowDefinitionLocator implements FlowDefinitionLocator {
+        Flow child = new Flow("child");
 
-		public SimpleFlowDefinitionLocator() {
-			new EndState(child, "state");
-		}
+        public SimpleFlowDefinitionLocator() {
+            new EndState(child, "state");
+        }
 
-		public FlowDefinition getFlowDefinition(String flowId) throws NoSuchFlowDefinitionException,
-				FlowDefinitionConstructionException {
-			if (flowId.equals(child.getId())) {
-				return child;
-			} else {
-				throw new IllegalArgumentException(flowId.toString());
-			}
-		}
-	}
+        public FlowDefinition getFlowDefinition(String flowId) throws NoSuchFlowDefinitionException,
+            FlowDefinitionConstructionException {
+            if (flowId.equals(child.getId())) {
+                return child;
+            } else {
+                throw new IllegalArgumentException(flowId.toString());
+            }
+        }
+    }
 }

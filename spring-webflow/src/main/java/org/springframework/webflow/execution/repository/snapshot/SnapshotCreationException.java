@@ -20,32 +20,34 @@ import org.springframework.webflow.execution.repository.FlowExecutionRepositoryE
 
 /**
  * Thrown when a continuation snapshot could not be taken of flow execution state.
- * 
+ *
  * @author Keith Donald
  */
 public class SnapshotCreationException extends FlowExecutionRepositoryException {
 
-	/**
-	 * The flow execution that could not be snapshotted.
-	 */
-	private FlowExecution flowExecution;
+    /**
+     * The flow execution that could not be snapshotted.
+     */
+    private FlowExecution flowExecution;
 
-	/**
-	 * Creates a new snapshot creation exception.
-	 * @param flowExecution the flow execution
-	 * @param message a descriptive message
-	 * @param cause the cause
-	 */
-	public SnapshotCreationException(FlowExecution flowExecution, String message, Throwable cause) {
-		super(message, cause);
-		this.flowExecution = flowExecution;
-	}
+    /**
+     * Creates a new snapshot creation exception.
+     *
+     * @param flowExecution the flow execution
+     * @param message       a descriptive message
+     * @param cause         the cause
+     */
+    public SnapshotCreationException(FlowExecution flowExecution, String message, Throwable cause) {
+        super(message, cause);
+        this.flowExecution = flowExecution;
+    }
 
-	/**
-	 * Returns the flow execution that could not be snapshotted.
+    /**
+     * Returns the flow execution that could not be snapshotted.
+     *
      * @return
      */
-	public FlowExecution getFlowExecution() {
-		return flowExecution;
-	}
+    public FlowExecution getFlowExecution() {
+        return flowExecution;
+    }
 }

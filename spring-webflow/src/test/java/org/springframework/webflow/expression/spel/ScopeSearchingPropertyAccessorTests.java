@@ -17,7 +17,6 @@ package org.springframework.webflow.expression.spel;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.expression.TypedValue;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.webflow.engine.ViewState;
@@ -25,66 +24,65 @@ import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.test.MockFlowSession;
 import org.springframework.webflow.test.MockRequestContext;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ScopeSearchingPropertyAccessorTests {
 
-	private ScopeSearchingPropertyAccessor accessor = new ScopeSearchingPropertyAccessor();
+    private ScopeSearchingPropertyAccessor accessor = new ScopeSearchingPropertyAccessor();
 
-	private MockRequestContext requestContext;
+    private MockRequestContext requestContext;
 
-	@BeforeEach
-	public void setUp() throws Exception {
-		requestContext = new MockRequestContext();
-	}
+    @BeforeEach
+    public void setUp() throws Exception {
+        requestContext = new MockRequestContext();
+    }
 
-	@Test
-	public void testGetSpecificTargetClasses() throws Exception {
-		Class<?>[] classes = accessor.getSpecificTargetClasses();
-		assertEquals(1, classes.length);
-		assertEquals(RequestContext.class, classes[0]);
-	}
+    @Test
+    public void testGetSpecificTargetClasses() throws Exception {
+        Class<?>[] classes = accessor.getSpecificTargetClasses();
+        assertEquals(1, classes.length);
+        assertEquals(RequestContext.class, classes[0]);
+    }
 
-	@Test
-	public void testGetValue() throws Exception {
-		Object bean = new Object();
-		requestContext.getConversationScope().put("myBean", bean);
-		TypedValue actual = accessor.read(new StandardEvaluationContext(), requestContext, "myBean");
-		assertSame(bean, actual.getValue());
+    @Test
+    public void testGetValue() throws Exception {
+        Object bean = new Object();
+        requestContext.getConversationScope().put("myBean", bean);
+        TypedValue actual = accessor.read(new StandardEvaluationContext(), requestContext, "myBean");
+        assertSame(bean, actual.getValue());
 
-		bean = new Object();
-		requestContext.getFlowScope().put("myBean", bean);
-		actual = accessor.read(new StandardEvaluationContext(), requestContext, "myBean");
-		assertSame(bean, actual.getValue());
+        bean = new Object();
+        requestContext.getFlowScope().put("myBean", bean);
+        actual = accessor.read(new StandardEvaluationContext(), requestContext, "myBean");
+        assertSame(bean, actual.getValue());
 
-		bean = new Object();
-		initView(requestContext);
-		requestContext.getViewScope().put("myBean", bean);
-		actual = accessor.read(new StandardEvaluationContext(), requestContext, "myBean");
-		unsetView(requestContext);
-		assertSame(bean, actual.getValue());
+        bean = new Object();
+        initView(requestContext);
+        requestContext.getViewScope().put("myBean", bean);
+        actual = accessor.read(new StandardEvaluationContext(), requestContext, "myBean");
+        unsetView(requestContext);
+        assertSame(bean, actual.getValue());
 
-		bean = new Object();
-		requestContext.getFlashScope().put("myBean", bean);
-		actual = accessor.read(new StandardEvaluationContext(), requestContext, "myBean");
-		assertSame(bean, actual.getValue());
+        bean = new Object();
+        requestContext.getFlashScope().put("myBean", bean);
+        actual = accessor.read(new StandardEvaluationContext(), requestContext, "myBean");
+        assertSame(bean, actual.getValue());
 
-		bean = new Object();
-		requestContext.getRequestScope().put("myBean", bean);
-		actual = accessor.read(new StandardEvaluationContext(), requestContext, "myBean");
-		assertSame(bean, actual.getValue());
-	}
+        bean = new Object();
+        requestContext.getRequestScope().put("myBean", bean);
+        actual = accessor.read(new StandardEvaluationContext(), requestContext, "myBean");
+        assertSame(bean, actual.getValue());
+    }
 
-	protected void initView(MockRequestContext requestContext) {
-		((MockFlowSession) requestContext.getFlowExecutionContext().getActiveSession()).setState(new ViewState(
-				requestContext.getRootFlow(), "view", context -> {
-					throw new UnsupportedOperationException("Not implemented");
-				}));
-	}
+    protected void initView(MockRequestContext requestContext) {
+        ((MockFlowSession) requestContext.getFlowExecutionContext().getActiveSession()).setState(new ViewState(
+            requestContext.getRootFlow(), "view", context -> {
+            throw new UnsupportedOperationException("Not implemented");
+        }));
+    }
 
-	protected void unsetView(MockRequestContext requestContext) {
-		((MockFlowSession) requestContext.getFlowExecutionContext().getActiveSession()).setState(null);
-	}
+    protected void unsetView(MockRequestContext requestContext) {
+        ((MockFlowSession) requestContext.getFlowExecutionContext().getActiveSession()).setState(null);
+    }
 
 }

@@ -23,31 +23,33 @@ import org.springframework.webflow.execution.repository.FlowExecutionRestoration
 
 /**
  * A factory for creating different {@link FlowExecutionSnapshot} implementations.
- * 
+ *
  * @author Keith Donald
  * @author Erwin Vervaet
  */
 public interface FlowExecutionSnapshotFactory {
 
-	/**
-	 * Takes a snapshot of the flow execution.
-	 * @param flowExecution the flow execution
-	 * @return the new snapshot
-	 * @throws SnapshotCreationException if the snapshot could not be created
-	 */
-	FlowExecutionSnapshot createSnapshot(FlowExecution flowExecution) throws SnapshotCreationException;
+    /**
+     * Takes a snapshot of the flow execution.
+     *
+     * @param flowExecution the flow execution
+     * @return the new snapshot
+     * @throws SnapshotCreationException if the snapshot could not be created
+     */
+    FlowExecutionSnapshot createSnapshot(FlowExecution flowExecution) throws SnapshotCreationException;
 
-	/**
-	 * Restores a flow execution from a previously taken snapshot.
-	 * @param snapshot the previously taken snapshot
-	 * @param flowId the id of the root flow definition
-	 * @param key the flow execution key
-	 * @param conversationScope conversation scope
-	 * @param keyFactory factory for creating new snapshot keys
-	 * @return the restored flow execution
-	 * @throws FlowExecutionRestorationFailureException if flow execution restoration fails
-	 */
-	FlowExecution restoreExecution(FlowExecutionSnapshot snapshot, String flowId, FlowExecutionKey key,
-			MutableAttributeMap<Object> conversationScope, FlowExecutionKeyFactory keyFactory)
-			throws FlowExecutionRestorationFailureException;
+    /**
+     * Restores a flow execution from a previously taken snapshot.
+     *
+     * @param snapshot          the previously taken snapshot
+     * @param flowId            the id of the root flow definition
+     * @param key               the flow execution key
+     * @param conversationScope conversation scope
+     * @param keyFactory        factory for creating new snapshot keys
+     * @return the restored flow execution
+     * @throws FlowExecutionRestorationFailureException if flow execution restoration fails
+     */
+    FlowExecution restoreExecution(FlowExecutionSnapshot snapshot, String flowId, FlowExecutionKey key,
+                                   MutableAttributeMap<Object> conversationScope, FlowExecutionKeyFactory keyFactory)
+        throws FlowExecutionRestorationFailureException;
 }

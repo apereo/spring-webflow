@@ -15,12 +15,6 @@
  */
 package org.springframework.binding.expression.beanwrapper;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
-
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.binding.convert.converters.StringToDate;
@@ -30,108 +24,110 @@ import org.springframework.binding.expression.ParserException;
 import org.springframework.binding.expression.ValueCoercionException;
 import org.springframework.binding.expression.support.FluentParserContext;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 public class BeanWrapperExpressionParserTests {
 
-	private BeanWrapperExpressionParser parser = new BeanWrapperExpressionParser();
+    private BeanWrapperExpressionParser parser = new BeanWrapperExpressionParser();
 
-	private TestBean bean = new TestBean();
+    private TestBean bean = new TestBean();
 
-	@Test
-	public void testParseSimple() {
-		String exp = "flag";
-		Expression e = parser.parseExpression(exp, null);
-		assertNotNull(e);
-		Boolean b = (Boolean) e.getValue(bean);
-		assertFalse(b);
-	}
+    @Test
+    public void testParseSimple() {
+        String exp = "flag";
+        Expression e = parser.parseExpression(exp, null);
+        assertNotNull(e);
+        Boolean b = (Boolean) e.getValue(bean);
+        assertFalse(b);
+    }
 
-	@Test
-	public void testParseSimpleAllowDelimited() {
-		parser.setAllowDelimitedEvalExpressions(true);
-		String exp = "${flag}";
-		Expression e = parser.parseExpression(exp, null);
-		assertNotNull(e);
-		Boolean b = (Boolean) e.getValue(bean);
-		assertFalse(b);
-	}
+    @Test
+    public void testParseSimpleAllowDelimited() {
+        parser.setAllowDelimitedEvalExpressions(true);
+        String exp = "${flag}";
+        Expression e = parser.parseExpression(exp, null);
+        assertNotNull(e);
+        Boolean b = (Boolean) e.getValue(bean);
+        assertFalse(b);
+    }
 
-	@Test
-	public void testParseSimpleDelimitedNotAllowed() {
-		String exp = "${flag}";
-		try {
-			parser.parseExpression(exp, null);
-			fail("should have failed");
-		} catch (ParserException e) {
-		}
-	}
+    @Test
+    public void testParseSimpleDelimitedNotAllowed() {
+        String exp = "${flag}";
+        try {
+            parser.parseExpression(exp, null);
+            fail("should have failed");
+        } catch (ParserException e) {
+        }
+    }
 
-	@Test
-	public void testParseTemplateSimpleLiteral() {
-		String exp = "flag";
-		Expression e = parser.parseExpression(exp, new FluentParserContext().template());
-		assertNotNull(e);
-		assertEquals("flag", e.getValue(bean));
-	}
+    @Test
+    public void testParseTemplateSimpleLiteral() {
+        String exp = "flag";
+        Expression e = parser.parseExpression(exp, new FluentParserContext().template());
+        assertNotNull(e);
+        assertEquals("flag", e.getValue(bean));
+    }
 
-	@Test
-	public void testParseTemplateEmpty() {
-		Expression e = parser.parseExpression("", new FluentParserContext().template());
-		assertNotNull(e);
-		assertEquals("", e.getValue(bean));
-	}
+    @Test
+    public void testParseTemplateEmpty() {
+        Expression e = parser.parseExpression("", new FluentParserContext().template());
+        assertNotNull(e);
+        assertEquals("", e.getValue(bean));
+    }
 
-	@Test
-	public void testParseTemplateComposite() {
-		String exp = "hello ${flag} ${flag} ${flag}";
-		Expression e = parser.parseExpression(exp, new FluentParserContext().template());
-		assertNotNull(e);
-		String str = (String) e.getValue(bean);
-		assertEquals("hello false false false", str);
-	}
+    @Test
+    public void testParseTemplateComposite() {
+        String exp = "hello ${flag} ${flag} ${flag}";
+        Expression e = parser.parseExpression(exp, new FluentParserContext().template());
+        assertNotNull(e);
+        String str = (String) e.getValue(bean);
+        assertEquals("hello false false false", str);
+    }
 
-	@Test
-	public void testTemplateEnclosedCompositeNotSupported() {
-		String exp = "${hello ${flag} ${flag} ${flag}}";
-		try {
-			parser.parseExpression(exp, new FluentParserContext().template());
-			fail("Should've failed - not intended use");
-		} catch (ParserException e) {
-		}
-	}
+    @Test
+    public void testTemplateEnclosedCompositeNotSupported() {
+        String exp = "${hello ${flag} ${flag} ${flag}}";
+        try {
+            parser.parseExpression(exp, new FluentParserContext().template());
+            fail("Should've failed - not intended use");
+        } catch (ParserException e) {
+        }
+    }
 
-	@Test
-	public void testGetValueType() {
-		String exp = "flag";
-		Expression e = parser.parseExpression(exp, null);
-		assertEquals(boolean.class, e.getValueType(bean));
-	}
+    @Test
+    public void testGetValueType() {
+        String exp = "flag";
+        Expression e = parser.parseExpression(exp, null);
+        assertEquals(boolean.class, e.getValueType(bean));
+    }
 
-	@Test
-	public void testGetValueTypeNullCollectionValue() {
-		String exp = "list[0]";
-		Expression e = parser.parseExpression(exp, null);
-		assertEquals(null, e.getValueType(bean));
-	}
+    @Test
+    public void testGetValueTypeNullCollectionValue() {
+        String exp = "list[0]";
+        Expression e = parser.parseExpression(exp, null);
+        assertEquals(null, e.getValueType(bean));
+    }
 
-	@Test
-	public void testSetValueWithCoersion() {
-		GenericConversionService cs = (GenericConversionService) parser.getConversionService();
-		StringToDate converter = new StringToDate();
-		converter.setPattern("yyyy-MM-dd");
-		cs.addConverter(converter);
-		Expression e = parser.parseExpression("date", null);
-		e.setValue(bean, "2008-9-15");
-	}
+    @Test
+    public void testSetValueWithCoersion() {
+        GenericConversionService cs = (GenericConversionService) parser.getConversionService();
+        StringToDate converter = new StringToDate();
+        converter.setPattern("yyyy-MM-dd");
+        cs.addConverter(converter);
+        Expression e = parser.parseExpression("date", null);
+        e.setValue(bean, "2008-9-15");
+    }
 
-	@Test
-	public void testSetBogusValueWithCoersion() {
-		Expression e = parser.parseExpression("date", null);
-		try {
-			e.setValue(bean, "bogus");
-			fail("Should have failed tme");
-		} catch (ValueCoercionException ex) {
-			assertTrue(ex.getCause() instanceof TypeMismatchException);
-		}
-	}
+    @Test
+    public void testSetBogusValueWithCoersion() {
+        Expression e = parser.parseExpression("date", null);
+        try {
+            e.setValue(bean, "bogus");
+            fail("Should have failed tme");
+        } catch (ValueCoercionException ex) {
+            assertTrue(ex.getCause() instanceof TypeMismatchException);
+        }
+    }
 
 }

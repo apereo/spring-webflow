@@ -21,84 +21,85 @@ import org.springframework.util.StringUtils;
  * Model support for evaluate actions.
  * <p>
  * Evaluates an expression against the flow request context.
- * 
+ *
  * @author Scott Andrews
  */
 public class EvaluateModel extends AbstractActionModel {
 
-	private String expression;
+    private String expression;
 
-	private String result;
+    private String result;
 
-	private String resultType;
+    private String resultType;
 
-	/**
-	 * Create an evaluate action model
-	 * @param expression the expression to evaluate
-	 */
-	public EvaluateModel(String expression) {
-		setExpression(expression);
-	}
+    /**
+     * Create an evaluate action model
+     *
+     * @param expression the expression to evaluate
+     */
+    public EvaluateModel(String expression) {
+        setExpression(expression);
+    }
 
-	public Model createCopy() {
-		EvaluateModel copy = new EvaluateModel(expression);
-		super.fillCopy(copy);
-		copy.setResult(result);
-		copy.setResultType(resultType);
-		return copy;
-	}
+    public Model createCopy() {
+        EvaluateModel copy = new EvaluateModel(expression);
+        super.fillCopy(copy);
+        copy.setResult(result);
+        copy.setResultType(resultType);
+        return copy;
+    }
 
-	/**
-	 * @return the expression
-	 */
-	public String getExpression() {
-		return expression;
-	}
+    /**
+     * @return the expression
+     */
+    public String getExpression() {
+        return expression;
+    }
 
-	/**
-	 * @param expression the expression to set
-	 */
-	public void setExpression(String expression) {
-		if (StringUtils.hasText(expression)) {
-			this.expression = expression;
-		} else {
-			this.expression = null;
-		}
-	}
+    /**
+     * @param expression the expression to set
+     */
+    public void setExpression(String expression) {
+        if (StringUtils.hasText(expression)) {
+            this.expression = expression;
+        } else {
+            this.expression = null;
+        }
+    }
 
-	/**
-	 * @return the result
-	 */
-	public String getResult() {
-		return result;
-	}
+    /**
+     * @return the result
+     */
+    public String getResult() {
+        return result;
+    }
 
-	/**
-	 * @param result the result to set
-	 */
-	public void setResult(String result) {
-		if (StringUtils.hasText(result)) {
-			this.result = result;
-		} else {
-			this.result = null;
-		}
-	}
+    /**
+     * @param result the result to set
+     */
+    public void setResult(String result) {
+        if (StringUtils.hasText(result)) {
+            this.result = result;
+        } else {
+            this.result = null;
+        }
+    }
 
-	/**
-	 * @return the result type
-	 */
-	public String getResultType() {
-		return resultType;
-	}
+    /**
+     * @return the result type
+     */
+    public String getResultType() {
+        return resultType;
+    }
 
-	/**
-	 * @param resultType the result type to set
-	 */
-	public void setResultType(String resultType) {
-		if (StringUtils.hasText(resultType)) {
-			this.resultType = resultType;
-		} else {
-			this.resultType = null;
-		}
-	}
+    /**
+     * @param resultType the result type to set
+     */
+    public void setResultType(String resultType) {
+        if (StringUtils.hasText(resultType)) {
+            this.resultType = resultType;
+        } else {
+            this.resultType = null;
+        }
+    }
 }

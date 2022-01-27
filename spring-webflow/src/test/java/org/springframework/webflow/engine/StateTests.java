@@ -15,85 +15,83 @@
  */
 package org.springframework.webflow.engine;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.webflow.execution.FlowExecutionException;
 import org.springframework.webflow.execution.TestAction;
 import org.springframework.webflow.test.MockRequestControlContext;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 /**
  * Tests that each of the Flow state types execute as expected when entered.
- * 
+ *
  * @author Keith Donald
  */
 public class StateTests {
 
-	private Flow flow;
+    private Flow flow;
 
-	private State state;
+    private State state;
 
-	private boolean entered;
+    private boolean entered;
 
-	private boolean handled;
+    private boolean handled;
 
-	@BeforeEach
-	public void setUp() {
-		flow = new Flow("flow");
-		state = new State(flow, "myState") {
-			protected void doEnter(RequestControlContext context) throws FlowExecutionException {
-				entered = true;
-			}
-		};
-	}
+    @BeforeEach
+    public void setUp() {
+        flow = new Flow("flow");
+        state = new State(flow, "myState") {
+            protected void doEnter(RequestControlContext context) throws FlowExecutionException {
+                entered = true;
+            }
+        };
+    }
 
-	@Test
-	public void testStateEnter() {
-		assertEquals("myState", state.getId());
-		MockRequestControlContext context = new MockRequestControlContext(flow);
-		state.enter(context);
-		assertEquals(state, context.getCurrentState());
-		assertTrue(entered);
-	}
+    @Test
+    public void testStateEnter() {
+        assertEquals("myState", state.getId());
+        MockRequestControlContext context = new MockRequestControlContext(flow);
+        state.enter(context);
+        assertEquals(state, context.getCurrentState());
+        assertTrue(entered);
+    }
 
-	@Test
-	public void testStateEnterWithEntryAction() {
-		TestAction action = new TestAction();
-		state.getEntryActionList().add(action);
-		MockRequestControlContext context = new MockRequestControlContext(flow);
-		state.enter(context);
-		assertEquals(state, context.getCurrentState());
-		assertTrue(action.isExecuted());
-		assertTrue(entered);
-		assertEquals(1, action.getExecutionCount());
-	}
+    @Test
+    public void testStateEnterWithEntryAction() {
+        TestAction action = new TestAction();
+        state.getEntryActionList().add(action);
+        MockRequestControlContext context = new MockRequestControlContext(flow);
+        state.enter(context);
+        assertEquals(state, context.getCurrentState());
+        assertTrue(action.isExecuted());
+        assertTrue(entered);
+        assertEquals(1, action.getExecutionCount());
+    }
 
-	@Test
-	public void testHandledException() {
-		state.getExceptionHandlerSet().add(new FlowExecutionExceptionHandler() {
-			public boolean canHandle(FlowExecutionException exception) {
-				return true;
-			}
+    @Test
+    public void testHandledException() {
+        state.getExceptionHandlerSet().add(new FlowExecutionExceptionHandler() {
+            public boolean canHandle(FlowExecutionException exception) {
+                return true;
+            }
 
-			public void handle(FlowExecutionException exception, RequestControlContext context) {
-				handled = true;
-			}
+            public void handle(FlowExecutionException exception, RequestControlContext context) {
+                handled = true;
+            }
 
-		});
-		FlowExecutionException e = new FlowExecutionException(flow.getId(), state.getId(), "Whatev");
-		MockRequestControlContext context = new MockRequestControlContext(flow);
-		assertTrue(state.handleException(e, context));
-		assertTrue(handled);
-	}
+        });
+        FlowExecutionException e = new FlowExecutionException(flow.getId(), state.getId(), "Whatev");
+        MockRequestControlContext context = new MockRequestControlContext(flow);
+        assertTrue(state.handleException(e, context));
+        assertTrue(handled);
+    }
 
-	@Test
-	public void testCouldNotHandleException() {
-		FlowExecutionException e = new FlowExecutionException(flow.getId(), state.getId(), "Whatev");
-		MockRequestControlContext context = new MockRequestControlContext(flow);
-		assertFalse(state.handleException(e, context));
-	}
+    @Test
+    public void testCouldNotHandleException() {
+        FlowExecutionException e = new FlowExecutionException(flow.getId(), state.getId(), "Whatev");
+        MockRequestControlContext context = new MockRequestControlContext(flow);
+        assertFalse(state.handleException(e, context));
+    }
 
 }

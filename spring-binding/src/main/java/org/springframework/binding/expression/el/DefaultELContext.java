@@ -22,39 +22,40 @@ import jakarta.el.VariableMapper;
 
 /**
  * A generic ELContext implementation.
- * 
+ *
  * @author Keith Donald
  */
 public class DefaultELContext extends ELContext {
 
-	private VariableMapper variableMapper;
+    private VariableMapper variableMapper;
 
-	private ELResolver resolver;
+    private ELResolver resolver;
 
-	private FunctionMapper functionMapper;
+    private FunctionMapper functionMapper;
 
-	/**
-	 * Creates a new default el context.
-	 * @param resolver the el resolver to use
-	 * @param variableMapper the variable mappter
-	 * @param functionMapper the function mapper
-	 */
-	public DefaultELContext(ELResolver resolver, VariableMapper variableMapper, FunctionMapper functionMapper) {
-		this.resolver = resolver;
-		this.variableMapper = variableMapper;
-		this.functionMapper = functionMapper;
-	}
+    /**
+     * Creates a new default el context.
+     *
+     * @param resolver       the el resolver to use
+     * @param variableMapper the variable mappter
+     * @param functionMapper the function mapper
+     */
+    public DefaultELContext(ELResolver resolver, VariableMapper variableMapper, FunctionMapper functionMapper) {
+        this.resolver = resolver;
+        this.variableMapper = variableMapper;
+        this.functionMapper = functionMapper;
+    }
 
-	public ELResolver getELResolver() {
-		return resolver;
-	}
+    public ELResolver getELResolver() {
+        return resolver;
+    }
 
-	public VariableMapper getVariableMapper() {
-		return variableMapper;
-	}
+    public VariableMapper getVariableMapper() {
+        return variableMapper;
+    }
 
-	public FunctionMapper getFunctionMapper() {
-		return functionMapper;
-	}
+    public FunctionMapper getFunctionMapper() {
+        return functionMapper;
+    }
 
 }

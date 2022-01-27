@@ -15,36 +15,36 @@
  */
 package org.springframework.webflow.execution.factory;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import org.junit.jupiter.api.Test;
 import org.springframework.webflow.engine.Flow;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit tests for {@link FlowExecutionListenerCriteriaFactory}.
  */
 public class FlowExecutionListenerCriteriaFactoryTests {
 
-	private FlowExecutionListenerCriteriaFactory factory = new FlowExecutionListenerCriteriaFactory();
+    private FlowExecutionListenerCriteriaFactory factory = new FlowExecutionListenerCriteriaFactory();
 
-	@Test
-	public void testAllFlows() {
-		FlowExecutionListenerCriteria c = factory.allFlows();
-		assertEquals(true, c.appliesTo(new Flow("foo")));
-	}
+    @Test
+    public void testAllFlows() {
+        FlowExecutionListenerCriteria c = factory.allFlows();
+        assertEquals(true, c.appliesTo(new Flow("foo")));
+    }
 
-	@Test
-	public void testFlowMatch() {
-		FlowExecutionListenerCriteria c = factory.flow("foo");
-		assertEquals(true, c.appliesTo(new Flow("foo")));
-		assertEquals(false, c.appliesTo(new Flow("baz")));
-	}
+    @Test
+    public void testFlowMatch() {
+        FlowExecutionListenerCriteria c = factory.flow("foo");
+        assertEquals(true, c.appliesTo(new Flow("foo")));
+        assertEquals(false, c.appliesTo(new Flow("baz")));
+    }
 
-	@Test
-	public void testMultipleFlowMatch() {
-		FlowExecutionListenerCriteria c = factory.flows("foo", "bar");
-		assertEquals(true, c.appliesTo(new Flow("foo")));
-		assertEquals(true, c.appliesTo(new Flow("bar")));
-		assertEquals(false, c.appliesTo(new Flow("baz")));
-	}
+    @Test
+    public void testMultipleFlowMatch() {
+        FlowExecutionListenerCriteria c = factory.flows("foo", "bar");
+        assertEquals(true, c.appliesTo(new Flow("foo")));
+        assertEquals(true, c.appliesTo(new Flow("bar")));
+        assertEquals(false, c.appliesTo(new Flow("baz")));
+    }
 }

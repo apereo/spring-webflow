@@ -29,26 +29,28 @@ import org.springframework.webflow.validation.ValidationHintResolver;
  */
 public interface ViewFactoryCreator {
 
-	/**
-	 * Create a view factory capable of creating {@link View} objects that can render the view template with the
-	 * provided identifier.
-	 * @param viewId an expression that resolves the id of the view to render
-	 * @param expressionParser an optional expression parser to use to resolve view expressions
-	 * @param conversionService an optional conversion service to use to format text values
-	 * @param binderConfiguration information on how the rendered view binds to a model that provides its data
-	 * @param validator a global validator to invoke
-	 * @param validationHintResolver a custom ValidationHintResolver to use
-	 * @return the view factory
-	 */
-	ViewFactory createViewFactory(Expression viewId, ExpressionParser expressionParser,
-			ConversionService conversionService, BinderConfiguration binderConfiguration,
-			Validator validator, ValidationHintResolver validationHintResolver);
+    /**
+     * Create a view factory capable of creating {@link View} objects that can render the view template with the
+     * provided identifier.
+     *
+     * @param viewId                 an expression that resolves the id of the view to render
+     * @param expressionParser       an optional expression parser to use to resolve view expressions
+     * @param conversionService      an optional conversion service to use to format text values
+     * @param binderConfiguration    information on how the rendered view binds to a model that provides its data
+     * @param validator              a global validator to invoke
+     * @param validationHintResolver a custom ValidationHintResolver to use
+     * @return the view factory
+     */
+    ViewFactory createViewFactory(Expression viewId, ExpressionParser expressionParser,
+                                  ConversionService conversionService, BinderConfiguration binderConfiguration,
+                                  Validator validator, ValidationHintResolver validationHintResolver);
 
-	/**
-	 * Get the default id of the view to render in the provided view state by convention.
-	 * @param viewStateId the view state id
-	 * @return the default view id
-	 */
-	String getViewIdByConvention(String viewStateId);
+    /**
+     * Get the default id of the view to render in the provided view state by convention.
+     *
+     * @param viewStateId the view state id
+     * @return the default view id
+     */
+    String getViewIdByConvention(String viewStateId);
 
 }

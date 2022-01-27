@@ -15,73 +15,71 @@
  */
 package org.springframework.webflow.expression.el;
 
-import java.beans.FeatureDescriptor;
-import java.util.Iterator;
-
 import jakarta.el.ELContext;
 import jakarta.el.ELResolver;
 import jakarta.el.PropertyNotWritableException;
-
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.AnnotatedAction;
+
+import java.beans.FeatureDescriptor;
+import java.util.Iterator;
 
 /**
  * Resolves the method to invoke on a resolved Web Flow Action instance. The resolved Action is usually a
  * {@link org.springframework.webflow.action.MultiAction}. Returns an AnnotatedAction wrapper around the target Action
  * configured with the appropriate method dispatching rules.
- * 
- * @see org.springframework.webflow.action.EvaluateAction
- * 
+ *
  * @author Keith Donald
+ * @see org.springframework.webflow.action.EvaluateAction
  */
 public class ActionMethodELResolver extends ELResolver {
 
-	public Class<?> getCommonPropertyType(ELContext elContext, Object base) {
-		if (base instanceof Action) {
-			return String.class;
-		} else {
-			return null;
-		}
-	}
+    public Class<?> getCommonPropertyType(ELContext elContext, Object base) {
+        if (base instanceof Action) {
+            return String.class;
+        } else {
+            return null;
+        }
+    }
 
-	public Iterator<FeatureDescriptor> getFeatureDescriptors(ELContext elContext, Object base) {
-		return null;
-	}
+    public Iterator<FeatureDescriptor> getFeatureDescriptors(ELContext elContext, Object base) {
+        return null;
+    }
 
-	public Class<?> getType(ELContext elContext, Object base, Object property) {
-		if (base instanceof Action) {
-			elContext.setPropertyResolved(true);
-			return Action.class;
-		} else {
-			return null;
-		}
-	}
+    public Class<?> getType(ELContext elContext, Object base, Object property) {
+        if (base instanceof Action) {
+            elContext.setPropertyResolved(true);
+            return Action.class;
+        } else {
+            return null;
+        }
+    }
 
-	public Object getValue(ELContext elContext, Object base, Object property) {
-		if (base instanceof Action) {
-			Action action = (Action) base;
-			elContext.setPropertyResolved(true);
-			AnnotatedAction annotated = new AnnotatedAction(action);
-			annotated.setMethod(property.toString());
-			return annotated;
-		} else {
-			return null;
-		}
-	}
+    public Object getValue(ELContext elContext, Object base, Object property) {
+        if (base instanceof Action) {
+            Action action = (Action) base;
+            elContext.setPropertyResolved(true);
+            AnnotatedAction annotated = new AnnotatedAction(action);
+            annotated.setMethod(property.toString());
+            return annotated;
+        } else {
+            return null;
+        }
+    }
 
-	public boolean isReadOnly(ELContext elContext, Object base, Object property) {
-		if (base instanceof Action) {
-			elContext.setPropertyResolved(true);
-			return true;
-		} else {
-			return false;
-		}
-	}
+    public boolean isReadOnly(ELContext elContext, Object base, Object property) {
+        if (base instanceof Action) {
+            elContext.setPropertyResolved(true);
+            return true;
+        } else {
+            return false;
+        }
+    }
 
-	public void setValue(ELContext elContext, Object base, Object property, Object value) {
-		if (base instanceof Action) {
-			elContext.setPropertyResolved(true);
-			throw new PropertyNotWritableException("The Action cannot be set with an expression.");
-		}
-	}
+    public void setValue(ELContext elContext, Object base, Object property, Object value) {
+        if (base instanceof Action) {
+            elContext.setPropertyResolved(true);
+            throw new PropertyNotWritableException("The Action cannot be set with an expression.");
+        }
+    }
 }

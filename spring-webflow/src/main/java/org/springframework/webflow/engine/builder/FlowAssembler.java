@@ -24,90 +24,94 @@ import org.springframework.webflow.engine.Flow;
  * pattern.
  * <p>
  * Flow assemblers may be used in a standalone, programmatic fashion as follows:
- * 
+ *
  * <pre>
  *     FlowBuilder builder = ...;
  *     FlowBuilder context = ...;
  *     Flow flow = new FlowAssembler(builder, builderContext).assembleFlow();
  * </pre>
- * 
- * @see org.springframework.webflow.engine.builder.FlowBuilder
- * 
+ *
  * @author Keith Donald
  * @author Erwin Vervaet
+ * @see org.springframework.webflow.engine.builder.FlowBuilder
  */
 public class FlowAssembler {
 
-	/**
-	 * The flow builder strategy used to construct the flow from its component parts.
-	 */
-	private FlowBuilder flowBuilder;
+    /**
+     * The flow builder strategy used to construct the flow from its component parts.
+     */
+    private FlowBuilder flowBuilder;
 
-	/**
-	 * Context needed to initialize the builder so it can perform a build operation.
-	 */
-	private FlowBuilderContext flowBuilderContext;
+    /**
+     * Context needed to initialize the builder so it can perform a build operation.
+     */
+    private FlowBuilderContext flowBuilderContext;
 
-	/**
-	 * Create a new flow assembler that will direct Flow assembly using the specified builder strategy.
-	 * @param flowBuilder the builder the factory will use to build flows
-	 * @param flowBuilderContext context to influence the build process
-	 */
-	public FlowAssembler(FlowBuilder flowBuilder, FlowBuilderContext flowBuilderContext) {
-		Assert.notNull(flowBuilder, "A flow builder is required for flow assembly");
-		Assert.notNull(flowBuilderContext, "A flow builder context is required for flow assembly");
-		this.flowBuilder = flowBuilder;
-		this.flowBuilderContext = flowBuilderContext;
-	}
+    /**
+     * Create a new flow assembler that will direct Flow assembly using the specified builder strategy.
+     *
+     * @param flowBuilder        the builder the factory will use to build flows
+     * @param flowBuilderContext context to influence the build process
+     */
+    public FlowAssembler(FlowBuilder flowBuilder, FlowBuilderContext flowBuilderContext) {
+        Assert.notNull(flowBuilder, "A flow builder is required for flow assembly");
+        Assert.notNull(flowBuilderContext, "A flow builder context is required for flow assembly");
+        this.flowBuilder = flowBuilder;
+        this.flowBuilderContext = flowBuilderContext;
+    }
 
-	/**
-	 * Returns the flow builder strategy used to construct the flow from its component parts.
+    /**
+     * Returns the flow builder strategy used to construct the flow from its component parts.
+     *
      * @return
      */
-	public FlowBuilder getFlowBuilder() {
-		return flowBuilder;
-	}
+    public FlowBuilder getFlowBuilder() {
+        return flowBuilder;
+    }
 
-	/**
-	 * Returns the flow builder context.
-	 * @return flow builder context
-	 */
-	public FlowBuilderContext getFlowBuilderContext() {
-		return flowBuilderContext;
-	}
+    /**
+     * Returns the flow builder context.
+     *
+     * @return flow builder context
+     */
+    public FlowBuilderContext getFlowBuilderContext() {
+        return flowBuilderContext;
+    }
 
-	/**
-	 * Assembles the flow, directing the construction process by delegating to the configured FlowBuilder. Every call to
-	 * this method will assemble the Flow instance.
-	 * <p>
-	 * This will drive the flow construction process as described in the {@link FlowBuilder} JavaDoc, starting with
-	 * builder initialization using {@link FlowBuilder#init(FlowBuilderContext)} and finishing by cleaning up the
-	 * builder with a call to {@link FlowBuilder#dispose()}.
-	 * @return the constructed flow
-	 * @throws FlowBuilderException when flow assembly fails
-	 */
-	public Flow assembleFlow() throws FlowBuilderException {
-		try {
-			flowBuilder.init(flowBuilderContext);
-			directAssembly();
-			return flowBuilder.getFlow();
-		} finally {
-			flowBuilder.dispose();
-		}
-	}
+    /**
+     * Assembles the flow, directing the construction process by delegating to the configured FlowBuilder. Every call to
+     * this method will assemble the Flow instance.
+     * <p>
+     * This will drive the flow construction process as described in the {@link FlowBuilder} JavaDoc, starting with
+     * builder initialization using {@link FlowBuilder#init(FlowBuilderContext)} and finishing by cleaning up the
+     * builder with a call to {@link FlowBuilder#dispose()}.
+     *
+     * @return the constructed flow
+     * @throws FlowBuilderException when flow assembly fails
+     */
+    public Flow assembleFlow() throws FlowBuilderException {
+        try {
+            flowBuilder.init(flowBuilderContext);
+            directAssembly();
+            return flowBuilder.getFlow();
+        } finally {
+            flowBuilder.dispose();
+        }
+    }
 
-	/**
-	 * Build all parts of the flow by directing flow assembly by the flow builder.
-	 * @throws FlowBuilderException when flow assembly fails
-	 */
-	protected void directAssembly() throws FlowBuilderException {
-		flowBuilder.buildVariables();
-		flowBuilder.buildInputMapper();
-		flowBuilder.buildStartActions();
-		flowBuilder.buildStates();
-		flowBuilder.buildGlobalTransitions();
-		flowBuilder.buildEndActions();
-		flowBuilder.buildOutputMapper();
-		flowBuilder.buildExceptionHandlers();
-	}
+    /**
+     * Build all parts of the flow by directing flow assembly by the flow builder.
+     *
+     * @throws FlowBuilderException when flow assembly fails
+     */
+    protected void directAssembly() throws FlowBuilderException {
+        flowBuilder.buildVariables();
+        flowBuilder.buildInputMapper();
+        flowBuilder.buildStartActions();
+        flowBuilder.buildStates();
+        flowBuilder.buildGlobalTransitions();
+        flowBuilder.buildEndActions();
+        flowBuilder.buildOutputMapper();
+        flowBuilder.buildExceptionHandlers();
+    }
 }

@@ -15,8 +15,6 @@
  */
 package org.springframework.webflow.engine;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.webflow.action.AbstractAction;
@@ -26,61 +24,63 @@ import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.TestAction;
 import org.springframework.webflow.test.MockRequestContext;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 public class AnnotedActionTests {
 
-	private AnnotatedAction action = new AnnotatedAction(new TestAction());
+    private AnnotatedAction action = new AnnotatedAction(new TestAction());
 
-	private MockRequestContext context;
+    private MockRequestContext context;
 
-	@BeforeEach
-	public void setUp() throws Exception {
-		Flow flow = new Flow("myFlow");
-		context = new MockRequestContext(flow);
-	}
+    @BeforeEach
+    public void setUp() throws Exception {
+        Flow flow = new Flow("myFlow");
+        context = new MockRequestContext(flow);
+    }
 
-	@Test
-	public void testBasicExecute() throws Exception {
-		assertEquals("success", action.execute(context).getId());
-	}
+    @Test
+    public void testBasicExecute() throws Exception {
+        assertEquals("success", action.execute(context).getId());
+    }
 
-	@Test
-	public void testExecuteWithCustomAttribute() throws Exception {
-		action.getAttributes().put("attr", "value");
-		action.setTargetAction(new AbstractAction() {
-			protected Event doExecute(RequestContext context) throws Exception {
-				assertEquals("value", context.getAttributes().getString("attr"));
-				return success();
-			}
-		});
-		assertEquals("success", action.execute(context).getId());
-		assertEquals(0, context.getAttributes().size());
-	}
+    @Test
+    public void testExecuteWithCustomAttribute() throws Exception {
+        action.getAttributes().put("attr", "value");
+        action.setTargetAction(new AbstractAction() {
+            protected Event doExecute(RequestContext context) throws Exception {
+                assertEquals("value", context.getAttributes().getString("attr"));
+                return success();
+            }
+        });
+        assertEquals("success", action.execute(context).getId());
+        assertEquals(0, context.getAttributes().size());
+    }
 
-	@Test
-	public void testExecuteWithChainOfCustomAttributes() throws Exception {
-		AnnotatedAction action2 = new AnnotatedAction(action);
-		action2.getAttributes().put("attr2", "value");
-		action.getAttributes().put("attr", "value");
-		action.setTargetAction(new AbstractAction() {
-			protected Event doExecute(RequestContext context) throws Exception {
-				assertEquals("value", context.getAttributes().getString("attr"));
-				assertEquals("value", context.getAttributes().getString("attr2"));
-				return success();
-			}
-		});
-		assertEquals("success", action2.execute(context).getId());
-		assertEquals(0, context.getAttributes().size());
-	}
+    @Test
+    public void testExecuteWithChainOfCustomAttributes() throws Exception {
+        AnnotatedAction action2 = new AnnotatedAction(action);
+        action2.getAttributes().put("attr2", "value");
+        action.getAttributes().put("attr", "value");
+        action.setTargetAction(new AbstractAction() {
+            protected Event doExecute(RequestContext context) throws Exception {
+                assertEquals("value", context.getAttributes().getString("attr"));
+                assertEquals("value", context.getAttributes().getString("attr2"));
+                return success();
+            }
+        });
+        assertEquals("success", action2.execute(context).getId());
+        assertEquals(0, context.getAttributes().size());
+    }
 
-	@Test
-	public void testExecuteWithName() throws Exception {
-		action.getAttributes().put("name", "foo");
-		action.setTargetAction(new AbstractAction() {
-			protected Event doExecute(RequestContext context) throws Exception {
-				assertEquals("foo", context.getAttributes().getString("name"));
-				return success();
-			}
-		});
-		assertEquals("foo.success", action.execute(context).getId());
-	}
+    @Test
+    public void testExecuteWithName() throws Exception {
+        action.getAttributes().put("name", "foo");
+        action.setTargetAction(new AbstractAction() {
+            protected Event doExecute(RequestContext context) throws Exception {
+                assertEquals("foo", context.getAttributes().getString("name"));
+                return success();
+            }
+        });
+        assertEquals("foo.success", action.execute(context).getId());
+    }
 }

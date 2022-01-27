@@ -15,79 +15,77 @@
  */
 package org.springframework.webflow.action;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.fail;
-
-import java.util.Date;
-
 import org.junit.jupiter.api.Test;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.test.MockRequestContext;
 
+import java.util.Date;
+
+import static org.junit.jupiter.api.Assertions.*;
+
 /**
  * Test case for {@link ResultObjectBasedEventFactory}.
- * 
+ *
  * @author Erwin Vervaet
  */
 public class ResultObjectBasedEventFactoryTests {
 
-	private ResultObjectBasedEventFactory factory = new ResultObjectBasedEventFactory();
+    private ResultObjectBasedEventFactory factory = new ResultObjectBasedEventFactory();
 
-	@Test
-	public void testNull() {
-		Event event = factory.createResultEvent(this, null, new MockRequestContext());
-		assertEquals(factory.getNullEventId(), event.getId());
-	}
+    @Test
+    public void testNull() {
+        Event event = factory.createResultEvent(this, null, new MockRequestContext());
+        assertEquals(factory.getNullEventId(), event.getId());
+    }
 
-	@Test
-	public void testBoolean() {
-		Event event = factory.createResultEvent(this, true, new MockRequestContext());
-		assertEquals(factory.getYesEventId(), event.getId());
-		event = factory.createResultEvent(this, false, new MockRequestContext());
-		assertEquals(factory.getNoEventId(), event.getId());
-	}
+    @Test
+    public void testBoolean() {
+        Event event = factory.createResultEvent(this, true, new MockRequestContext());
+        assertEquals(factory.getYesEventId(), event.getId());
+        event = factory.createResultEvent(this, false, new MockRequestContext());
+        assertEquals(factory.getNoEventId(), event.getId());
+    }
 
-	@Test
-	public void testLabeledEnum() {
-		Event event = factory.createResultEvent(this, MyLabeledEnum.A, new MockRequestContext());
-		assertEquals("A", event.getId());
-		assertSame(MyLabeledEnum.A, event.getAttributes().get("result"));
-	}
+    @Test
+    public void testLabeledEnum() {
+        Event event = factory.createResultEvent(this, MyLabeledEnum.A, new MockRequestContext());
+        assertEquals("A", event.getId());
+        assertSame(MyLabeledEnum.A, event.getAttributes().get("result"));
+    }
 
-	public enum MyLabeledEnum {
-		A, B;
-	}
+    @Test
+    public void testString() {
+        Event event = factory.createResultEvent(this, "foobar", new MockRequestContext());
+        assertEquals("foobar", event.getId());
+    }
 
-	/*
-	 * public void testJava5Enum() { Event event = factory.createResultEvent(this, MyEnum.A, new MockRequestContext());
-	 * assertEquals("A", event.getId()); assertSame(MyEnum.A, event.getAttributes().get("result")); }
-	 * 
-	 * public static enum MyEnum { A, B;
-	 * 
-	 * public String toString() { return "MyEnum " + name(); } }
-	 */
+    /*
+     * public void testJava5Enum() { Event event = factory.createResultEvent(this, MyEnum.A, new MockRequestContext());
+     * assertEquals("A", event.getId()); assertSame(MyEnum.A, event.getAttributes().get("result")); }
+     *
+     * public static enum MyEnum { A, B;
+     *
+     * public String toString() { return "MyEnum " + name(); } }
+     */
 
-	@Test
-	public void testString() {
-		Event event = factory.createResultEvent(this, "foobar", new MockRequestContext());
-		assertEquals("foobar", event.getId());
-	}
+    @Test
+    public void testEvent() {
+        Event orig = new Event(this, "test");
+        Event event = factory.createResultEvent(this, orig, new MockRequestContext());
+        assertSame(orig, event);
+    }
 
-	@Test
-	public void testEvent() {
-		Event orig = new Event(this, "test");
-		Event event = factory.createResultEvent(this, orig, new MockRequestContext());
-		assertSame(orig, event);
-	}
+    @Test
+    public void testUnsupported() {
+        try {
+            factory.createResultEvent(this, new Date(), new MockRequestContext());
+            fail();
+        } catch (IllegalArgumentException e) {
+            // expected
+        }
+    }
 
-	@Test
-	public void testUnsupported() {
-		try {
-			factory.createResultEvent(this, new Date(), new MockRequestContext());
-			fail();
-		} catch (IllegalArgumentException e) {
-			// expected
-		}
-	}
+    public enum MyLabeledEnum {
+        A, B;
+    }
 }

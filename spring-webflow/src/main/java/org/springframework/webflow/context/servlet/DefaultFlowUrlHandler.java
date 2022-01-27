@@ -15,32 +15,31 @@
  */
 package org.springframework.webflow.context.servlet;
 
+import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.util.StringUtils;
+import org.springframework.web.util.WebUtils;
+import org.springframework.webflow.core.collection.AttributeMap;
+
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Iterator;
 import java.util.Map;
-
-import jakarta.servlet.http.HttpServletRequest;
-
-import org.springframework.util.StringUtils;
-import org.springframework.web.util.WebUtils;
-import org.springframework.webflow.core.collection.AttributeMap;
 
 /**
  * The default FlowUrlHandler implementation for Spring Web Flow.
  * <p>
  * Expects URLs to launch flow to be of this pattern:
  * </p>
- * 
+ *
  * <pre>
  * https://&lt;host&gt;/[app context path]/[app servlet path]/&lt;flow path&gt;
  * </pre>
- * 
+ * <p>
  * As an example, the URL <code>http://localhost/springtravel/app/booking</code> would map to flow "booking", while the
  * URL <code>http://localhost/springtravel/app/hotels/booking</code> would map to flow "hotels/booking". In both these
  * examples, /springtravel is the context path and /app is the servlet path. The flow id is treated as the path info
  * component of the request URL string.
- * 
+ * <p>
  * If the path info is null, the servletPath will be used as the flow id. Also, if the servlet path ends in an extension
  * it will be stripped when calculating the flow id. For example, a URL of
  * <code>http://localhost/springtravel/hotels/booking.htm</code> would still map to flow id "hotels/booking", assuming a
@@ -49,156 +48,157 @@ import org.springframework.webflow.core.collection.AttributeMap;
  * <p>
  * Expects URLs to resume flows to be of this pattern:
  * </p>
- * 
+ *
  * <pre>
  * https://&lt;host&gt;/[app context path]/[app servlet path]/&lt;flow path&gt;?execution=&lt;flow execution key&gt;
  * </pre>
- * 
+ * <p>
  * As an example, the URL http://localhost/springtravel/app/hotels/booking?execution=e1s1 would attempt to resume
  * execution "e1s1" of the "hotels/booking" flow.
- * 
+ *
  * @author Keith Donald
  * @author Jeremy Grelle
  */
 public class DefaultFlowUrlHandler implements FlowUrlHandler {
 
-	private static final String FLOW_EXECUTION_KEY_PARAMETER = "execution";
+    private static final String FLOW_EXECUTION_KEY_PARAMETER = "execution";
 
-	private String encodingScheme;
+    private String encodingScheme;
 
-	/**
-	 * Set the character encoding scheme for flow urls. Default is the request's encoding scheme (which is ISO-8859-1 if
-	 * not specified otherwise).
+    /**
+     * Set the character encoding scheme for flow urls. Default is the request's encoding scheme (which is ISO-8859-1 if
+     * not specified otherwise).
+     *
      * @param encodingScheme
      * @param encodingScheme
      */
-	public void setEncodingScheme(String encodingScheme) {
-		this.encodingScheme = encodingScheme;
-	}
+    public void setEncodingScheme(String encodingScheme) {
+        this.encodingScheme = encodingScheme;
+    }
 
-	public String getFlowExecutionKey(HttpServletRequest request) {
-		return request.getParameter(FLOW_EXECUTION_KEY_PARAMETER);
-	}
+    public String getFlowExecutionKey(HttpServletRequest request) {
+        return request.getParameter(FLOW_EXECUTION_KEY_PARAMETER);
+    }
 
-	public String getFlowId(HttpServletRequest request) {
-		String pathInfo = request.getPathInfo();
-		if (pathInfo != null) {
-			return pathInfo.substring(1);
-		} else {
-			String servletPath = request.getServletPath();
-			if (StringUtils.hasText(servletPath)) {
-				int dotIndex = servletPath.lastIndexOf('.');
-				if (dotIndex != -1) {
-					return servletPath.substring(1, dotIndex);
-				} else {
-					return servletPath.substring(1);
-				}
-			} else {
-				String contextPath = request.getContextPath();
-				if (StringUtils.hasText(contextPath)) {
-					return request.getContextPath().substring(1);
-				} else {
-					return null;
-				}
-			}
-		}
-	}
+    public String getFlowId(HttpServletRequest request) {
+        String pathInfo = request.getPathInfo();
+        if (pathInfo != null) {
+            return pathInfo.substring(1);
+        } else {
+            String servletPath = request.getServletPath();
+            if (StringUtils.hasText(servletPath)) {
+                int dotIndex = servletPath.lastIndexOf('.');
+                if (dotIndex != -1) {
+                    return servletPath.substring(1, dotIndex);
+                } else {
+                    return servletPath.substring(1);
+                }
+            } else {
+                String contextPath = request.getContextPath();
+                if (StringUtils.hasText(contextPath)) {
+                    return request.getContextPath().substring(1);
+                } else {
+                    return null;
+                }
+            }
+        }
+    }
 
-	public String createFlowExecutionUrl(String flowId, String flowExecutionKey, HttpServletRequest request) {
-		StringBuilder url = new StringBuilder();
-		url.append(request.getRequestURI());
-		url.append('?');
-		appendQueryParameter(url, FLOW_EXECUTION_KEY_PARAMETER, flowExecutionKey, getEncodingScheme(request));
-		return url.toString();
-	}
+    public String createFlowExecutionUrl(String flowId, String flowExecutionKey, HttpServletRequest request) {
+        StringBuilder url = new StringBuilder();
+        url.append(request.getRequestURI());
+        url.append('?');
+        appendQueryParameter(url, FLOW_EXECUTION_KEY_PARAMETER, flowExecutionKey, getEncodingScheme(request));
+        return url.toString();
+    }
 
-	/**
-	 * The flow definition URL for the given flow id will be built by appending the flow id to the base app context and
-	 * servlet paths.
-	 * 
-	 * <p>
-	 * Example - given a request originating at:
-	 * 
-	 * <pre>
-	 * https://someHost/someApp/someServlet/nestedPath/foo
-	 * </pre>
-	 * 
-	 * and a request for the flow id "nestedPath/bar", the new flow definition URL would be:
-	 * 
-	 * <pre>
-	 * https://someHost/someApp/someServlet/nestedPath/bar
-	 * </pre>
-	 */
-	public String createFlowDefinitionUrl(String flowId, AttributeMap<?> input, HttpServletRequest request) {
-		StringBuilder url = new StringBuilder();
-		if (request.getPathInfo() != null) {
-			url.append(request.getContextPath());
-			url.append(request.getServletPath());
-			url.append('/');
-			url.append(flowId);
-		} else {
-			String servletPath = request.getServletPath();
-			if (StringUtils.hasText(servletPath)) {
-				url.append(request.getContextPath());
-				url.append('/');
-				url.append(flowId);
-				int dotIndex = servletPath.lastIndexOf('.');
-				if (dotIndex != -1) {
-					url.append(servletPath.substring(dotIndex));
-				}
-			} else {
-				url.append('/');
-				url.append(flowId);
-			}
-		}
-		if (input != null && !input.isEmpty()) {
-			url.append('?');
-			appendQueryParameters(url, input.asMap(), getEncodingScheme(request));
-		}
-		return url.toString();
-	}
+    /**
+     * The flow definition URL for the given flow id will be built by appending the flow id to the base app context and
+     * servlet paths.
+     *
+     * <p>
+     * Example - given a request originating at:
+     *
+     * <pre>
+     * https://someHost/someApp/someServlet/nestedPath/foo
+     * </pre>
+     * <p>
+     * and a request for the flow id "nestedPath/bar", the new flow definition URL would be:
+     *
+     * <pre>
+     * https://someHost/someApp/someServlet/nestedPath/bar
+     * </pre>
+     */
+    public String createFlowDefinitionUrl(String flowId, AttributeMap<?> input, HttpServletRequest request) {
+        StringBuilder url = new StringBuilder();
+        if (request.getPathInfo() != null) {
+            url.append(request.getContextPath());
+            url.append(request.getServletPath());
+            url.append('/');
+            url.append(flowId);
+        } else {
+            String servletPath = request.getServletPath();
+            if (StringUtils.hasText(servletPath)) {
+                url.append(request.getContextPath());
+                url.append('/');
+                url.append(flowId);
+                int dotIndex = servletPath.lastIndexOf('.');
+                if (dotIndex != -1) {
+                    url.append(servletPath.substring(dotIndex));
+                }
+            } else {
+                url.append('/');
+                url.append(flowId);
+            }
+        }
+        if (input != null && !input.isEmpty()) {
+            url.append('?');
+            appendQueryParameters(url, input.asMap(), getEncodingScheme(request));
+        }
+        return url.toString();
+    }
 
-	protected String getEncodingScheme(HttpServletRequest request) {
-		if (encodingScheme != null) {
-			return encodingScheme;
-		} else {
-			String encodingScheme = request.getCharacterEncoding();
-			if (encodingScheme == null) {
-				encodingScheme = WebUtils.DEFAULT_CHARACTER_ENCODING;
-			}
-			return encodingScheme;
-		}
-	}
+    protected String getEncodingScheme(HttpServletRequest request) {
+        if (encodingScheme != null) {
+            return encodingScheme;
+        } else {
+            String encodingScheme = request.getCharacterEncoding();
+            if (encodingScheme == null) {
+                encodingScheme = WebUtils.DEFAULT_CHARACTER_ENCODING;
+            }
+            return encodingScheme;
+        }
+    }
 
-	protected <T> void appendQueryParameters(StringBuilder url, Map<String, T> parameters, String encodingScheme) {
-		Iterator<Map.Entry<String, T>> entries = parameters.entrySet().iterator();
-		while (entries.hasNext()) {
-			Map.Entry<?, ?> entry = entries.next();
-			appendQueryParameter(url, entry.getKey(), entry.getValue(), encodingScheme);
-			if (entries.hasNext()) {
-				url.append('&');
-			}
-		}
-	}
+    protected <T> void appendQueryParameters(StringBuilder url, Map<String, T> parameters, String encodingScheme) {
+        Iterator<Map.Entry<String, T>> entries = parameters.entrySet().iterator();
+        while (entries.hasNext()) {
+            Map.Entry<?, ?> entry = entries.next();
+            appendQueryParameter(url, entry.getKey(), entry.getValue(), encodingScheme);
+            if (entries.hasNext()) {
+                url.append('&');
+            }
+        }
+    }
 
-	// internal helpers
+    // internal helpers
 
-	private void appendQueryParameter(StringBuilder url, Object key, Object value, String encodingScheme) {
-		String encodedKey = encode(key, encodingScheme);
-		String encodedValue = encode(value, encodingScheme);
-		url.append(encodedKey).append('=').append(encodedValue);
-	}
+    private void appendQueryParameter(StringBuilder url, Object key, Object value, String encodingScheme) {
+        String encodedKey = encode(key, encodingScheme);
+        String encodedValue = encode(value, encodingScheme);
+        url.append(encodedKey).append('=').append(encodedValue);
+    }
 
-	private String encode(Object value, String encodingScheme) {
-		return value != null ? urlEncode(value.toString(), encodingScheme) : "";
-	}
+    private String encode(Object value, String encodingScheme) {
+        return value != null ? urlEncode(value.toString(), encodingScheme) : "";
+    }
 
-	private String urlEncode(String value, String encodingScheme) {
-		try {
-			return URLEncoder.encode(value, encodingScheme);
-		} catch (UnsupportedEncodingException e) {
-			throw new IllegalArgumentException("Cannot url encode " + value);
-		}
-	}
+    private String urlEncode(String value, String encodingScheme) {
+        try {
+            return URLEncoder.encode(value, encodingScheme);
+        } catch (UnsupportedEncodingException e) {
+            throw new IllegalArgumentException("Cannot url encode " + value);
+        }
+    }
 
 }

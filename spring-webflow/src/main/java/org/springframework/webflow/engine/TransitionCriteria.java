@@ -20,20 +20,20 @@ import org.springframework.webflow.execution.RequestContext;
 /**
  * Strategy interface encapsulating criteria that determine whether or not a transition should execute given a flow
  * execution request context.
- * 
- * @see org.springframework.webflow.engine.Transition
- * @see org.springframework.webflow.execution.RequestContext
- * 
+ *
  * @author Keith Donald
  * @author Erwin Vervaet
+ * @see org.springframework.webflow.engine.Transition
+ * @see org.springframework.webflow.execution.RequestContext
  */
 public interface TransitionCriteria {
 
-	/**
-	 * Check if the transition should fire based on the given flow execution request context.
-	 * @param context the flow execution request context
-	 * @return true if the transition should fire, false otherwise
-	 */
-	boolean test(RequestContext context);
+    /**
+     * Check if the transition should fire based on the given flow execution request context.
+     *
+     * @param context the flow execution request context
+     * @return true if the transition should fire, false otherwise
+     */
+    boolean test(RequestContext context);
 
 }

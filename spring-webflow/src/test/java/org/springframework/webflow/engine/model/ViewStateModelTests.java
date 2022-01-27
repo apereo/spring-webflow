@@ -15,14 +15,11 @@
  */
 package org.springframework.webflow.engine.model;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.Test;
 
 import java.util.LinkedList;
 
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 
 /**
@@ -30,85 +27,85 @@ import org.junit.jupiter.api.Test;
  */
 public class ViewStateModelTests {
 
-	@Test
-	public void testMergeable() {
-		ViewStateModel child = new ViewStateModel("child");
-		assertTrue(child.isMergeableWith(child));
-	}
+    @Test
+    public void testMergeable() {
+        ViewStateModel child = new ViewStateModel("child");
+        assertTrue(child.isMergeableWith(child));
+    }
 
-	@Test
-	public void testNotMergeable() {
-		ViewStateModel child = new ViewStateModel("child");
-		ViewStateModel parent = new ViewStateModel("parent");
-		assertFalse(child.isMergeableWith(parent));
-	}
+    @Test
+    public void testNotMergeable() {
+        ViewStateModel child = new ViewStateModel("child");
+        ViewStateModel parent = new ViewStateModel("parent");
+        assertFalse(child.isMergeableWith(parent));
+    }
 
-	@Test
-	public void testNotMergeableWithNull() {
-		ViewStateModel child = new ViewStateModel("child");
-		assertFalse(child.isMergeableWith(null));
-	}
+    @Test
+    public void testNotMergeableWithNull() {
+        ViewStateModel child = new ViewStateModel("child");
+        assertFalse(child.isMergeableWith(null));
+    }
 
-	@Test
-	public void testMerge() {
-		ViewStateModel child = new ViewStateModel("child");
-		ViewStateModel parent = new ViewStateModel("parent");
+    @Test
+    public void testMerge() {
+        ViewStateModel child = new ViewStateModel("child");
+        ViewStateModel parent = new ViewStateModel("parent");
 
-		LinkedList<AttributeModel> attributes = new LinkedList<>();
-		attributes.add(new AttributeModel("foo", "bar"));
-		parent.setAttributes(attributes);
+        LinkedList<AttributeModel> attributes = new LinkedList<>();
+        attributes.add(new AttributeModel("foo", "bar"));
+        parent.setAttributes(attributes);
 
-		BinderModel binder = new BinderModel();
-		LinkedList<BindingModel> bindings = new LinkedList<>();
-		bindings.add(new BindingModel("foo", "fooConverter", "true"));
-		binder.setBindings(bindings);
-		parent.setBinder(binder);
+        BinderModel binder = new BinderModel();
+        LinkedList<BindingModel> bindings = new LinkedList<>();
+        bindings.add(new BindingModel("foo", "fooConverter", "true"));
+        binder.setBindings(bindings);
+        parent.setBinder(binder);
 
-		parent.setSecured(new SecuredModel("secured"));
+        parent.setSecured(new SecuredModel("secured"));
 
-		parent.setRedirect("true");
-		parent.setPopup("true");
-		parent.setModel("fooModel");
-		parent.setValidationHints("foo");
-		parent.setView("fooView");
+        parent.setRedirect("true");
+        parent.setPopup("true");
+        parent.setModel("fooModel");
+        parent.setValidationHints("foo");
+        parent.setView("fooView");
 
-		LinkedList<TransitionModel> transitions = new LinkedList<>();
-		TransitionModel tx = new TransitionModel();
-		tx.setOn("submit");
-		tx.setTo("bar");
-		transitions.add(tx);
-		parent.setTransitions(transitions);
+        LinkedList<TransitionModel> transitions = new LinkedList<>();
+        TransitionModel tx = new TransitionModel();
+        tx.setOn("submit");
+        tx.setTo("bar");
+        transitions.add(tx);
+        parent.setTransitions(transitions);
 
-		EvaluateModel eval = new EvaluateModel("foo.bar");
-		LinkedList<AbstractActionModel> actions = new LinkedList<>();
-		actions.add(eval);
-		parent.setOnEntryActions(actions);
-		parent.setOnExitActions(actions);
-		parent.setOnRenderActions(actions);
+        EvaluateModel eval = new EvaluateModel("foo.bar");
+        LinkedList<AbstractActionModel> actions = new LinkedList<>();
+        actions.add(eval);
+        parent.setOnEntryActions(actions);
+        parent.setOnExitActions(actions);
+        parent.setOnRenderActions(actions);
 
-		LinkedList<VarModel> vars = new LinkedList<>();
-		vars.add(new VarModel("foo", "class"));
-		parent.setVars(vars);
+        LinkedList<VarModel> vars = new LinkedList<>();
+        vars.add(new VarModel("foo", "class"));
+        parent.setVars(vars);
 
-		LinkedList<ExceptionHandlerModel> eh = new LinkedList<>();
-		eh.add(new ExceptionHandlerModel("foo"));
-		parent.setExceptionHandlers(eh);
+        LinkedList<ExceptionHandlerModel> eh = new LinkedList<>();
+        eh.add(new ExceptionHandlerModel("foo"));
+        parent.setExceptionHandlers(eh);
 
-		child.merge(parent);
-		assertNotNull(child.getSecured());
+        child.merge(parent);
+        assertNotNull(child.getSecured());
 
-		assertEquals("true", child.getRedirect());
-		assertEquals("true", child.getPopup());
-		assertEquals("fooModel", child.getModel());
-		assertEquals("foo", child.getValidationHints());
-		assertEquals("fooView", child.getView());
-		assertEquals("bar", child.getAttributes().get(0).getValue());
-		assertEquals("foo", child.getBinder().getBindings().get(0).getProperty());
-		assertEquals("bar", child.getTransitions().get(0).getTo());
-		assertEquals("foo.bar", ((EvaluateModel) child.getOnEntryActions().get(0)).getExpression());
-		assertEquals("foo.bar", ((EvaluateModel) child.getOnExitActions().get(0)).getExpression());
-		assertEquals("foo.bar", ((EvaluateModel) child.getOnRenderActions().get(0)).getExpression());
-		assertEquals("foo", child.getVars().get(0).getName());
-		assertEquals("foo", child.getExceptionHandlers().get(0).getBean());
-	}
+        assertEquals("true", child.getRedirect());
+        assertEquals("true", child.getPopup());
+        assertEquals("fooModel", child.getModel());
+        assertEquals("foo", child.getValidationHints());
+        assertEquals("fooView", child.getView());
+        assertEquals("bar", child.getAttributes().get(0).getValue());
+        assertEquals("foo", child.getBinder().getBindings().get(0).getProperty());
+        assertEquals("bar", child.getTransitions().get(0).getTo());
+        assertEquals("foo.bar", ((EvaluateModel) child.getOnEntryActions().get(0)).getExpression());
+        assertEquals("foo.bar", ((EvaluateModel) child.getOnExitActions().get(0)).getExpression());
+        assertEquals("foo.bar", ((EvaluateModel) child.getOnRenderActions().get(0)).getExpression());
+        assertEquals("foo", child.getVars().get(0).getName());
+        assertEquals("foo", child.getExceptionHandlers().get(0).getBean());
+    }
 }

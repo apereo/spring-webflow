@@ -15,49 +15,49 @@
  */
 package org.springframework.webflow.engine;
 
+import org.springframework.webflow.execution.RequestContext;
+
 import java.io.ObjectStreamException;
 import java.io.Serializable;
 
-import org.springframework.webflow.execution.RequestContext;
-
 /**
  * Transition criteria that always returns true.
- * 
+ *
  * @author Keith Donald
  */
 public class WildcardTransitionCriteria implements TransitionCriteria, Serializable {
 
-	/*
-	 * Implementation note: not located in webflow.execution.support package to avoid a cyclic dependency between
-	 * webflow.execution and webflow.execution.support.
-	 */
+    /*
+     * Implementation note: not located in webflow.execution.support package to avoid a cyclic dependency between
+     * webflow.execution and webflow.execution.support.
+     */
 
-	/**
-	 * Event id value ("*") that will cause the transition to match on any event.
-	 */
-	public static final String WILDCARD_EVENT_ID = "*";
+    /**
+     * Event id value ("*") that will cause the transition to match on any event.
+     */
+    public static final String WILDCARD_EVENT_ID = "*";
 
-	/**
-	 * Shared instance of a TransitionCriteria that always returns true.
-	 */
-	public static final WildcardTransitionCriteria INSTANCE = new WildcardTransitionCriteria();
+    /**
+     * Shared instance of a TransitionCriteria that always returns true.
+     */
+    public static final WildcardTransitionCriteria INSTANCE = new WildcardTransitionCriteria();
 
-	/**
-	 * Private constructor because this is a singleton.
-	 */
-	private WildcardTransitionCriteria() {
-	}
+    /**
+     * Private constructor because this is a singleton.
+     */
+    private WildcardTransitionCriteria() {
+    }
 
-	public boolean test(RequestContext context) {
-		return true;
-	}
+    public boolean test(RequestContext context) {
+        return true;
+    }
 
-	// resolve the singleton instance
-	private Object readResolve() throws ObjectStreamException {
-		return INSTANCE;
-	}
+    public String toString() {
+        return WILDCARD_EVENT_ID;
+    }
 
-	public String toString() {
-		return WILDCARD_EVENT_ID;
-	}
+    // resolve the singleton instance
+    private Object readResolve() throws ObjectStreamException {
+        return INSTANCE;
+    }
 }

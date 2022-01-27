@@ -19,51 +19,51 @@ import java.util.LinkedList;
 
 /**
  * Model support for transitionable states.
- * 
+ *
  * @author Scott Andrews
  */
 public abstract class AbstractTransitionableStateModel extends AbstractStateModel {
 
-	private LinkedList<TransitionModel> transitions;
+    private LinkedList<TransitionModel> transitions;
 
-	private LinkedList<AbstractActionModel> onExitActions;
+    private LinkedList<AbstractActionModel> onExitActions;
 
-	public AbstractTransitionableStateModel(String id) {
-		super(id);
-	}
+    public AbstractTransitionableStateModel(String id) {
+        super(id);
+    }
 
-	protected void fillCopy(final AbstractTransitionableStateModel copy) {
-		super.fillCopy(copy);
-		copy.setTransitions(copyList(transitions));
-		copy.setOnExitActions(copyList(onExitActions));
-	}
+    /**
+     * @return the transitions
+     */
+    public LinkedList<TransitionModel> getTransitions() {
+        return transitions;
+    }
 
-	/**
-	 * @return the transitions
-	 */
-	public LinkedList<TransitionModel> getTransitions() {
-		return transitions;
-	}
+    /**
+     * @param transitions the transitions to set
+     */
+    public void setTransitions(LinkedList<TransitionModel> transitions) {
+        this.transitions = transitions;
+    }
 
-	/**
-	 * @param transitions the transitions to set
-	 */
-	public void setTransitions(LinkedList<TransitionModel> transitions) {
-		this.transitions = transitions;
-	}
+    /**
+     * @return the on exit actions
+     */
+    public LinkedList<AbstractActionModel> getOnExitActions() {
+        return onExitActions;
+    }
 
-	/**
-	 * @return the on exit actions
-	 */
-	public LinkedList<AbstractActionModel> getOnExitActions() {
-		return onExitActions;
-	}
+    /**
+     * @param onExitActions the on exit actions to set
+     */
+    public void setOnExitActions(LinkedList<AbstractActionModel> onExitActions) {
+        this.onExitActions = onExitActions;
+    }
 
-	/**
-	 * @param onExitActions the on exit actions to set
-	 */
-	public void setOnExitActions(LinkedList<AbstractActionModel> onExitActions) {
-		this.onExitActions = onExitActions;
-	}
+    protected void fillCopy(final AbstractTransitionableStateModel copy) {
+        super.fillCopy(copy);
+        copy.setTransitions(copyList(transitions));
+        copy.setOnExitActions(copyList(onExitActions));
+    }
 
 }

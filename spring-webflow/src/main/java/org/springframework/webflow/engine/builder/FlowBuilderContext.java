@@ -25,68 +25,79 @@ import org.springframework.webflow.validation.ValidationHintResolver;
 
 /**
  * Provides services needed to a direct a flow builder through building a flow definition.
+ *
  * @author Keith Donald
  */
 public interface FlowBuilderContext {
 
-	/**
-	 * Returns an externally configured flow definition identifier to assign to the flow being built.
-	 * @return the flow id
-	 */
-	String getFlowId();
+    /**
+     * Returns an externally configured flow definition identifier to assign to the flow being built.
+     *
+     * @return the flow id
+     */
+    String getFlowId();
 
-	/**
-	 * Returns externally configured attributes to assign to the flow definition being built.
-	 * @return the flow attributes
-	 */
-	AttributeMap<Object> getFlowAttributes();
+    /**
+     * Returns externally configured attributes to assign to the flow definition being built.
+     *
+     * @return the flow attributes
+     */
+    AttributeMap<Object> getFlowAttributes();
 
-	/**
-	 * Returns the locator for locating dependent flows (subflows).
-	 * @return the flow definition locator
-	 */
-	FlowDefinitionLocator getFlowDefinitionLocator();
+    /**
+     * Returns the locator for locating dependent flows (subflows).
+     *
+     * @return the flow definition locator
+     */
+    FlowDefinitionLocator getFlowDefinitionLocator();
 
-	/**
-	 * Returns the factory for core flow artifacts such as Flow and State.
-	 * @return the flow artifact factory
-	 */
-	FlowArtifactFactory getFlowArtifactFactory();
+    /**
+     * Returns the factory for core flow artifacts such as Flow and State.
+     *
+     * @return the flow artifact factory
+     */
+    FlowArtifactFactory getFlowArtifactFactory();
 
-	/**
-	 * Returns a generic type conversion service for converting between types, typically from string to a rich value
-	 * object.
-	 * @return the generic conversion service
-	 */
-	ConversionService getConversionService();
+    /**
+     * Returns a generic type conversion service for converting between types, typically from string to a rich value
+     * object.
+     *
+     * @return the generic conversion service
+     */
+    ConversionService getConversionService();
 
-	/**
-	 * Returns the view factory creator for configuring a ViewFactory per view state
-	 * @return the view factory creator
-	 */
-	ViewFactoryCreator getViewFactoryCreator();
+    /**
+     * Returns the view factory creator for configuring a ViewFactory per view state
+     *
+     * @return the view factory creator
+     */
+    ViewFactoryCreator getViewFactoryCreator();
 
-	/**
-	 * Returns the expression parser for parsing expression strings.
-	 * @return the expression parser
-	 */
-	ExpressionParser getExpressionParser();
+    /**
+     * Returns the expression parser for parsing expression strings.
+     *
+     * @return the expression parser
+     */
+    ExpressionParser getExpressionParser();
 
-	/**
-	 * Returns the Validator instance to use for validating a model.
-	 * @return the validator
-	 */
-	Validator getValidator();
+    /**
+     * Returns the Validator instance to use for validating a model.
+     *
+     * @return the validator
+     */
+    Validator getValidator();
 
-	/**
-	 * Return the {@link ValidationHintResolver}.
+    /**
+     * Return the {@link ValidationHintResolver}.
+     *
      * @return
      */
-	ValidationHintResolver getValidationHintResolver();
+    ValidationHintResolver getValidationHintResolver();
 
-	/**
-	 * Returns the application context hosting the flow system.
-	 * @return the application context
-	 */
-	ApplicationContext getApplicationContext();
+    /**
+     * Returns the application context hosting the flow system.
+     *
+     * @return the application context
+     */
+    ApplicationContext getApplicationContext();
 }

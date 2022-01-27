@@ -15,12 +15,6 @@
  */
 package org.springframework.webflow.engine;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.webflow.execution.ActionExecutionException;
@@ -30,70 +24,74 @@ import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.TestAction;
 import org.springframework.webflow.test.MockRequestContext;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 public class ActionExecutorTests {
 
-	private MockRequestContext context;
-	private State state;
-	private Flow flow;
+    private MockRequestContext context;
 
-	@BeforeEach
-	public void setUp() throws Exception {
-		flow = new Flow("myFlow");
-		state = new EndState(flow, "end");
-		context = new MockRequestContext(flow);
-	}
+    private State state;
 
-	@Test
-	public void testExecuteAction() {
-		TestAction action = new TestAction();
-		Event result = ActionExecutor.execute(action, context);
-		assertNull(context.getCurrentState());
-		assertEquals("success", result.getId());
-	}
+    private Flow flow;
 
-	@Test
-	public void testExecuteActionInState() {
-		context.getMockFlowExecutionContext().getMockActiveSession().setState(state);
-		TestAction action = new TestAction();
-		Event result = ActionExecutor.execute(action, context);
-		assertSame(state, context.getCurrentState());
-		assertEquals("success", result.getId());
-	}
+    @BeforeEach
+    public void setUp() throws Exception {
+        flow = new Flow("myFlow");
+        state = new EndState(flow, "end");
+        context = new MockRequestContext(flow);
+    }
 
-	@Test
-	public void testExecuteActionWithException() {
-		TestAction action = new TestAction() {
-			protected Event doExecute(RequestContext context) throws Exception {
-				throw new IllegalStateException("Oops");
-			}
-		};
-		try {
-			ActionExecutor.execute(action, context);
-			fail("Should've failed");
-		} catch (ActionExecutionException e) {
-			assertNull(context.getCurrentState());
-			assertTrue(e.getCause() instanceof IllegalStateException);
-			assertEquals(flow.getId(), e.getFlowId());
-			assertNull(e.getStateId());
-		}
-	}
+    @Test
+    public void testExecuteAction() {
+        TestAction action = new TestAction();
+        Event result = ActionExecutor.execute(action, context);
+        assertNull(context.getCurrentState());
+        assertEquals("success", result.getId());
+    }
 
-	@Test
-	public void testExecuteActionInStateWithException() {
-		context.getMockFlowExecutionContext().getMockActiveSession().setState(state);
-		TestAction action = new TestAction() {
-			protected Event doExecute(RequestContext context) throws Exception {
-				throw new IllegalStateException("Oops");
-			}
-		};
-		try {
-			ActionExecutor.execute(action, context);
-			fail("Should've failed");
-		} catch (ActionExecutionException e) {
-			assertSame(state, context.getCurrentState());
-			assertTrue(e.getCause() instanceof IllegalStateException);
-			assertEquals(flow.getId(), e.getFlowId());
-			assertEquals(state.getId(), e.getStateId());
-		}
-	}
+    @Test
+    public void testExecuteActionInState() {
+        context.getMockFlowExecutionContext().getMockActiveSession().setState(state);
+        TestAction action = new TestAction();
+        Event result = ActionExecutor.execute(action, context);
+        assertSame(state, context.getCurrentState());
+        assertEquals("success", result.getId());
+    }
+
+    @Test
+    public void testExecuteActionWithException() {
+        TestAction action = new TestAction() {
+            protected Event doExecute(RequestContext context) throws Exception {
+                throw new IllegalStateException("Oops");
+            }
+        };
+        try {
+            ActionExecutor.execute(action, context);
+            fail("Should've failed");
+        } catch (ActionExecutionException e) {
+            assertNull(context.getCurrentState());
+            assertTrue(e.getCause() instanceof IllegalStateException);
+            assertEquals(flow.getId(), e.getFlowId());
+            assertNull(e.getStateId());
+        }
+    }
+
+    @Test
+    public void testExecuteActionInStateWithException() {
+        context.getMockFlowExecutionContext().getMockActiveSession().setState(state);
+        TestAction action = new TestAction() {
+            protected Event doExecute(RequestContext context) throws Exception {
+                throw new IllegalStateException("Oops");
+            }
+        };
+        try {
+            ActionExecutor.execute(action, context);
+            fail("Should've failed");
+        } catch (ActionExecutionException e) {
+            assertSame(state, context.getCurrentState());
+            assertTrue(e.getCause() instanceof IllegalStateException);
+            assertEquals(flow.getId(), e.getFlowId());
+            assertEquals(state.getId(), e.getStateId());
+        }
+    }
 }

@@ -24,25 +24,24 @@ import org.springframework.webflow.execution.RequestContext;
  * <li>If the currently executing action has a "method" property defined, use the value as method name.</li>
  * <li>Else use the name of the current state of the flow execution as a method name.</li>
  * </ol>
- * 
- * @see org.springframework.webflow.action.MultiAction
- * 
+ *
  * @author Erwin Vervaet
+ * @see org.springframework.webflow.action.MultiAction
  */
 public class DefaultMultiActionMethodResolver implements MethodResolver {
 
-	public String resolveMethod(RequestContext context) {
-		// implementation note: not using AnnotatedAction.METHOD_ATTRIBUTE since
-		// that resides in the engine subsystem
-		String method = context.getAttributes().getString("method");
-		if (method == null) {
-			if (context.getCurrentState() != null) {
-				// default to the state id
-				method = context.getCurrentState().getId();
-			} else {
-				throw new IllegalStateException("Unable to resolve action method; no 'method' context attribute set");
-			}
-		}
-		return method;
-	}
+    public String resolveMethod(RequestContext context) {
+        // implementation note: not using AnnotatedAction.METHOD_ATTRIBUTE since
+        // that resides in the engine subsystem
+        String method = context.getAttributes().getString("method");
+        if (method == null) {
+            if (context.getCurrentState() != null) {
+                // default to the state id
+                method = context.getCurrentState().getId();
+            } else {
+                throw new IllegalStateException("Unable to resolve action method; no 'method' context attribute set");
+            }
+        }
+        return method;
+    }
 }

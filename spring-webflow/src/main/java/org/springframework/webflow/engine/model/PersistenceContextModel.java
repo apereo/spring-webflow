@@ -23,27 +23,27 @@ package org.springframework.webflow.engine.model;
  * execution are flushed to the database in a transaction.
  * <p>
  * The persistence context can be referenced from within this flow by the "entityManager" variable.
- * 
+ *
  * @author Scott Andrews
  */
 public class PersistenceContextModel extends AbstractModel {
 
-	/**
-	 * Create a persistence context model
-	 */
-	public PersistenceContextModel() {
-	}
+    /**
+     * Create a persistence context model
+     */
+    public PersistenceContextModel() {
+    }
 
-	public boolean isMergeableWith(Model model) {
-		return false;
-	}
+    public boolean isMergeableWith(Model model) {
+        return false;
+    }
 
-	public void merge(Model model) {
+    public void merge(Model model) {
 
-	}
+    }
 
-	public Model createCopy() {
-		return new PersistenceContextModel();
-	}
+    public Model createCopy() {
+        return new PersistenceContextModel();
+    }
 
 }

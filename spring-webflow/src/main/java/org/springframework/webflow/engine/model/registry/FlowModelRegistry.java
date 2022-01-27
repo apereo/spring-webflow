@@ -21,26 +21,28 @@ package org.springframework.webflow.engine.model.registry;
  * <p>
  * Flow model registries can be configured with a "parent" registry to provide a hook into a larger flow model registry
  * hierarchy.
- * 
+ *
  * @author Keith Donald
  * @author Scott Andrews
  */
 public interface FlowModelRegistry extends FlowModelLocator {
 
-	/**
-	 * Sets this registry's parent registry. When asked by a client to locate a flow model this registry will query it's
-	 * parent if it cannot fulfill the lookup request itself.
-	 * @param parent the parent flow model registry, may be null
-	 */
-	void setParent(FlowModelRegistry parent);
+    /**
+     * Sets this registry's parent registry. When asked by a client to locate a flow model this registry will query it's
+     * parent if it cannot fulfill the lookup request itself.
+     *
+     * @param parent the parent flow model registry, may be null
+     */
+    void setParent(FlowModelRegistry parent);
 
-	/**
-	 * Register a flow model in this registry. Registers a "holder", not the Flow model itself. This allows the actual
-	 * Flow model to be loaded lazily only when needed, and also rebuilt at runtime when its underlying resource changes
-	 * without re-deploy.
-	 * @param id the id to register the flow model under
-	 * @param modelHolder a holder holding the flow model to register
-	 */
-	void registerFlowModel(String id, FlowModelHolder modelHolder);
+    /**
+     * Register a flow model in this registry. Registers a "holder", not the Flow model itself. This allows the actual
+     * Flow model to be loaded lazily only when needed, and also rebuilt at runtime when its underlying resource changes
+     * without re-deploy.
+     *
+     * @param id          the id to register the flow model under
+     * @param modelHolder a holder holding the flow model to register
+     */
+    void registerFlowModel(String id, FlowModelHolder modelHolder);
 
 }

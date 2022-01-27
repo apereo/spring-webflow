@@ -25,73 +25,76 @@ import org.springframework.webflow.execution.RequestContextHolder;
 
 /**
  * Base class for {@link Scope} implementations that access a Web Flow scope from the current request.
- * 
+ *
  * @author Keith Donald
  */
 public abstract class AbstractWebFlowScope implements Scope {
 
-	/**
-	 * Logger, usable by subclasses.
-	 */
-	protected final Log logger = LogFactory.getLog(getClass());
+    /**
+     * Logger, usable by subclasses.
+     */
+    protected final Log logger = LogFactory.getLog(getClass());
 
-	public Object get(String name, ObjectFactory<?> objectFactory) {
-		MutableAttributeMap<Object> scope = getScope();
-		Object scopedObject = scope.get(name);
-		if (scopedObject == null) {
-			if (logger.isDebugEnabled()) {
-				logger.debug("No scoped instance '" + name + "' found; creating new instance");
-			}
-			scopedObject = objectFactory.getObject();
-			scope.put(name, scopedObject);
-		} else {
-			if (logger.isDebugEnabled()) {
-				logger.debug("Returning scoped instance '" + name + "'");
-			}
-		}
-		return scopedObject;
-	}
+    public Object get(String name, ObjectFactory<?> objectFactory) {
+        MutableAttributeMap<Object> scope = getScope();
+        Object scopedObject = scope.get(name);
+        if (scopedObject == null) {
+            if (logger.isDebugEnabled()) {
+                logger.debug("No scoped instance '" + name + "' found; creating new instance");
+            }
+            scopedObject = objectFactory.getObject();
+            scope.put(name, scopedObject);
+        } else {
+            if (logger.isDebugEnabled()) {
+                logger.debug("Returning scoped instance '" + name + "'");
+            }
+        }
+        return scopedObject;
+    }
 
-	public Object remove(String name) {
-		return getScope().remove(name);
-	}
+    public Object remove(String name) {
+        return getScope().remove(name);
+    }
 
-	/**
-	 * Template method that returns the target scope map.
-	 * @throws IllegalStateException if the scope could not be accessed
-	 */
-	protected abstract MutableAttributeMap<Object> getScope() throws IllegalStateException;
+    /**
+     * Always returns <code>null</code> as most Spring Web Flow scopes do not have obvious conversation ids. Subclasses
+     * should override this method where conversation ids can be intelligently returned.
+     *
+     * @return always returns <code>null</code>
+     */
+    public String getConversationId() {
+        return null;
+    }
 
-	/**
-	 * Always returns <code>null</code> as most Spring Web Flow scopes do not have obvious conversation ids. Subclasses
-	 * should override this method where conversation ids can be intelligently returned.
-	 * @return always returns <code>null</code>
-	 */
-	public String getConversationId() {
-		return null;
-	}
+    public Object resolveContextualObject(String key) {
+        return null;
+    }
 
-	public Object resolveContextualObject(String key) {
-		return null;
-	}
+    /**
+     * Will not register a destruction callback as Spring Web Flow does not support destruction of scoped beans.
+     * Subclasses should override this method where where destruction can adequately be accomplished.
+     *
+     * @param name     the name of the bean to register the callback for
+     * @param callback the callback to execute
+     */
+    public void registerDestructionCallback(String name, Runnable callback) {
+        logger.warn("Destruction callback for '" + name + "' was not registered. Spring Web Flow does not "
+                    + "support destruction of scoped beans.");
+    }
 
-	/**
-	 * Will not register a destruction callback as Spring Web Flow does not support destruction of scoped beans.
-	 * Subclasses should override this method where where destruction can adequately be accomplished.
-	 * @param name the name of the bean to register the callback for
-	 * @param callback the callback to execute
-	 */
-	public void registerDestructionCallback(String name, Runnable callback) {
-		logger.warn("Destruction callback for '" + name + "' was not registered. Spring Web Flow does not "
-				+ "support destruction of scoped beans.");
-	}
+    /**
+     * Template method that returns the target scope map.
+     *
+     * @throws IllegalStateException if the scope could not be accessed
+     */
+    protected abstract MutableAttributeMap<Object> getScope() throws IllegalStateException;
 
-	protected RequestContext getRequiredRequestContext() {
-		RequestContext context = RequestContextHolder.getRequestContext();
-		if (context == null) {
-			throw new IllegalStateException(
-					"No request context bound to this thread; to access flow-scoped beans you must be running in a flow execution request");
-		}
-		return context;
-	}
+    protected RequestContext getRequiredRequestContext() {
+        RequestContext context = RequestContextHolder.getRequestContext();
+        if (context == null) {
+            throw new IllegalStateException(
+                "No request context bound to this thread; to access flow-scoped beans you must be running in a flow execution request");
+        }
+        return context;
+    }
 }

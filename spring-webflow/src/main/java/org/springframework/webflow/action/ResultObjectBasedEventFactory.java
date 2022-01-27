@@ -62,70 +62,71 @@ import org.springframework.webflow.execution.RequestContext;
  */
 public class ResultObjectBasedEventFactory extends EventFactorySupport implements ResultEventFactory {
 
-	public Event createResultEvent(Object source, Object resultObject, RequestContext context) {
-		if (resultObject == null) {
-			// this handles the case where the declared result return type is mapped
-			// by this class but the value is null
-			return event(source, getNullEventId());
-		} else if (isBoolean(resultObject.getClass())) {
-			return event(source, ((Boolean) resultObject));
-		} else if (isEnum(resultObject.getClass())) {
-			String eventId = EnumUtils.getEnumName(resultObject);
-			return event(source, eventId, getResultAttributeName(), resultObject);
-		} else if (isString(resultObject.getClass())) {
-			String resultString = (String) resultObject;
-			if (StringUtils.hasText(resultString)) {
-				return event(source, resultString);
-			} else {
-				// treat an empty string as the null event
-				return event(source, getNullEventId());
-			}
-		} else if (isEvent(resultObject.getClass())) {
-			return (Event) resultObject;
-		} else {
-			throw new IllegalArgumentException("Cannot deal with result object '" + resultObject + "' of type '"
-					+ resultObject.getClass() + "'");
-		}
-	}
+    public Event createResultEvent(Object source, Object resultObject, RequestContext context) {
+        if (resultObject == null) {
+            // this handles the case where the declared result return type is mapped
+            // by this class but the value is null
+            return event(source, getNullEventId());
+        } else if (isBoolean(resultObject.getClass())) {
+            return event(source, ((Boolean) resultObject));
+        } else if (isEnum(resultObject.getClass())) {
+            String eventId = EnumUtils.getEnumName(resultObject);
+            return event(source, eventId, getResultAttributeName(), resultObject);
+        } else if (isString(resultObject.getClass())) {
+            String resultString = (String) resultObject;
+            if (StringUtils.hasText(resultString)) {
+                return event(source, resultString);
+            } else {
+                // treat an empty string as the null event
+                return event(source, getNullEventId());
+            }
+        } else if (isEvent(resultObject.getClass())) {
+            return (Event) resultObject;
+        } else {
+            throw new IllegalArgumentException("Cannot deal with result object '" + resultObject + "' of type '"
+                                               + resultObject.getClass() + "'");
+        }
+    }
 
-	/**
-	 * Check whether or not given type is mapped to a corresponding event using special mapping rules.
+    /**
+     * Check whether or not given type is mapped to a corresponding event using special mapping rules.
+     *
      * @param type
      * @param type
      * @return
      */
-	public boolean isMappedValueType(Class<?> type) {
-		return isBoolean(type) || isEnum(type) || isString(type) || isEvent(type);
-	}
+    public boolean isMappedValueType(Class<?> type) {
+        return isBoolean(type) || isEnum(type) || isString(type) || isEvent(type);
+    }
 
-	// internal helpers to determine the 'type' of a class
+    // internal helpers to determine the 'type' of a class
 
-	private boolean isBoolean(Class<?> type) {
-		return Boolean.class.equals(type) || boolean.class.equals(type);
-	}
+    /**
+     * Simple helper class with Java 5 specific code factored out to keep the containing class JDK 1.3 compatible.
+     */
+    private static class EnumUtils {
+        public static String getEnumName(Object enumValue) {
+            return ((java.lang.Enum<?>) enumValue).name();
+        }
 
-	private boolean isEnum(Class<?> type) {
-		return EnumUtils.isEnum(type);
-	}
+        public static boolean isEnum(Class<?> type) {
+            return java.lang.Enum.class.isAssignableFrom(type);
+        }
+    }
 
-	private boolean isString(Class<?> type) {
-		return String.class.equals(type);
-	}
+    private boolean isBoolean(Class<?> type) {
+        return Boolean.class.equals(type) || boolean.class.equals(type);
+    }
 
-	private boolean isEvent(Class<?> type) {
-		return Event.class.isAssignableFrom(type);
-	}
+    private boolean isEnum(Class<?> type) {
+        return EnumUtils.isEnum(type);
+    }
 
-	/**
-	 * Simple helper class with Java 5 specific code factored out to keep the containing class JDK 1.3 compatible.
-	 */
-	private static class EnumUtils {
-		public static String getEnumName(Object enumValue) {
-			return ((java.lang.Enum<?>) enumValue).name();
-		}
+    private boolean isString(Class<?> type) {
+        return String.class.equals(type);
+    }
 
-		public static boolean isEnum(Class<?> type) {
-			return java.lang.Enum.class.isAssignableFrom(type);
-		}
-	}
+    private boolean isEvent(Class<?> type) {
+        return Event.class.isAssignableFrom(type);
+    }
 }

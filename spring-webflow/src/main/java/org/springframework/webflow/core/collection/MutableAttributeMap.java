@@ -20,67 +20,74 @@ package org.springframework.webflow.core.collection;
  * <p>
  * Implementations can optionally support {@link AttributeMapBindingListener listeners} that will be notified when
  * they're bound in or unbound from the map.
- * 
+ *
  * @author Keith Donald
  */
 public interface MutableAttributeMap<V> extends AttributeMap<V> {
 
-	/**
-	 * Put the attribute into this map.
-	 * <p>
-	 * If the attribute value is an {@link AttributeMapBindingListener} this map will publish
-	 * {@link AttributeMapBindingEvent binding events} such as on "bind" and "unbind" if supported.
-	 * <p>
-	 * <b>Note</b>: not all <code>MutableAttributeMap</code> implementations support this.
-	 * @param attributeName the attribute name
-	 * @param attributeValue the attribute value
-	 * @return the previous value of the attribute, or <code>null</code> of there was no previous value
-	 */
-	V put(String attributeName, V attributeValue);
+    /**
+     * Put the attribute into this map.
+     * <p>
+     * If the attribute value is an {@link AttributeMapBindingListener} this map will publish
+     * {@link AttributeMapBindingEvent binding events} such as on "bind" and "unbind" if supported.
+     * <p>
+     * <b>Note</b>: not all <code>MutableAttributeMap</code> implementations support this.
+     *
+     * @param attributeName  the attribute name
+     * @param attributeValue the attribute value
+     * @return the previous value of the attribute, or <code>null</code> of there was no previous value
+     */
+    V put(String attributeName, V attributeValue);
 
-	/**
-	 * Put all the attributes into this map.
-	 * @param attributes the attributes to put into this map
-	 * @return this, to support call chaining
-	 */
-	MutableAttributeMap<V> putAll(AttributeMap<? extends V> attributes);
+    /**
+     * Put all the attributes into this map.
+     *
+     * @param attributes the attributes to put into this map
+     * @return this, to support call chaining
+     */
+    MutableAttributeMap<V> putAll(AttributeMap<? extends V> attributes);
 
-	/**
-	 * Remove all attributes in the map provided from this map.
-	 * @param attributes the attributes to remove from this map
-	 * @return this, to support call chaining
-	 */
-	MutableAttributeMap<V> removeAll(MutableAttributeMap<? extends V> attributes);
+    /**
+     * Remove all attributes in the map provided from this map.
+     *
+     * @param attributes the attributes to remove from this map
+     * @return this, to support call chaining
+     */
+    MutableAttributeMap<V> removeAll(MutableAttributeMap<? extends V> attributes);
 
-	/**
-	 * Remove an attribute from this map.
-	 * @param attributeName the name of the attribute to remove
-	 * @return previous value associated with specified attribute name, or <tt>null</tt> if there was no mapping for the
-	 * name
-	 */
-	Object remove(String attributeName);
+    /**
+     * Remove an attribute from this map.
+     *
+     * @param attributeName the name of the attribute to remove
+     * @return previous value associated with specified attribute name, or <tt>null</tt> if there was no mapping for the
+     * name
+     */
+    Object remove(String attributeName);
 
-	/**
-	 * Extract an attribute from this map, getting it and removing it in a single operation.
-	 * @param attributeName the attribute name
-	 * @return the value of the attribute, or <code>null</code> of there was no value
-	 */
-	Object extract(String attributeName);
+    /**
+     * Extract an attribute from this map, getting it and removing it in a single operation.
+     *
+     * @param attributeName the attribute name
+     * @return the value of the attribute, or <code>null</code> of there was no value
+     */
+    Object extract(String attributeName);
 
-	/**
-	 * Remove all attributes in this map.
-	 * @return this, to support call chaining
-	 */
-	MutableAttributeMap<V> clear();
+    /**
+     * Remove all attributes in this map.
+     *
+     * @return this, to support call chaining
+     */
+    MutableAttributeMap<V> clear();
 
-	/**
-	 * Replace the contents of this attribute map with the contents of the provided collection.
-	 * @param attributes the attribute collection
-	 * @return this, to support call chaining
+    /**
+     * Replace the contents of this attribute map with the contents of the provided collection.
+     *
+     * @param attributes the attribute collection
+     * @return this, to support call chaining
      * @throws UnsupportedOperationException
      * @throws UnsupportedOperationException
-	 */
-	MutableAttributeMap<V> replaceWith(AttributeMap<? extends V> attributes)
-			throws UnsupportedOperationException;
+     */
+    MutableAttributeMap<V> replaceWith(AttributeMap<? extends V> attributes)
+        throws UnsupportedOperationException;
 
 }

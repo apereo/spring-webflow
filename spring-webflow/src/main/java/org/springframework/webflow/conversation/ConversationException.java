@@ -17,25 +17,27 @@ package org.springframework.webflow.conversation;
 
 /**
  * The root of the conversation service exception hierarchy.
- * 
+ *
  * @author Keith Donald
  */
 public abstract class ConversationException extends RuntimeException {
 
-	/**
-	 * Creates a conversation service exception.
-	 * @param message a descriptive message
-	 */
-	public ConversationException(String message) {
-		super(message);
-	}
+    /**
+     * Creates a conversation service exception.
+     *
+     * @param message a descriptive message
+     */
+    public ConversationException(String message) {
+        super(message);
+    }
 
-	/**
-	 * Creates a conversation service exception.
-	 * @param message a descriptive message
-	 * @param cause the root cause of the problem
-	 */
-	public ConversationException(String message, Throwable cause) {
-		super(message, cause);
-	}
+    /**
+     * Creates a conversation service exception.
+     *
+     * @param message a descriptive message
+     * @param cause   the root cause of the problem
+     */
+    public ConversationException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

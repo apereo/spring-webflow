@@ -15,24 +15,24 @@
  */
 package org.springframework.webflow.execution.repository.support;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import org.junit.jupiter.api.Test;
 import org.springframework.webflow.conversation.impl.SimpleConversationId;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 public class CompositeFlowExecutionKeyTests {
 
-	@Test
-	public void testToString() {
-		CompositeFlowExecutionKey key = new CompositeFlowExecutionKey(new SimpleConversationId("1"), "1");
-		assertEquals("e1s1", key.toString());
-	}
+    @Test
+    public void testToString() {
+        CompositeFlowExecutionKey key = new CompositeFlowExecutionKey(new SimpleConversationId("1"), "1");
+        assertEquals("e1s1", key.toString());
+    }
 
-	@Test
-	public void testEquals() {
-		CompositeFlowExecutionKey key = new CompositeFlowExecutionKey(new SimpleConversationId("foo"), "bar");
-		CompositeFlowExecutionKey key2 = new CompositeFlowExecutionKey(new SimpleConversationId("foo"), "bar");
-		assertEquals(key, key2);
-	}
+    @Test
+    public void testEquals() {
+        CompositeFlowExecutionKey key = new CompositeFlowExecutionKey(new SimpleConversationId("foo"), "bar");
+        CompositeFlowExecutionKey key2 = new CompositeFlowExecutionKey(new SimpleConversationId("foo"), "bar");
+        assertEquals(key, key2);
+    }
 
 }

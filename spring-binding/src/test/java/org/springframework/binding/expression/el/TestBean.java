@@ -20,52 +20,55 @@ import java.util.List;
 
 public class TestBean {
 
-	private String value = "foo";
-	private int maximum = 2;
-	private TestBean bean;
-	private List<String> list = new ArrayList<>();
+    private String value = "foo";
 
-	public TestBean() {
-		initList();
-	}
+    private int maximum = 2;
 
-	public TestBean(TestBean bean) {
-		this.bean = bean;
-		initList();
-	}
+    private TestBean bean;
 
-	private void initList() {
-		list.add("1");
-		list.add("2");
-		list.add("3");
-		list.add(null);
-	}
+    private List<String> list = new ArrayList<>();
 
-	public TestBean getBean() {
-		return bean;
-	}
+    public TestBean() {
+        initList();
+    }
 
-	public String getValue() {
-		return value;
-	}
+    public TestBean(TestBean bean) {
+        this.bean = bean;
+        initList();
+    }
 
-	public void setValue(String value) {
-		this.value = value;
-	}
+    public TestBean getBean() {
+        return bean;
+    }
 
-	public String encode(String data) {
-		return "!" + data;
-	}
+    public String getValue() {
+        return value;
+    }
 
-	public int getMaximum() {
-		return maximum;
-	}
+    public void setValue(String value) {
+        this.value = value;
+    }
 
-	public void setMaximum(int maximum) {
-		this.maximum = maximum;
-	}
+    public String encode(String data) {
+        return "!" + data;
+    }
 
-	public List<String> getList() {
-		return list;
-	}
+    public int getMaximum() {
+        return maximum;
+    }
+
+    public void setMaximum(int maximum) {
+        this.maximum = maximum;
+    }
+
+    public List<String> getList() {
+        return list;
+    }
+
+    private void initList() {
+        list.add("1");
+        list.add("2");
+        list.add("3");
+        list.add(null);
+    }
 }

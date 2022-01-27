@@ -15,36 +15,38 @@
  */
 package org.springframework.webflow.execution.repository.snapshot;
 
-import java.io.Serializable;
-
 import org.springframework.webflow.execution.repository.FlowExecutionRepositoryException;
+
+import java.io.Serializable;
 
 /**
  * Thrown when a flow execution snapshot cannot be found This usually occurs when the client references a snapshot that
  * has since been removed.
- * 
+ *
  * @author Keith Donald
  * @author Erwin Vervaet
  */
 public class SnapshotNotFoundException extends FlowExecutionRepositoryException {
 
-	private Serializable snapshotId;
+    private Serializable snapshotId;
 
-	/**
-	 * Creates a snapshot not found exception.
-	 * @param snapshotId the snapshot id that could not be found
-	 */
-	public SnapshotNotFoundException(Serializable snapshotId) {
-		super("No flow execution snapshot could be found with id '" + snapshotId
-				+ "'; perhaps the snapshot has been removed? ");
-		this.snapshotId = snapshotId;
-	}
+    /**
+     * Creates a snapshot not found exception.
+     *
+     * @param snapshotId the snapshot id that could not be found
+     */
+    public SnapshotNotFoundException(Serializable snapshotId) {
+        super("No flow execution snapshot could be found with id '" + snapshotId
+              + "'; perhaps the snapshot has been removed? ");
+        this.snapshotId = snapshotId;
+    }
 
-	/**
-	 * The id of the snapshot that was not found.
+    /**
+     * The id of the snapshot that was not found.
+     *
      * @return
      */
-	public Serializable getSnapshotId() {
-		return snapshotId;
-	}
+    public Serializable getSnapshotId() {
+        return snapshotId;
+    }
 }

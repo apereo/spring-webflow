@@ -19,32 +19,34 @@ import org.springframework.webflow.core.FlowException;
 
 /**
  * Thrown when a flow definition was found during a lookup operation but could not be constructed.
- * 
+ *
  * @author Keith Donald
  * @author Erwin Vervaet
  */
 public class FlowDefinitionConstructionException extends FlowException {
 
-	/**
-	 * The id of the flow that could not be constructed.
-	 */
-	private String flowDefinitionId;
+    /**
+     * The id of the flow that could not be constructed.
+     */
+    private String flowDefinitionId;
 
-	/**
-	 * Creates an exception indicating a flow definition could not be constructed.
-	 * @param flowDefinitionId the flow definition identifier
-	 * @param cause the underlying cause of the exception
-	 */
-	public FlowDefinitionConstructionException(String flowDefinitionId, Throwable cause) {
-		super("An exception occurred constructing the flow '" + flowDefinitionId + "'", cause);
-		this.flowDefinitionId = flowDefinitionId;
-	}
+    /**
+     * Creates an exception indicating a flow definition could not be constructed.
+     *
+     * @param flowDefinitionId the flow definition identifier
+     * @param cause            the underlying cause of the exception
+     */
+    public FlowDefinitionConstructionException(String flowDefinitionId, Throwable cause) {
+        super("An exception occurred constructing the flow '" + flowDefinitionId + "'", cause);
+        this.flowDefinitionId = flowDefinitionId;
+    }
 
-	/**
-	 * Returns the id of the flow definition that could not be constructed.
-	 * @return the flow id
-	 */
-	public String getFlowDefinitionId() {
-		return flowDefinitionId;
-	}
+    /**
+     * Returns the id of the flow definition that could not be constructed.
+     *
+     * @return the flow id
+     */
+    public String getFlowDefinitionId() {
+        return flowDefinitionId;
+    }
 }

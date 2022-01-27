@@ -15,9 +15,6 @@
  */
 package org.springframework.binding.expression.el;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import jakarta.el.ELContext;
 import jakarta.el.ELException;
 import jakarta.el.ELResolver;
@@ -25,7 +22,6 @@ import jakarta.el.ExpressionFactory;
 import jakarta.el.FunctionMapper;
 import jakarta.el.ValueExpression;
 import jakarta.el.VariableMapper;
-
 import org.springframework.binding.convert.ConversionService;
 import org.springframework.binding.convert.service.DefaultConversionService;
 import org.springframework.binding.expression.Expression;
@@ -36,176 +32,183 @@ import org.springframework.binding.expression.ParserException;
 import org.springframework.binding.expression.support.NullParserContext;
 import org.springframework.util.Assert;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * The expression parser that parses EL expressions.
- * 
+ *
  * @author Keith Donald
  * @author Jeremy Grelle
  */
 public class ELExpressionParser implements ExpressionParser {
 
-	private ExpressionFactory expressionFactory;
+    private ExpressionFactory expressionFactory;
 
-	private Map<Class<?>, ELContextFactory> contextFactories = new HashMap<>();
+    private Map<Class<?>, ELContextFactory> contextFactories = new HashMap<>();
 
-	private ConversionService conversionService = new DefaultConversionService();
+    private ConversionService conversionService = new DefaultConversionService();
 
-	/**
-	 * Creates a new EL expression parser for standalone usage.
+    /**
+     * Creates a new EL expression parser for standalone usage.
+     *
      * @param expressionFactory
      * @param expressionFactory
      */
-	public ELExpressionParser(ExpressionFactory expressionFactory) {
-		init(expressionFactory);
-	}
+    public ELExpressionParser(ExpressionFactory expressionFactory) {
+        init(expressionFactory);
+    }
 
-	/**
-	 * The conversion service to use to perform type conversions as needed by the Unified EL system. If not specified,
-	 * the default is an instance of {@link DefaultConversionService}.
+    /**
+     * The conversion service to use to perform type conversions as needed by the Unified EL system. If not specified,
+     * the default is an instance of {@link DefaultConversionService}.
+     *
      * @return
      */
-	public ConversionService getConversionService() {
-		return conversionService;
-	}
+    public ConversionService getConversionService() {
+        return conversionService;
+    }
 
-	/**
-	 * Sets the conversion service to use to perform type conversions as needed by the Unified EL system.
-	 * @param conversionService the conversion service to use
-	 */
-	public void setConversionService(ConversionService conversionService) {
-		Assert.notNull(conversionService, "The conversion service is required");
-		this.conversionService = conversionService;
-	}
+    /**
+     * Sets the conversion service to use to perform type conversions as needed by the Unified EL system.
+     *
+     * @param conversionService the conversion service to use
+     */
+    public void setConversionService(ConversionService conversionService) {
+        Assert.notNull(conversionService, "The conversion service is required");
+        this.conversionService = conversionService;
+    }
 
-	/**
-	 * Register the ELContextFactory for expressions that evaluate the given class of context object.
-	 * @param contextType the expression context class
-	 * @param contextFactory the context factory to use for expressions that evaluate those types of contexts
-	 */
-	public void putContextFactory(Class<?> contextType, ELContextFactory contextFactory) {
-		Assert.notNull(contextFactory, "The EL context factory cannot be null");
-		contextFactories.put(contextType, contextFactory);
-	}
+    /**
+     * Register the ELContextFactory for expressions that evaluate the given class of context object.
+     *
+     * @param contextType    the expression context class
+     * @param contextFactory the context factory to use for expressions that evaluate those types of contexts
+     */
+    public void putContextFactory(Class<?> contextType, ELContextFactory contextFactory) {
+        Assert.notNull(contextFactory, "The EL context factory cannot be null");
+        contextFactories.put(contextType, contextFactory);
+    }
 
-	public Expression parseExpression(String expressionString, ParserContext context) throws ParserException {
-		Assert.notNull(expressionString, "The expression string to parse is required");
-		if (context == null) {
-			context = NullParserContext.INSTANCE;
-		}
-		if (context.isTemplate()) {
-			return parseExpressionInternal(expressionString, context, true);
-		} else {
-			assertNotDelimited(expressionString);
-			assertHasText(expressionString);
-			return parseExpressionInternal("#{" + expressionString + "}", context, false);
-		}
-	}
+    public Expression parseExpression(String expressionString, ParserContext context) throws ParserException {
+        Assert.notNull(expressionString, "The expression string to parse is required");
+        if (context == null) {
+            context = NullParserContext.INSTANCE;
+        }
+        if (context.isTemplate()) {
+            return parseExpressionInternal(expressionString, context, true);
+        } else {
+            assertNotDelimited(expressionString);
+            assertHasText(expressionString);
+            return parseExpressionInternal("#{" + expressionString + "}", context, false);
+        }
+    }
 
-	private Expression parseExpressionInternal(String expressionString, ParserContext context, boolean template)
-			throws ParserException {
-		Assert.notNull(expressionString, "The expression string to parse is required");
-		try {
-			ValueExpression expression = parseValueExpression(expressionString, context);
-			ELContextFactory contextFactory = getContextFactory(context.getEvaluationContextType(), expressionString);
-			return new ELExpression(contextFactory, expression);
-		} catch (ELException e) {
-			throw new ParserException(expressionString, e);
-		}
-	}
+    private static class VariableMapperImpl extends VariableMapper {
+        private Map<String, ValueExpression> variables = new HashMap<>();
 
-	private ValueExpression parseValueExpression(String expressionString, ParserContext context) throws ELException {
-		ParserELContext elContext = new ParserELContext();
-		elContext.mapVariables(context.getExpressionVariables(), expressionFactory);
-		ValueExpression expression = expressionFactory.createValueExpression(elContext, expressionString, Object.class);
-		return new BindingValueExpression(expression, getExpectedType(context), conversionService, context.isTemplate());
-	}
+        public ValueExpression resolveVariable(String name) {
+            return variables.get(name);
+        }
 
-	private Class<?> getExpectedType(ParserContext context) {
-		Class<?> expectedType = context.getExpectedEvaluationResultType();
-		return expectedType != null ? expectedType : Object.class;
-	}
+        public ValueExpression setVariable(String name, ValueExpression value) {
+            return variables.put(name, value);
+        }
 
-	private ELContextFactory getContextFactory(Class<?> expressionTargetType, String expressionString) {
-		if (contextFactories.containsKey(expressionTargetType)) {
-			return contextFactories.get(expressionTargetType);
-		} else {
-			return contextFactories.get(Object.class);
-		}
-	}
+        public String toString() {
+            return variables.toString();
+        }
+    }
 
-	private void init(ExpressionFactory expressionFactory) {
-		this.expressionFactory = expressionFactory;
-		DefaultElContextFactory contextFactory = new DefaultElContextFactory();
-		putContextFactory(null, contextFactory);
-		putContextFactory(Object.class, contextFactory);
-	}
+    private class ParserELContext extends ELContext {
+        private VariableMapper variableMapper;
 
-	private void assertNotDelimited(String expressionString) {
-		if ((expressionString.startsWith("#{") && expressionString.endsWith("}"))
-				|| (expressionString.startsWith("${") && expressionString.endsWith("}"))) {
-			throw new ParserException(expressionString, "This expression '" + expressionString
-					+ "' being parsed is expected be an 'eval' EL expression string. "
-					+ "Do not attempt to enclose such expression strings in #{} or ${} delimiters. "
-					+ "If you need to parse a template that mixes literal text with evaluatable blocks, "
-					+ "set the 'template' parser context attribute to true.", null);
-		}
-	}
+        public ELResolver getELResolver() {
+            return null;
+        }
 
-	private void assertHasText(String expressionString) {
-		if (expressionString.length() == 0) {
-			throw new ParserException(expressionString, "The EL eval expression to parse must have text", null);
-		}
-	}
+        public FunctionMapper getFunctionMapper() {
+            return null;
+        }
 
-	private class ParserELContext extends ELContext {
-		private VariableMapper variableMapper;
+        public VariableMapper getVariableMapper() {
+            return variableMapper;
+        }
 
-		public ELResolver getELResolver() {
-			return null;
-		}
+        public void mapVariables(ExpressionVariable[] variables, ExpressionFactory expressionFactory) {
+            if (variables != null && variables.length > 0) {
+                variableMapper = new VariableMapperImpl();
+                for (ExpressionVariable var : variables) {
+                    ParserContext context = var.getParserContext() != null ? var.getParserContext()
+                        : NullParserContext.INSTANCE;
+                    ValueExpression expr;
+                    if (context.isTemplate()) {
+                        expr = parseValueExpression(var.getValueExpression(), context);
+                    } else {
+                        assertNotDelimited(var.getValueExpression());
+                        assertHasText(var.getValueExpression());
+                        expr = parseValueExpression("#{" + var.getValueExpression() + "}", context);
+                    }
+                    variableMapper.setVariable(var.getName(), expr);
+                }
+            }
+        }
+    }
 
-		public FunctionMapper getFunctionMapper() {
-			return null;
-		}
+    private Expression parseExpressionInternal(String expressionString, ParserContext context, boolean template)
+        throws ParserException {
+        Assert.notNull(expressionString, "The expression string to parse is required");
+        try {
+            ValueExpression expression = parseValueExpression(expressionString, context);
+            ELContextFactory contextFactory = getContextFactory(context.getEvaluationContextType(), expressionString);
+            return new ELExpression(contextFactory, expression);
+        } catch (ELException e) {
+            throw new ParserException(expressionString, e);
+        }
+    }
 
-		public VariableMapper getVariableMapper() {
-			return variableMapper;
-		}
+    private ValueExpression parseValueExpression(String expressionString, ParserContext context) throws ELException {
+        ParserELContext elContext = new ParserELContext();
+        elContext.mapVariables(context.getExpressionVariables(), expressionFactory);
+        ValueExpression expression = expressionFactory.createValueExpression(elContext, expressionString, Object.class);
+        return new BindingValueExpression(expression, getExpectedType(context), conversionService, context.isTemplate());
+    }
 
-		public void mapVariables(ExpressionVariable[] variables, ExpressionFactory expressionFactory) {
-			if (variables != null && variables.length > 0) {
-				variableMapper = new VariableMapperImpl();
-				for (ExpressionVariable var : variables) {
-					ParserContext context = var.getParserContext() != null ? var.getParserContext()
-							: NullParserContext.INSTANCE;
-					ValueExpression expr;
-					if (context.isTemplate()) {
-						expr = parseValueExpression(var.getValueExpression(), context);
-					} else {
-						assertNotDelimited(var.getValueExpression());
-						assertHasText(var.getValueExpression());
-						expr = parseValueExpression("#{" + var.getValueExpression() + "}", context);
-					}
-					variableMapper.setVariable(var.getName(), expr);
-				}
-			}
-		}
-	}
+    private Class<?> getExpectedType(ParserContext context) {
+        Class<?> expectedType = context.getExpectedEvaluationResultType();
+        return expectedType != null ? expectedType : Object.class;
+    }
 
-	private static class VariableMapperImpl extends VariableMapper {
-		private Map<String, ValueExpression> variables = new HashMap<>();
+    private ELContextFactory getContextFactory(Class<?> expressionTargetType, String expressionString) {
+        if (contextFactories.containsKey(expressionTargetType)) {
+            return contextFactories.get(expressionTargetType);
+        } else {
+            return contextFactories.get(Object.class);
+        }
+    }
 
-		public ValueExpression resolveVariable(String name) {
-			return variables.get(name);
-		}
+    private void init(ExpressionFactory expressionFactory) {
+        this.expressionFactory = expressionFactory;
+        DefaultElContextFactory contextFactory = new DefaultElContextFactory();
+        putContextFactory(null, contextFactory);
+        putContextFactory(Object.class, contextFactory);
+    }
 
-		public ValueExpression setVariable(String name, ValueExpression value) {
-			return variables.put(name, value);
-		}
+    private void assertNotDelimited(String expressionString) {
+        if ((expressionString.startsWith("#{") && expressionString.endsWith("}"))
+            || (expressionString.startsWith("${") && expressionString.endsWith("}"))) {
+            throw new ParserException(expressionString, "This expression '" + expressionString
+                                                        + "' being parsed is expected be an 'eval' EL expression string. "
+                                                        + "Do not attempt to enclose such expression strings in #{} or ${} delimiters. "
+                                                        + "If you need to parse a template that mixes literal text with evaluatable blocks, "
+                                                        + "set the 'template' parser context attribute to true.", null);
+        }
+    }
 
-		public String toString() {
-			return variables.toString();
-		}
-	}
+    private void assertHasText(String expressionString) {
+        if (expressionString.length() == 0) {
+            throw new ParserException(expressionString, "The EL eval expression to parse must have text", null);
+        }
+    }
 
 }

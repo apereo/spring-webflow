@@ -15,131 +15,131 @@
  */
 package org.springframework.webflow.engine.model;
 
-import java.util.LinkedList;
-
 import org.springframework.util.StringUtils;
+
+import java.util.LinkedList;
 
 /**
  * Model support for states.
- * 
+ *
  * @author Scott Andrews
  */
 public abstract class AbstractStateModel extends AbstractModel {
 
-	private String id;
+    private String id;
 
-	private String parent;
+    private String parent;
 
-	private LinkedList<AttributeModel> attributes;
+    private LinkedList<AttributeModel> attributes;
 
-	private SecuredModel secured;
+    private SecuredModel secured;
 
-	private LinkedList<AbstractActionModel> onEntryActions;
+    private LinkedList<AbstractActionModel> onEntryActions;
 
-	private LinkedList<ExceptionHandlerModel> exceptionHandlers;
+    private LinkedList<ExceptionHandlerModel> exceptionHandlers;
 
-	public AbstractStateModel(String id) {
-		setId(id);
-	}
+    public AbstractStateModel(String id) {
+        setId(id);
+    }
 
-	protected void fillCopy(AbstractStateModel copy) {
-		copy.setParent(parent);
-		copy.setAttributes(copyList(attributes));
-		copy.setSecured((SecuredModel) copy(secured));
-		copy.setOnEntryActions(copyList(onEntryActions));
-		copy.setExceptionHandlers(copyList(exceptionHandlers));
-	}
+    /**
+     * @return the id
+     */
+    public String getId() {
+        return id;
+    }
 
-	/**
-	 * @return the id
-	 */
-	public String getId() {
-		return id;
-	}
+    /**
+     * @param id the id to set
+     */
+    public void setId(String id) {
+        if (StringUtils.hasText(id)) {
+            this.id = id;
+        } else {
+            this.id = null;
+        }
+    }
 
-	/**
-	 * @param id the id to set
-	 */
-	public void setId(String id) {
-		if (StringUtils.hasText(id)) {
-			this.id = id;
-		} else {
-			this.id = null;
-		}
-	}
+    /**
+     * @return the parent
+     */
+    public String getParent() {
+        return parent;
+    }
 
-	/**
-	 * @return the parent
-	 */
-	public String getParent() {
-		return parent;
-	}
+    /**
+     * @param parent the parent to set
+     */
+    public void setParent(String parent) {
+        if (StringUtils.hasText(parent)) {
+            this.parent = parent;
+        } else {
+            this.parent = null;
+        }
+    }
 
-	/**
-	 * @param parent the parent to set
-	 */
-	public void setParent(String parent) {
-		if (StringUtils.hasText(parent)) {
-			this.parent = parent;
-		} else {
-			this.parent = null;
-		}
-	}
+    /**
+     * @return the attributes
+     */
+    public LinkedList<AttributeModel> getAttributes() {
+        return attributes;
+    }
 
-	/**
-	 * @return the attributes
-	 */
-	public LinkedList<AttributeModel> getAttributes() {
-		return attributes;
-	}
+    /**
+     * @param attributes the attributes to set
+     */
+    public void setAttributes(LinkedList<AttributeModel> attributes) {
+        this.attributes = attributes;
+    }
 
-	/**
-	 * @param attributes the attributes to set
-	 */
-	public void setAttributes(LinkedList<AttributeModel> attributes) {
-		this.attributes = attributes;
-	}
+    /**
+     * @return the secured
+     */
+    public SecuredModel getSecured() {
+        return secured;
+    }
 
-	/**
-	 * @return the secured
-	 */
-	public SecuredModel getSecured() {
-		return secured;
-	}
+    /**
+     * @param secured the secured to set
+     */
+    public void setSecured(SecuredModel secured) {
+        this.secured = secured;
+    }
 
-	/**
-	 * @param secured the secured to set
-	 */
-	public void setSecured(SecuredModel secured) {
-		this.secured = secured;
-	}
+    /**
+     * @return the on entry actions
+     */
+    public LinkedList<AbstractActionModel> getOnEntryActions() {
+        return onEntryActions;
+    }
 
-	/**
-	 * @return the on entry actions
-	 */
-	public LinkedList<AbstractActionModel> getOnEntryActions() {
-		return onEntryActions;
-	}
+    /**
+     * @param onEntryActions the on entry actions to set
+     */
+    public void setOnEntryActions(LinkedList<AbstractActionModel> onEntryActions) {
+        this.onEntryActions = onEntryActions;
+    }
 
-	/**
-	 * @param onEntryActions the on entry actions to set
-	 */
-	public void setOnEntryActions(LinkedList<AbstractActionModel> onEntryActions) {
-		this.onEntryActions = onEntryActions;
-	}
+    /**
+     * @return the exception handlers
+     */
+    public LinkedList<ExceptionHandlerModel> getExceptionHandlers() {
+        return exceptionHandlers;
+    }
 
-	/**
-	 * @return the exception handlers
-	 */
-	public LinkedList<ExceptionHandlerModel> getExceptionHandlers() {
-		return exceptionHandlers;
-	}
+    /**
+     * @param exceptionHandlers the exception handlers to set
+     */
+    public void setExceptionHandlers(LinkedList<ExceptionHandlerModel> exceptionHandlers) {
+        this.exceptionHandlers = exceptionHandlers;
+    }
 
-	/**
-	 * @param exceptionHandlers the exception handlers to set
-	 */
-	public void setExceptionHandlers(LinkedList<ExceptionHandlerModel> exceptionHandlers) {
-		this.exceptionHandlers = exceptionHandlers;
-	}
+    protected void fillCopy(AbstractStateModel copy) {
+        copy.setParent(parent);
+        copy.setAttributes(copyList(attributes));
+        copy.setSecured((SecuredModel) copy(secured));
+        copy.setOnEntryActions(copyList(onEntryActions));
+        copy.setExceptionHandlers(copyList(exceptionHandlers));
+    }
 
 }
