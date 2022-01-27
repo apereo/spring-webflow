@@ -6,7 +6,6 @@ env:
   TERM: xterm-256color
   SONATYPE_PWD: ${{ secrets.SONATYPE_PWD }}
   SONATYPE_USER: ${{ secrets.SONATYPE_USER }}
-  GH_TOKEN: ${{ secrets.GH_PAGES_TOKEN }}
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   JDK_CURRENT: 17
 
@@ -14,9 +13,9 @@ env:
 
 on:
   push:
-    branches: [ main ]
+    branches: [ master ]
   pull_request:
-    branches: [ main ]
+    branches: [ master ]
 
 ##########################################################################
 
@@ -48,17 +47,17 @@ jobs:
 
   ##########################################################################
 
-#  publish-snapshots:
-#    runs-on: ubuntu-latest
-#    needs: [build]
-#    if: ${{ github.event_name == 'push' }}
-#    steps:
-#      - uses: actions/checkout@v2
-#      - name: Set up JDK
-#        uses: actions/setup-java@v1
-#        with:
-#          java-version: ${{ env.JDK_CURRENT }}
-#      - name: Publish SNAPSHOTs
-#        if: ${{ env.SONATYPE_USER != null && env.SONATYPE_PWD != null }}
-#        run:  mvn -T 10 deploy --settings ./.github/workflows/settings.xml
+  publish-snapshots:
+    runs-on: ubuntu-latest
+    needs: [build]
+    if: ${{ github.event_name == 'push' }}
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{ env.JDK_CURRENT }}
+      - name: Publish SNAPSHOTs
+        if: ${{ env.SONATYPE_USER != null && env.SONATYPE_PWD != null }}
+        run: ./gradlew publish -PpublishSnapshots=true -PSonatypeUsername=${SONATYPE_USER} -PSonatypePassword=${SONATYPE_PWD}
 
