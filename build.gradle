@@ -1,0 +1,99 @@
+buildscript {
+    repositories {
+        maven { url "https://repo.spring.io/plugins-release" }
+    }
+}
+
+plugins {
+    id 'io.spring.dependency-management' version "${dependencyMgmtPluginVersion}" apply false
+}
+
+allprojects {
+    group = "org.springframework.webflow"
+
+    apply plugin: "java"
+    apply plugin: "io.spring.dependency-management"
+
+    dependencyManagement {
+        imports {
+            mavenBom "org.springframework:spring-framework-bom:${springVersion}"
+            mavenBom "org.junit:junit-bom:${junitVersion}"
+        }
+        dependencies {
+            dependency "jakarta.servlet:jakarta.servlet-api:${servletApiVersion}"
+            dependency "jakarta.servlet.jsp:jakarta.servlet.jsp-api:${jspApiVersion}"
+            dependency "jakarta.servlet.jsp.jstl:jakarta.servlet.jsp.jstl-api:${jstlApiVersion}"
+            dependency "jakarta.el:jakarta.el-api:${elApiVersion}"
+            dependency "jakarta.validation:jakarta.validation-api:${validationApiVersion}"
+
+            dependencySet(group: "org.apache.logging.log4j", version: "${log4jVersion}") {
+                entry 'log4j-api'
+                entry 'log4j-core'
+                entry 'log4j-slf4j-impl'
+                entry 'log4j-jul'
+            }
+            dependency "org.slf4j:slf4j-api:${slf4jVersion}"
+            dependency "org.easymock:easymock:4.3"
+            dependency "org.hamcrest:hamcrest:2.2"
+            dependency "org.apache.tomcat:tomcat-jasper-el:${tomcatJasperVersion}"
+            dependency "junit:junit:4.13.2"
+        }
+    }
+    repositories {
+        mavenCentral()
+        maven {
+            url "https://repo.spring.io/milestone"
+        }
+    }
+
+    test {
+        useJUnitPlatform()
+        include(["**/*Tests.class", "**/*Test.class"])
+        systemProperty("java.awt.headless", "true")
+        systemProperty("testGroups", project.properties.get("testGroups"))
+    }
+
+    javadoc {
+        options.memberLevel = JavadocMemberLevel.PROTECTED
+        options.author = true
+        options.header = project.name
+        failOnError false
+        options.addStringOption('Xdoclint:none', '-quiet')
+        options.addStringOption('encoding', 'UTF-8')
+        options.addStringOption('charSet', 'UTF-8')
+    }
+
+    task sourcesJar(type: Jar, dependsOn: classes) {
+        archiveClassifier.set("sources")
+        from sourceSets.main.allJava
+    }
+
+    task javadocJar(type: Jar) {
+        archiveClassifier.set("javadoc")
+        from javadoc
+    }
+
+    artifacts {
+        archives sourcesJar
+        archives javadocJar
+    }
+}
+
+subprojects { subproject ->
+
+    [compileJava, compileTestJava]*.options*.compilerArgs = ["-Xlint:none"]
+
+    sourceSets.test.resources.srcDirs = ["src/main/java", "src/test/resources", "src/test/java"]
+
+    jar {
+        manifest.attributes["Implementation-Title"] = subproject.name
+        manifest.attributes["Implementation-Version"] = subproject.version
+
+        from("${rootProject.projectDir}/src/dist") {
+            include "license.txt"
+            include "notice.txt"
+            into "META-INF"
+            expand(copyright: new Date().format("yyyy"), version: project.version)
+        }
+    }
+}

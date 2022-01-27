@@ -1,0 +1,19 @@
+description = "Spring Binding"
+
+dependencies {
+    compileOnly("org.springframework:spring-context")
+    compileOnly("org.springframework:spring-core")
+
+    compileOnly("jakarta.el:jakarta.el-api")
+
+    testImplementation("org.springframework:spring-context")
+    testImplementation("org.springframework:spring-core")
+
+    testImplementation("org.junit.jupiter:junit-jupiter")
+    testImplementation("org.hamcrest:hamcrest")
+    testImplementation("org.easymock:easymock")
+    testImplementation("org.apache.tomcat:tomcat-jasper-el")
+    testImplementation("org.apache.logging.log4j:log4j-core")
+    testImplementation("org.apache.logging.log4j:log4j-slf4j-impl")
+    testImplementation("org.apache.logging.log4j:log4j-jul")
+}
