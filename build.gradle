@@ -33,7 +33,7 @@ allprojects {
                 entry 'log4j-jul'
             }
             dependency "org.slf4j:slf4j-api:${slf4jVersion}"
-            dependency "org.easymock:easymock:4.3"
+            dependency "org.easymock:easymock:5.1.0"
             dependency "org.hamcrest:hamcrest:2.2"
             dependency "org.apache.tomcat:tomcat-jasper-el:${tomcatJasperVersion}"
             dependency "junit:junit:4.13.2"
